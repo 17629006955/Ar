@@ -103,7 +103,7 @@ namespace Ar.API.Controllers
                 if (UserAuthorization)
                 {
                     bool re = _service.GiveedUpdate(couponCode,userCode);
-                    result.Resource = result;
+                    result.Resource = re;
                     result.Status = Result.SUCCEED;
                 }
                 else
