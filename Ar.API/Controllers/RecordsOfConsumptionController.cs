@@ -136,10 +136,10 @@ namespace Ar.API.Controllers
             IRecordsOfConsumptionService _service = new RecordsOfConsumptionService();
             try
             {
-                if (UserAuthorization)
+                if (1==1)
                 {
-                     _service.PayOrder(productCode,userCode,peopleCount,dateTime);
-                    result.Resource = true;
+                    var re= _service.PayOrder(productCode,userCode,peopleCount,dateTime);
+                    result.Resource = re;
                     result.Status = Result.SUCCEED;
                 }
                 else

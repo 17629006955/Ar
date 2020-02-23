@@ -92,7 +92,7 @@ namespace Ar.API.Controllers
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        ////http://localhost:10010//api/Coupon/GiveedUpdate?couponCode=1&userCode=1
+        ////http://localhost:10010//api/Coupon/GiveedUpdate?couponCode=c0e2af18-3019-4ba7-82b1-9dadba34b07d&userCode=1
         [HttpGet]
         public IHttpActionResult GiveedUpdate(string couponCode, string userCode)
         {

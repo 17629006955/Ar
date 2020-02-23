@@ -30,13 +30,13 @@ namespace Ar.Services
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@UserCode", userCode, System.Data.DbType.String);
-            IList<RecordsOfConsumption> list = DapperSqlHelper.FindToList<RecordsOfConsumption>(@"select * from [dbo].[RecordsOfConsumption] where UserCode=@UserCode", null, false);
+            IList<RecordsOfConsumption> list = DapperSqlHelper.FindToList<RecordsOfConsumption>(@"select * from [dbo].[RecordsOfConsumption] where UserCode=@UserCode", paras, false);
             return list;
         }
-        public bool InsertRecore(string typeCode,string userCode,decimal? recordsMoney)
+        public bool InsertRecore(string typeCode,string userCode,decimal? recordsMoney,string explain)
         {
             var tempRecord = DapperSqlHelper.FindOne<RecordsOfConsumption>("SELECT MAX(RecordsOfConsumptionCode) RecordsOfConsumptionCode FROM [dbo].[RecordsOfConsumption]", null, false);
-            if (tempRecord != null)
+            if (tempRecord != null && !string.IsNullOrEmpty(tempRecord.RecordsOfConsumptionCode))
             {
                 tempRecord.RecordsOfConsumptionCode = tempRecord.RecordsOfConsumptionCode;
             }
@@ -49,6 +49,8 @@ namespace Ar.Services
             paras.Add("@UserCode", userCode, System.Data.DbType.String);
             paras.Add("@RechargeTypeCode", typeCode, System.Data.DbType.String);
             paras.Add("@RecordsMoney", recordsMoney, System.Data.DbType.Decimal);
+            paras.Add("@Explain", explain, System.Data.DbType.String);
+            paras.Add("@RecordsOfConsumptionCode", tempRecord.RecordsOfConsumptionCode, System.Data.DbType.String);
             var n = DapperSqlHelper.ExcuteNonQuery<RecordsOfConsumption>(@"INSERT INTO [dbo].[RecordsOfConsumption]
            ([RecordsOfConsumptionCode],[UserCode] ,[RechargeTypeCode]  ,[RecordsMoney],Explain,CreateTime) 
             VALUES  ( @RecordsOfConsumptionCode, 
@@ -60,7 +62,7 @@ namespace Ar.Services
             return true;
         }
 
-        public void PayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime)
+        public bool PayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime)
         {
             IProductInfoService _productInfoService = new ProductInfoService();
             IOrderService _orderService = new OrderService();
@@ -75,6 +77,7 @@ namespace Ar.Services
             order.ExperienceVoucherCode = "";
             order.AppointmentTime = dateTime;
             _orderService.InsertOrder(order);
+            return true;
         }
 
         /// <summary>

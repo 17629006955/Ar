@@ -47,7 +47,7 @@ namespace Ar.Services
             paras.Add("@code", couponCode, System.Data.DbType.String);
             string sql1 = "select * from [dbo].[Coupon] where CouponCode=@code ";
             Coupon coupon= DapperSqlHelper.FindOne<Coupon>(sql1, paras, false);
-            string sql = "update [dbo].[Coupon] set IsGiveed=1 and GiveedTime=getdate() where CouponCode=@code";
+            string sql = "update [dbo].[Coupon] set IsGiveed=1, GiveedTime=getdate() where CouponCode=@code";
             DapperSqlHelper.ExcuteNonQuery<Coupon>(sql, paras, false);
             coupon.CouponCode = GetMaxCode();
             coupon.UserCode = userCode;
@@ -77,8 +77,8 @@ namespace Ar.Services
         public string GetMaxCode()
         {
             var coupon = DapperSqlHelper.FindOne<Coupon>("SELECT MAX(CouponCode) CouponCode FROM [dbo].[Coupon]", null, false);
-            var code = coupon != null ? Convert.ToInt32(coupon.CouponCode) + 1 : 1;
-            return code.ToString();
+            //var code = coupon != null ? Convert.ToInt32(coupon.CouponCode) + 1 : 1;
+            return Guid.NewGuid().ToString();
         }
     }
 }

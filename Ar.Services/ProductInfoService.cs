@@ -26,7 +26,7 @@ namespace Ar.Services
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@productCode", code, System.Data.DbType.String);
             string sql = @"SELECT b.ProductTypeName FROM ProductTypeList a, ProductType b WHERE a.ProductTypeCode= b.ProductTypeCode AND a.ProductCode= @productCode";
-            IList<ProductType> list =DapperSqlHelper.FindToList<ProductType>(sql, null, false);
+            IList<ProductType> list =DapperSqlHelper.FindToList<ProductType>(sql, paras, false);
             return list.Select(p => p.ProductTypeName).ToList();
         }
         public ProductInfo GetProductInfo(string code)

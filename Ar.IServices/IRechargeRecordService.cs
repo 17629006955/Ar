@@ -26,7 +26,7 @@ namespace Ar.IServices
         /// 获取充值记录根据用户
         /// </summary>
         /// <returns></returns>
-        IList<RechargeRecord> GetRechargeRecordListByUserCode(string userCode);
+        IList<RechargeType> GetRechargeRecordListByUserCode(string userCode);
 
         /// <summary>
         ///充值
@@ -34,7 +34,7 @@ namespace Ar.IServices
         /// <param name="typeCode">类型</param>
         /// <param name="userCode">用户</param>
         /// <returns></returns>
-        bool Recharge(string typeCode, string userCode);
+        bool Recharge(string typeCode, string userCode, string explain);
         bool InsertRechargeRecord(RechargeRecord record);
     }
 }

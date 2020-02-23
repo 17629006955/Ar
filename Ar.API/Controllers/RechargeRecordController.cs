@@ -128,9 +128,9 @@ namespace Ar.API.Controllers
         /// </summary>
         /// <param name="record"></param>
         /// <returns></returns>
-        ////http://localhost:10010//api/RechargeRecord/Recharge?typeCode=1&userCode=1
+        ////http://localhost:10010//api/RechargeRecord/Recharge?typeCode=1&userCode=1&explain=333
         [HttpGet]
-        public IHttpActionResult Recharge(string typeCode, string userCode)
+        public IHttpActionResult Recharge(string typeCode, string userCode, string explain)
         {
             SimpleResult result = new SimpleResult();
             IRechargeRecordService _service = new RechargeRecordService();
@@ -138,9 +138,9 @@ namespace Ar.API.Controllers
             {
                 if (UserAuthorization)
                 {
-                    var list = _service.Recharge(typeCode,userCode);
-                result.Resource = list;
-                result.Status = Result.SUCCEED;
+                    var list = _service.Recharge(typeCode, userCode, explain);
+                    result.Resource = list;
+                    result.Status = Result.SUCCEED;
                 }
                 else
                 {
@@ -155,7 +155,6 @@ namespace Ar.API.Controllers
                 result.Msg = ex.Message;
             }
             return Json(result);
-
         }
 
         /// <summary>

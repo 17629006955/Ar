@@ -24,16 +24,18 @@ namespace Ar.Services
             IList<RechargeRecord> list = DapperSqlHelper.FindToList<RechargeRecord>(@"select * from [dbo].[RechargeRecord]", null, false);
             return list;
         }
-        public IList<RechargeRecord> GetRechargeRecordListByUserCode(string userCode)
+        public IList<RechargeType> GetRechargeRecordListByUserCode(string userCode)
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@userCode", userCode, System.Data.DbType.String);
-            IList<RechargeRecord> list = DapperSqlHelper.FindToList<RechargeRecord>(@"select * from [dbo].[RechargeRecord] where UserCode=@userCode", paras, false);
+            IList<RechargeType> list = DapperSqlHelper.FindToList<RechargeType>(@"select b.RechargeTypeCode,RechargeTypeName from [dbo].[RecordsOfConsumption] a  ,[dbo].[RechargeType] b
+              WHERE a.RechargeTypeCode=b.RechargeTypeCode
+              AND b.Status=1 and a.UserCode=@userCode", paras, false);
             return list;
         }
 
         
-        public bool Recharge(string typeCode,string userCode)
+        public bool Recharge(string typeCode,string userCode,string explain)
         {
             IRechargeTypeService s = new RechargeTypeService();
             IRecordsOfConsumptionService cs = new RecordsOfConsumptionService();
@@ -47,7 +49,8 @@ namespace Ar.Services
                 RechargeRecordCode = "1",
                 UserCode = userCode,
                 RechargeAmount = money,
-                CreateTime = DateTime.Now
+                CreateTime = DateTime.Now,
+                Explain= explain
             };
             UseWallet wallet = new UseWallet()
             {
@@ -62,9 +65,9 @@ namespace Ar.Services
             //钱包
             us.InsertUseWallet(wallet);
             //消费记录
-            cs.InsertRecore(typeCode, userCode, decimal.Parse(money.ToString()));
+            cs.InsertRecore(typeCode, userCode, decimal.Parse(money.ToString()),explain);
             //充值
-            InsertRechargeRecord(record);
+            //InsertRechargeRecord(record);
             return true;
         }
         public bool InsertRechargeRecord(RechargeRecord record)
