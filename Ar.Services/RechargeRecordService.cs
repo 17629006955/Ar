@@ -28,7 +28,7 @@ namespace Ar.Services
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@userCode", userCode, System.Data.DbType.String);
-            IList<RechargeType> list = DapperSqlHelper.FindToList<RechargeType>(@"select b.RechargeTypeCode,RechargeTypeName from [dbo].[RecordsOfConsumption] a  ,[dbo].[RechargeType] b
+            IList<RechargeType> list = DapperSqlHelper.FindToList<RechargeType>(@"select b.RechargeTypeCode,b.RechargeTypeName,b.Status,b.Money,b.DonationAmount from [dbo].[RecordsOfConsumption] a  ,[dbo].[RechargeType] b
               WHERE a.RechargeTypeCode=b.RechargeTypeCode
               AND b.Status=1 and a.UserCode=@userCode", paras, false);
             return list;
