@@ -22,7 +22,7 @@ namespace Ar.Services
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@userCode", userCode, System.Data.DbType.String);
-            IList<Order> list = DapperSqlHelper.FindToList<Order>(@"select * from [dbo].[Order]  where UserCode=@userCode and ", paras, false);
+            IList<Order> list = DapperSqlHelper.FindToList<Order>(@"select * from [dbo].[Order]  where UserCode=@userCode  ", paras, false);
             return list;
         }
 

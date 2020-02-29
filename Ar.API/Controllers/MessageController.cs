@@ -62,19 +62,22 @@ namespace Ar.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [HttpPost]
-        //http://localhost:10010//api/Message/BangMessageCode?phone=18235139350&SendMessageCode=232232&userCode=121ewe
+        //http://localhost:10010//api/Message/BangMessageCode?phone=18235139350&verificationCode=232232&userCode=121ewe
         public IHttpActionResult BangMessageCode(string phone,string verificationCode, string userCode)
         {
             SimpleResult result = new SimpleResult();
             if (UserAuthorization)
-            {    
-            if (verificationService.CheckVerification(phone, verificationCode))
             {
-                //写入到手机号和和数据库
-                var count = userInfo.UpdateByPhone( userCode, phone);
-                result.Resource = count;
-                result.Status = Result.SUCCEED;
-            }
+                if (verificationService.CheckVerification(phone, verificationCode))
+                {
+                    //写入到手机号和和数据库
+                    var count = userInfo.UpdateByPhone(userCode, phone);
+                    result.Resource = count;
+                    result.Status = Result.SUCCEED;
+                }
+                else {
+                    result.Msg = "验证码错误或者已经过期，请重新获取验证码。";
+                }
             }
             else
             {
