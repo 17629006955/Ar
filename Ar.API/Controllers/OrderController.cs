@@ -227,5 +227,39 @@ namespace Ar.API.Controllers
             return Json(result);
 
         }
+        /// <summary>
+        ///  下单购买（微信支付）
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        ////http://localhost:10010//api/Order/InsertOrder
+        [HttpPost]
+        public IHttpActionResult InsertOrder(Order order)
+        {
+            SimpleResult result = new SimpleResult();
+            IOrderService _service = new OrderService();
+            try
+            {
+                if (UserAuthorization)
+                {
+                    _service.InsertOrder(order);
+                    result.Resource = null;
+                    result.Status = Result.SUCCEED;
+                }
+                else
+                {
+                    result.Status = ResultType;
+                    result.Resource = ReAccessToken;
+                    result.Msg = TokenMessage;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Status = Result.FAILURE;
+                result.Msg = ex.Message;
+            }
+            return Json(result);
+
+        }
     }
 }
