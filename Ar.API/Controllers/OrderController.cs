@@ -232,9 +232,9 @@ namespace Ar.API.Controllers
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        ////http://localhost:10010//api/Order/InsertOrder
+        ////http://localhost:10010//api/Order/WxOrder
         [HttpPost]
-        public IHttpActionResult InsertOrder(Order order)
+        public IHttpActionResult WxOrder(Order order)
         {
             SimpleResult result = new SimpleResult();
             IOrderService _service = new OrderService();
