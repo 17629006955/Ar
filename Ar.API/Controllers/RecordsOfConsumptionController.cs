@@ -136,7 +136,7 @@ namespace Ar.API.Controllers
             IRecordsOfConsumptionService _service = new RecordsOfConsumptionService();
             try
             {
-                if (1==1)
+                if (UserAuthorization)
                 {
                     var re= _service.PayOrder(productCode,userCode,peopleCount,dateTime,money,couponCode);
                     result.Resource = re;
@@ -144,7 +144,7 @@ namespace Ar.API.Controllers
                 }
                 else
                 {
-                    result.Status = Result.FAILURE;
+                    result.Status = ResultType;
                     result.Resource = ReAccessToken;
                     result.Msg = TokenMessage;
                 }
