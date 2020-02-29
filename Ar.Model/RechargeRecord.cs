@@ -23,6 +23,9 @@ namespace AR.Model
 	[Serializable]
 	public partial class RechargeRecord
 	{
+        /// <summary>
+        /// 充值记录
+        /// </summary>
 		public RechargeRecord()
 		{}
 		#region Model

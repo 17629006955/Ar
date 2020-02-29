@@ -24,6 +24,16 @@ namespace Ar.Services
             
             return userone;
         }
+
+        public UserStore GetUserStorebyUserCode(string userCode)
+        {
+
+            DynamicParameters paras = new DynamicParameters();
+            paras.Add("@userCode", userCode, System.Data.DbType.String);
+            UserStore userone = DapperSqlHelper.FindOne<UserStore>("select * from [dbo].[UserStore] where   UserCode=@userCode", paras, false);
+            return userone;
+        }
+     
         public int  CreateUserStore(UserStore userStore)
         {
             DynamicParameters paras = new DynamicParameters();

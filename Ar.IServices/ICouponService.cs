@@ -7,7 +7,7 @@ namespace Ar.IServices
     {
         Coupon GetCouponByCode(string code);
         IList<Coupon> GetCouponList(string userCode);
-        bool UsedUpdate(string couponCode);
+        bool UsedUpdate(string couponCode,string userCode);
         bool GiveedUpdate(string couponCode, string userCode);
         bool Insert(Coupon coupon);
 

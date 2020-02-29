@@ -29,11 +29,12 @@ namespace Ar.Services
         /// 使用
         /// </summary>
         /// <param name="couponCode"></param>
-        public bool UsedUpdate(string couponCode)
+        public bool UsedUpdate(string couponCode,string userCode)
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@code", couponCode, System.Data.DbType.String);
-            string sql = "update [dbo].[Coupon] set IsUsed=1 and UseTime=getdate() where CouponCode=@code";
+            paras.Add("@userCode", userCode, System.Data.DbType.String);
+            string sql = "update [dbo].[Coupon] set IsUsed=1, UseTime=getdate(),CouponUseCode=@userCode where CouponCode=@code";
             DapperSqlHelper.ExcuteNonQuery<Coupon>(sql, paras, false);
             return true;
         }

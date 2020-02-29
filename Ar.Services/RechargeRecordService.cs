@@ -5,6 +5,7 @@ using Ar.Repository;
 
 using AR.Model;
 using Dapper;
+using System.Transactions;
 
 namespace Ar.Services
 {
@@ -34,7 +35,8 @@ namespace Ar.Services
             return list;
         }
 
-        
+   
+
         public bool Recharge(string typeCode,string userCode,string explain)
         {
             IRechargeTypeService s = new RechargeTypeService();
@@ -52,20 +54,24 @@ namespace Ar.Services
                 CreateTime = DateTime.Now,
                 Explain= explain
             };
+            IList<UseWallet> useWallet = us.GetUseWallet(userCode);
             UseWallet wallet = new UseWallet()
             {
                 WalletCode = "1",
-                UserCode = userCode,
                 AccountPrincipal = money,
                 DonationAmount = donationAmount,
                 Ratio = decimal.Round(decimal.Parse(ratio.ToString()), 2).ToString(),
                 Status = true,
                 Sort = 1
             };
-            //钱包
-            us.InsertUseWallet(wallet);
-            //消费记录
-            cs.InsertRecore(typeCode, userCode, decimal.Parse(money.ToString()),explain);
+            using (var scope = new TransactionScope())//创建事务
+            {
+                //钱包
+                us.InsertUseWallet(wallet);
+                //消费记录
+                cs.InsertRecore(typeCode, userCode, decimal.Parse(money.ToString()), explain);
+                scope.Complete();
+            }
             //充值
             //InsertRechargeRecord(record);
             return true;

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Ar.IServices;
 using Ar.Repository;
-
 using AR.Model;
 using Dapper;
+using System.Transactions;
 
 namespace Ar.Services
 {
@@ -62,21 +62,33 @@ namespace Ar.Services
             return true;
         }
 
-        public bool PayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime)
+        public bool PayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime,decimal money,string couponCode="")
         {
             IProductInfoService _productInfoService = new ProductInfoService();
+            DateTime now = DateTime.Now;
+           ICouponService _couponService = new CouponService();
             IOrderService _orderService = new OrderService();
+            IUserStoreService  _userStoreService = new UserStoreService();
+            IUseWalletService _useWalletService = new UseWalletService();
             var p = _productInfoService.GetProductInfo(productCode);
+            var userSotre=_userStoreService.GetUserStorebyUserCode(userCode);
             Order order = new Order();
             order.Money = p.ExperiencePrice;
             order.Number = 1;
-            order.PayTime = DateTime.Now;
-            order.StoreCode = "";
+            order.PayTime = now;
+            order.StoreCode = userSotre.UserStoreCode;
             order.UserCode = userCode;
-            order.CreateTime = DateTime.Now;
-            order.ExperienceVoucherCode = "";
+            order.ProductCode = productCode;
+            order.CreateTime = now;
+            order.ExperienceVoucherCode = couponCode;
             order.AppointmentTime = dateTime;
-            _orderService.InsertOrder(order);
+            using (var scope = new TransactionScope())//创建事务
+            {
+                _orderService.InsertOrder(order);
+                _couponService.UsedUpdate(couponCode, userCode);
+                _useWalletService.UpdateData(userCode, money);
+                scope.Complete();//这是最后提交事务
+            }
             return true;
         }
 

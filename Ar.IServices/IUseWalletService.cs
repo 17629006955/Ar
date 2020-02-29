@@ -38,5 +38,6 @@ namespace Ar.IServices
         /// <param name="userCode"></param>
         /// <returns></returns>
         RechargePage GetRechargePage(string userCode);
+       bool UpdateData(string userCode, decimal money);
     }
 }

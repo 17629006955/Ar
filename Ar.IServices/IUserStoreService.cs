@@ -10,6 +10,9 @@ namespace Ar.IServices
     public interface IUserStoreService
     {
         UserStore GetUserStoreby(string openId);
+
+        UserStore GetUserStorebyUserCode(string userCode);
+
         int CreateUserStore(UserStore userStore);
     }
 }
