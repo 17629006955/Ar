@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LitJson, Version=0.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\LitJson.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
@@ -65,18 +69,33 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CacheMgr.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="Data.cs" />
+    <Compile Include="DemoConfig.cs" />
+    <Compile Include="Exception.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
+    <Compile Include="HttpService.cs" />
     <Compile Include="HttpURL.cs" />
+    <Compile Include="IConfig.cs" />
+    <Compile Include="JsApiPay.cs" />
     <Compile Include="JsonStrToJson.cs" />
     <Compile Include="Keys.cs" />
+    <Compile Include="Log.cs" />
     <Compile Include="LogHelp.cs" />
+    <Compile Include="Notify.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RandomGenerator.cs" />
+    <Compile Include="SafeXmlDocument.cs" />
+    <Compile Include="WxPayApi.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Logging\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="lib\LitJson.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

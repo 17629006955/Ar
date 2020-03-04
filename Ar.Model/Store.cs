@@ -33,6 +33,8 @@ namespace AR.Model
         private string _addrip;
         private string _appid;
         private string _secret;
+        private string _mchid;
+        
         /// <summary>
         /// 
         /// </summary>
@@ -71,6 +73,14 @@ namespace AR.Model
         {
             set { _appid = value; }
             get { return _appid; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string mchid
+        {
+            set { _mchid = value; }
+            get { return _mchid; }
         }
         /// <summary>
         /// 

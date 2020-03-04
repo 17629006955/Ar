@@ -5,6 +5,8 @@ using Ar.Repository;
 using AR.Model;
 using Dapper;
 using System.Transactions;
+using System.Configuration;
+using System.Net;
 
 namespace Ar.Services
 {
@@ -91,7 +93,33 @@ namespace Ar.Services
             }
             return true;
         }
-
+        public Order WxPayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string couponCode = "")
+        {
+            IProductInfoService _productInfoService = new ProductInfoService();
+            DateTime now = DateTime.Now;
+            
+            IOrderService _orderService = new OrderService();
+            IUserStoreService _userStoreService = new UserStoreService();
+     
+            var p = _productInfoService.GetProductInfo(productCode);
+            var userSotre = _userStoreService.GetUserStorebyUserCode(userCode);
+            Order order = new Order();
+            order.Money = p.ExperiencePrice;
+            order.Number = 1;
+            order.PayTime = now;
+            order.StoreCode = userSotre.UserStoreCode;
+            order.UserCode = userCode;
+            order.ProductCode = productCode;
+            order.CreateTime = now;
+            order.ExperienceVoucherCode = couponCode;
+            order.AppointmentTime = dateTime;
+           
+             _orderService.InsertOrder(order);
+             
+             
+            return order;
+        }
+       
         /// <summary>
         /// 核销
         /// </summary>
