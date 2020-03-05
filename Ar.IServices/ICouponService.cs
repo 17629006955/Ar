@@ -11,5 +11,7 @@ namespace Ar.IServices
         bool GiveedUpdate(string couponCode, string userCode);
         bool Insert(Coupon coupon);
 
+        int Exist(string code);
+
     }
 }

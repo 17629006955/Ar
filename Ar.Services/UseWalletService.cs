@@ -48,6 +48,32 @@ namespace Ar.Services
             return list;
         }
 
+        /// <summary>
+        /// 判断钱包的钱是否够
+        /// </summary>
+        /// <param name="userCode"></param>
+        /// <param name="money"></param>
+        /// <returns></returns>
+        public bool ExistMoney(string userCode, decimal money)
+        {
+            bool result = false;
+            IList<UseWallet> list = GetUseWallet(userCode);
+            decimal tempTotal = 0;
+            foreach (var w in list)
+            {
+                if (w.AccountPrincipal > 0)
+                {
+                    var ratio = decimal.Parse(w.Ratio);
+                    tempTotal = decimal.Parse((w.AccountPrincipal + w.DonationAmount).ToString());
+                }
+            }
+            if (tempTotal >= money)
+            {
+                result = true;
+            }
+            return result;
+
+        }
         public bool UpdateData(string userCode, decimal money)
         {
             decimal total = 0;

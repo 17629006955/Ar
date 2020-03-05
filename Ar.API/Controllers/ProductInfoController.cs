@@ -99,7 +99,7 @@ namespace Ar.API.Controllers
             IProductInfoService _service = new ProductInfoService();
             try
             {
-                if (1==1)//UserAuthorization)
+                if (UserAuthorization)
                 {
                     var list = _service.GetPayPage(productCode);
                 result.Resource = list;

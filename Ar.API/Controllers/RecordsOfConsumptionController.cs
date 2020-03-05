@@ -134,13 +134,44 @@ namespace Ar.API.Controllers
         {
             SimpleResult result = new SimpleResult();
             IRecordsOfConsumptionService _service = new RecordsOfConsumptionService();
+            ICouponService _couponService = new CouponService();
+            IUseWalletService _useWalletService = new UseWalletService();
             try
             {
                 if (1==1)
                 {
-                    var re= _service.PayOrder(productCode,userCode,peopleCount,dateTime,money,couponCode);
-                    result.Resource = re;
-                    result.Status = Result.SUCCEED;
+                    if(!string.IsNullOrEmpty(couponCode)){
+                        var n=_couponService.Exist(couponCode);
+                        if (n == 3)
+                        {
+                            if (_useWalletService.ExistMoney(userCode, money))
+                            {
+                                var re = _service.PayOrder(productCode, userCode, peopleCount, dateTime, money, couponCode);
+                                result.Resource = re;
+                                result.Status = Result.SUCCEED;
+                            }
+                            else
+                            {
+                                result.Status = Result.FAILURE;
+                                result.Msg = "账号余额不足";
+                                result.Resource = null;
+                            }
+                        }
+                        else if(n==1)
+                        {
+                            result.Status = Result.FAILURE;
+                            result.Msg = "优惠卷不存在";
+                            result.Resource = null;
+                        }
+                        else if (n == 2)
+                        {
+                            result.Status = Result.FAILURE;
+                            result.Msg = "优惠卷已经被使用";
+                            result.Resource = null;
+                        }
+
+                    }
+                   
                 }
                 else
                 {

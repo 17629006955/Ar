@@ -14,7 +14,7 @@ namespace Ar.Services
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@CouponCode", code, System.Data.DbType.String);
-            Coupon record = DapperSqlHelper.FindOne<Coupon>("select a.*,b.CouponTypeName from [dbo].[Coupon] a,[dbo].[CouponType] b  where a.CouponCode=@CouponCode and and a.CouponTypeCode=b.CouponTypeCode", paras, false);
+            Coupon record = DapperSqlHelper.FindOne<Coupon>("select a.*,b.CouponTypeName from [dbo].[Coupon] a,[dbo].[CouponType] b  where a.CouponCode=@CouponCode  and a.CouponTypeCode=b.CouponTypeCode", paras, false);
             return record;
         }
 
@@ -80,6 +80,31 @@ namespace Ar.Services
             var coupon = DapperSqlHelper.FindOne<Coupon>("SELECT MAX(CouponCode) CouponCode FROM [dbo].[Coupon]", null, false);
             //var code = coupon != null ? Convert.ToInt32(coupon.CouponCode) + 1 : 1;
             return Guid.NewGuid().ToString();
+        }
+
+        /// <summary>
+        /// 判断优惠卷是否存在是否被使用
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public int Exist(string code)
+        {
+            DynamicParameters paras = new DynamicParameters();
+            paras.Add("@CouponCode", code, System.Data.DbType.String);
+            var isExist= GetCouponByCode(code)!=null;
+            if (!isExist)
+            {
+                return 1;//优惠卷不存在
+            }
+            else
+            {
+                Coupon record = DapperSqlHelper.FindOne<Coupon>("select * from [dbo].[Coupon]  where IsUsed=1 and CouponCode=@CouponCode", paras, false);
+                if (record != null)
+                {
+                    return 1;//优惠卷被使用
+                }
+            }
+            return 3;
         }
     }
 }

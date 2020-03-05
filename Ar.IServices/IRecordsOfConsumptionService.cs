@@ -25,5 +25,7 @@ namespace Ar.IServices
         /// <param name="orderCode">订单号</param>
         /// <returns></returns>
         bool WriteOff(string phone, string orderCode);
+
+        
     }
 }
