@@ -182,11 +182,19 @@ namespace Ar.API.Controllers
                         var couponser  =  _couponservice.GetCouponByCode(couponCode);
                         //生成微信预支付订单
                         var prepayid = Common.wxPayOrderSomething(openid, money.ToString(), couponser.CouponTypeName, store.StoreName);
-                        WxOrder wxorder = new WxOrder();
-                        wxorder.order = order;
-                        wxorder.prepayid = prepayid;
-                        result.Resource = wxorder; ;
-                        result.Status = Result.SUCCEED;
+                        if (prepayid != null)
+                        {
+                            WxOrder wxorder = new WxOrder();
+                            wxorder.order = order;
+                            wxorder.prepayid = prepayid;
+                            result.Resource = wxorder; 
+                            result.Status = Result.SUCCEED;
+                        }
+                        else
+                        {
+                            result.Resource = "微信下单失败，重新提交订单";
+                            result.Status = Result.FAILURE;
+                        }
                         scope.Complete();//这是最后提交事务
                     }
                     

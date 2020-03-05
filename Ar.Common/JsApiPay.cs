@@ -146,7 +146,7 @@ namespace WxPayAPI
             WxPayData data = new WxPayData();
             
       
-            data.SetValue("body", "test");
+            data.SetValue("body", ConfigurationManager.AppSettings["Company"].ToString()+stoeName);
             data.SetValue("attach", stoeName);
             data.SetValue("out_trade_no", WxPayApi.GenerateOutTradeNo());
             data.SetValue("total_fee", total_fee);

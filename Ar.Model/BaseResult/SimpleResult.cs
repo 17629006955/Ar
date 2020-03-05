@@ -48,15 +48,16 @@ namespace Ar.Model.BaseResult
     /// 成功
     /// </summary>
         SUCCEED = 1,
-        /// <summary>
-        /// 重新认证
-        /// </summary>
+        
         FAILURE = 2, 
         /// <summary>
         /// 重新微信认证
         /// </summary>
-        SIGN_TIMESTAMP_ERROR = 3, 
-        USER_AUTH_ERROR=4,
+        SIGN_TIMESTAMP_ERROR = 3,
+        /// <summary>
+        /// 重新认证
+        /// </summary>
+        USER_AUTH_ERROR = 4,
         SYSTEM_ERROR=5,
         PARAMERS_VERIFY_ERROR=6  //参数验证失败
     }
