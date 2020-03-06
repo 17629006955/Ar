@@ -186,7 +186,7 @@ namespace Ar.API.Controllers
                         {
                             WxOrder wxorder = new WxOrder();
                             wxorder.order = order;
-                            wxorder.prepayid = prepayid;
+                            wxorder.wxJsApiParam = prepayid;
                             result.Resource = wxorder; 
                             result.Status = Result.SUCCEED;
                         }

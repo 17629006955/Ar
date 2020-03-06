@@ -31,7 +31,7 @@ namespace AR.Model
 		private DateTime? _birthday;
 		private string _phone;
 		private string _useriamgeurl;
-		private int? _sex;
+		private bool _sex;
 		private DateTime? _createtime;
 		private int? _level;
 		private bool _ismember;
@@ -85,7 +85,7 @@ namespace AR.Model
 		/// <summary>
 		/// 
 		/// </summary>
-		public int? Sex
+		public bool Sex
 		{
 			set{ _sex=value;}
 			get{return _sex;}

@@ -78,6 +78,7 @@ namespace Ar.API.Controllers
 
         }
         [HttpGet]
+        [HttpPost]
         //http://localhost:10010//api/WeixinUser/Login?storeCode=3
         public IHttpActionResult Login(string storeCode)
         {
@@ -98,7 +99,7 @@ namespace Ar.API.Controllers
                     Common.Mchid = store.mchid?.Trim();
                     LogHelper.WriteLog("store.mchid " + store.mchid);
                     result.Status = Result.SUCCEED;
-                    result.Resource = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + Common.Appid.Trim() + "&redirect_uri=" + HttpUtility.UrlEncode(ConfigurationManager.AppSettings["redirect_uri"].ToString().Trim()) + "&response_type=code&scope=" + ConfigurationManager.AppSettings["scope"].ToString() + "&state=STATE#wechat_redirect";
+                    result.Resource = Common.Appid;
                 }
                 else
                 {

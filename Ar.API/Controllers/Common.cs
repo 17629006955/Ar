@@ -136,11 +136,11 @@ namespace Ar.API.Controllers
                 //JSAPI支付预处理
 
                 WxPayData unifiedOrderResult = jsApiPay.GetUnifiedOrderResult(Appid, Mchid, total_fee, stoeName, couponType,openid);
-                //wxJsApiParam = jsApiPay.GetJsApiParameters();//获取H5调起JS API参数                    
+                wxJsApiParam = jsApiPay.GetJsApiParameters();//获取H5调起JS API参数                    
 
                 LogHelper.WriteLog("wxJsApiParam:" + wxJsApiParam);
                 //在页面上显示订单信息
-                return unifiedOrderResult.GetValue("prepay_id")?.ToString();
+                return wxJsApiParam;
             }
 
            

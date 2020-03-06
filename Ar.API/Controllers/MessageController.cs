@@ -60,10 +60,10 @@ namespace Ar.API.Controllers
         /// <param name="verificationCode"></param>
         /// <param name="userCode"></param>
         /// <returns></returns>
-        [HttpGet]
+      
         [HttpPost]
         //http://localhost:10010//api/Message/BangMessageCode?phone=18235139350&verificationCode=232232&userCode=121ewe
-        public IHttpActionResult BangMessageCode(string phone,string verificationCode, string userCode)
+        public IHttpActionResult BangMessageCode(string phone,string verificationCode, string userCode,DateTime birthday)
         {
             SimpleResult result = new SimpleResult();
             if (UserAuthorization)
@@ -71,7 +71,7 @@ namespace Ar.API.Controllers
                 if (verificationService.CheckVerification(phone, verificationCode))
                 {
                     //写入到手机号和和数据库
-                    var count = userInfo.UpdateByPhone(userCode, phone);
+                    var count = userInfo.UpdateByPhone(userCode, phone, birthday);
                     result.Resource = count;
                     result.Status = Result.SUCCEED;
                 }

@@ -55,12 +55,13 @@ namespace Ar.Services
 
            
         }
-        public int UpdateByPhone(string userCode ,string  phone)
+        public int UpdateByPhone(string userCode ,string  phone, DateTime birthday)
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@phone", phone, System.Data.DbType.String);
             paras.Add("@Code", userCode, System.Data.DbType.String);
-            return DapperSqlHelper.ExcuteNonQuery<User>(@"Update  [dbo].[User] set phone=@phone where Code=@Code", paras, false);
+            paras.Add("@birthday", birthday, System.Data.DbType.DateTime);
+            return DapperSqlHelper.ExcuteNonQuery<User>(@"Update  [dbo].[User] set phone=@phone,birthday=@birthday where Code=@Code", paras, false);
 
 
         }
