@@ -22,6 +22,40 @@ namespace Ar.API.Controllers
         /// 获取优惠券
         /// </summary>
         /// <returns></returns>
+        ////http://localhost:10010//api/Coupon/GetCoupon
+        [HttpGet]
+        public IHttpActionResult GetCoupon()
+        {
+            SimpleResult result = new SimpleResult();
+            ICouponService _service = new CouponService();
+            try
+            {
+                if (UserAuthorization)
+                {
+                    var list = _service.GetCoupon();
+                    result.Resource = list;
+                    result.Status = Result.SUCCEED;
+                }
+                else
+                {
+                    result.Status = ResultType;
+                    result.Resource = ReAccessToken;
+                    result.Msg = TokenMessage;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Status = Result.FAILURE;
+                result.Msg = ex.Message;
+            }
+            return Json(result);
+
+        }
+
+        /// <summary>
+        /// 获取优惠券
+        /// </summary>
+        /// <returns></returns>
         ////http://localhost:10010//api/Coupon/GetCouponByCode?code=1
         [HttpGet]
         public IHttpActionResult GetCouponByCode(string code)
@@ -70,6 +104,42 @@ namespace Ar.API.Controllers
                     var list = _service.GetCouponList(userCode);
                     result.Resource = list;
                     result.Status = Result.SUCCEED;
+                }
+                else
+                {
+                    result.Status = ResultType;
+                    result.Resource = ReAccessToken;
+                    result.Msg = TokenMessage;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Status = Result.FAILURE;
+                result.Msg = ex.Message;
+            }
+            return Json(result);
+
+        }
+
+        /// <summary>
+        /// 给用户添加优惠卷
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        ////http://localhost:10010//api/Coupon/InsertCouponByUser?couponCode=1&userCode=1
+        [HttpGet]
+        public IHttpActionResult InsertCouponByUser(string couponCode,string userCode)
+        {
+            SimpleResult result = new SimpleResult();
+            ICouponService _service = new CouponService();
+            try
+            {
+                if (UserAuthorization)
+                {
+                    var re = _service.InsertCouponByUser(couponCode,userCode);
+                    result.Resource = re;
+                    result.Status = re?Result.SUCCEED: Result.FAILURE;
+                    result.Msg = re ?"":"优惠卷不存在！";
                 }
                 else
                 {

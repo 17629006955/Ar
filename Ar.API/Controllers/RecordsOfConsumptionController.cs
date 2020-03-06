@@ -129,9 +129,9 @@ namespace Ar.API.Controllers
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        ////http://localhost:10010//api/RecordsOfConsumption/PayOrder?productCode=1&userCode=1&peopleCount=1&dateTime=2019-12-07&money=9&couponCode=1ac31b4d-e383-447a-9417-9c66ca9e6004 
-        [HttpGet]
-        public IHttpActionResult PayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string couponCode = "")
+        ////http://localhost:10010//api/RecordsOfConsumption/PayOrder?productCode=1&userCode=1&peopleCount=1&dateTime=2019-12-07&money=9&storeId=1&couponCode=1ac31b4d-e383-447a-9417-9c66ca9e6004 
+        [HttpPost]
+        public IHttpActionResult PayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money,string storeId, string couponCode = "")
         {
             SimpleResult result = new SimpleResult();
             IRecordsOfConsumptionService _service = new RecordsOfConsumptionService();
@@ -147,7 +147,7 @@ namespace Ar.API.Controllers
                         {
                             if (_useWalletService.ExistMoney(userCode, money))
                             {
-                                var re = _service.PayOrder(productCode, userCode, peopleCount, dateTime, money, couponCode);
+                                var re = _service.PayOrder(productCode, userCode, peopleCount, dateTime, money,storeId, couponCode);
                                 result.Resource = re;
                                 result.Status = Result.SUCCEED;
                             }

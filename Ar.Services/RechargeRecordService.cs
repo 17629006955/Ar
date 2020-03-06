@@ -37,7 +37,7 @@ namespace Ar.Services
 
    
 
-        public bool Recharge(string typeCode,string userCode,string explain)
+        public bool Recharge(string typeCode,string userCode)
         {
             IRechargeTypeService s = new RechargeTypeService();
             IRecordsOfConsumptionService cs = new RecordsOfConsumptionService();
@@ -46,13 +46,14 @@ namespace Ar.Services
            var donationAmount=type.DonationAmount;
             var money = type.Money;
             var ratio = donationAmount / money;
+            var explain = "充值类型" + type.RechargeTypeName + ",本金：" + money + ".赠送：+" + donationAmount;
             RechargeRecord record = new RechargeRecord()
             {
                 RechargeRecordCode = "1",
                 UserCode = userCode,
                 RechargeAmount = money,
                 CreateTime = DateTime.Now,
-                Explain= explain
+                Explain = explain
             };
             IList<UseWallet> useWallet = us.GetUseWallet(userCode);
             UseWallet wallet = new UseWallet()

@@ -5,6 +5,7 @@ namespace Ar.IServices
 {
     public interface ICouponService
     {
+        object GetCoupon();
         Coupon GetCouponByCode(string code);
         IList<Coupon> GetCouponList(string userCode);
         bool UsedUpdate(string couponCode,string userCode);
@@ -12,6 +13,8 @@ namespace Ar.IServices
         bool Insert(Coupon coupon);
 
         int Exist(string code);
+
+        bool InsertCouponByUser(string couponCode, string userCode);
 
     }
 }
