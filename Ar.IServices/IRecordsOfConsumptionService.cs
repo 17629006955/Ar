@@ -16,7 +16,7 @@ namespace Ar.IServices
         IList<RecordsOfConsumption> GetRecordsOfConsumptionListByUserCode(string userCode);
         bool InsertRecore(string typeCode, string userCode, decimal? recordsMoney, string explain);
 
-        bool PayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string couponCode = "");
+        bool PayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string storeId, string couponCode = "");
         Order WxPayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string couponCode = "");
 
         /// <summary>
@@ -26,5 +26,7 @@ namespace Ar.IServices
         /// <param name="orderCode">订单号</param>
         /// <returns></returns>
         bool WriteOff(string phone, string orderCode);
+
+        
     }
 }

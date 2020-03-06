@@ -53,6 +53,41 @@ namespace Ar.API.Controllers
             return Json(result);
 
         }
+        /// <summary>
+        /// 获取会员钱包通过用户总金额，充值金额，赠送金额
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        ////http://localhost:10010//api/UseWallet/GetUseWalletInfoByUserCode?userCode=1
+        [HttpGet]
+        public IHttpActionResult GetUseWalletInfoByUserCode(string userCode)
+        {
+            SimpleResult result = new SimpleResult();
+            IUseWalletService _service = new UseWalletService();
+            try
+            {
+                if (UserAuthorization)
+                {
+                    var list = _service.GetUseWalletInfoByUserCode(userCode);
+                    result.Resource = list;
+                    result.Status = Result.SUCCEED;
+                }
+                else
+                {
+                    result.Status = ResultType;
+                    result.Resource = ReAccessToken;
+                    result.Msg = TokenMessage;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Status = Result.FAILURE;
+                result.Msg = ex.Message;
+            }
+            return Json(result);
+
+        }
+
 
         /// <summary>
         /// 获取会员钱包通过用户

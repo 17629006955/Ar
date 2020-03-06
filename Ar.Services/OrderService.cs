@@ -22,7 +22,10 @@ namespace Ar.Services
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@userCode", userCode, System.Data.DbType.String);
-            IList<Order> list = DapperSqlHelper.FindToList<Order>(@"select * from [dbo].[Order]  where UserCode=@userCode  ", paras, false);
+            IList<Order> list = DapperSqlHelper.FindToList<Order>(@"select a.*,b.ProductCode,b.ProductName,b.Imageurl,b.videourl,
+                case when a.PayTime is null then '待支付' else '已支付' end OrderState 
+                from [dbo].[Order] a,[dbo].[ProductInfo] b  where a.UserCode=@userCode 
+             and b.ProductCode = a.ProductCode", paras, false);
             return list;
         }
 
@@ -30,7 +33,10 @@ namespace Ar.Services
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@userCode", userCode, System.Data.DbType.String);
-            IList<Order> list = DapperSqlHelper.FindToList<Order>(@"select * from [dbo].[Order] where  UserCode=@userCode and PayTime is not null ", paras, false);
+            IList<Order> list = DapperSqlHelper.FindToList<Order>(@"select a.*,b.ProductCode,b.ProductName,b.Imageurl,b.videourl,
+                '已支付' OrderState 
+                from [dbo].[Order] a,[dbo].[ProductInfo] b  where a.UserCode=@userCode 
+             and b.ProductCode = a.ProductCode and isnull(a.PayTime,'')!='' ", paras, false);
             return list;
         }
 
@@ -38,7 +44,10 @@ namespace Ar.Services
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@userCode", userCode, System.Data.DbType.String);
-            IList<Order> list = DapperSqlHelper.FindToList<Order>(@"select * from [dbo].[Order] where  UserCode=@userCode and PayTime is null ", paras, false);
+            IList<Order> list = DapperSqlHelper.FindToList<Order>(@"select a.*,b.ProductCode,b.ProductName,b.Imageurl,b.videourl,
+                '待支付' OrderState 
+                from [dbo].[Order] a,[dbo].[ProductInfo] b  where a.UserCode=@userCode 
+             and b.ProductCode = a.ProductCode and isnull(a.PayTime,'') ='' ", paras, false);
             return list;
         }
 

@@ -48,6 +48,32 @@ namespace Ar.Services
             return list;
         }
 
+        /// <summary>
+        /// 判断钱包的钱是否够
+        /// </summary>
+        /// <param name="userCode"></param>
+        /// <param name="money"></param>
+        /// <returns></returns>
+        public bool ExistMoney(string userCode, decimal money)
+        {
+            bool result = false;
+            IList<UseWallet> list = GetUseWallet(userCode);
+            decimal tempTotal = 0;
+            foreach (var w in list)
+            {
+                if (w.AccountPrincipal > 0)
+                {
+                    var ratio = decimal.Parse(w.Ratio);
+                    tempTotal = decimal.Parse((w.AccountPrincipal + w.DonationAmount).ToString());
+                }
+            }
+            if (tempTotal >= money)
+            {
+                result = true;
+            }
+            return result;
+
+        }
         public bool UpdateData(string userCode, decimal money)
         {
             decimal total = 0;
@@ -129,6 +155,24 @@ namespace Ar.Services
             paras.Add("@Sort", wallet.Sort, System.Data.DbType.String);
             int i = DapperSqlHelper.ExcuteNonQuery<UseWallet>(sql, paras, false);
             return true;
+        }
+
+        public object GetUseWalletInfoByUserCode(string userCode)
+        {
+            DynamicParameters paras = new DynamicParameters();
+            paras.Add("@userCode", userCode, System.Data.DbType.String);
+            decimal? totalAmount = 0;
+            decimal? accountPrincipal = 0;
+            decimal? donationAmount = 0;
+            IList<UseWallet> list = DapperSqlHelper.FindToList<UseWallet>("select * from [dbo].[UseWallet] where UserCode=@userCode and Status=1 order by Sort", paras, false);
+            foreach (var w in list)
+            {
+                accountPrincipal = w.AccountPrincipal + accountPrincipal;
+                donationAmount = donationAmount + w.DonationAmount;
+                w.TotalAmount = w.AccountPrincipal + w.DonationAmount;
+                totalAmount = totalAmount + w.TotalAmount;
+            }
+            return new { accountPrincipal = accountPrincipal, donationAmount = donationAmount, totalAmount = totalAmount };
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Ar.IServices
         /// <param name="typeCode">类型</param>
         /// <param name="userCode">用户</param>
         /// <returns></returns>
-        bool Recharge(string typeCode, string userCode, string explain);
+        bool Recharge(string typeCode, string userCode);
         bool InsertRechargeRecord(RechargeRecord record);
     }
 }

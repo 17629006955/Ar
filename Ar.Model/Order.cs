@@ -119,5 +119,132 @@ namespace AR.Model
 		#endregion Model
 
 	}
+
+
+    public partial class OrderShow
+    {
+        public OrderShow()
+        { }
+        #region Model
+        private string _ordercode;
+        private string _usercode;
+        private string _productcode;
+        private string _productName;
+        private string _imageurl;
+        private string _videourl;
+        private int? _number;
+        private decimal? _money;
+        private string _storecode;
+        private DateTime? _createtime;
+        private DateTime? _paytime;
+        private DateTime? _appointmenttime;
+        private string _experiencevouchercode;
+        private string _orderState;
+        /// <summary>
+        /// 
+        /// </summary>
+        public string OrderCode
+        {
+            set { _ordercode = value; }
+            get { return _ordercode; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string UserCode
+        {
+            set { _usercode = value; }
+            get { return _usercode; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string ProductCode
+        {
+            set { _productcode = value; }
+            get { return _productcode; }
+        }
+
+        public string ProductName
+        {
+            set { _productName = value; }
+            get { return _productName; }
+        }
+        public string Imageurl
+        {
+            set { _imageurl = value; }
+            get { return _imageurl; }
+        }
+
+        public string Videourl
+        {
+            set { _videourl = value; }
+            get { return _videourl; }
+        }
+        public string OrderState
+        {
+            set { _orderState = value; }
+            get { return _orderState; }
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public int? Number
+        {
+            set { _number = value; }
+            get { return _number; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal? Money
+        {
+            set { _money = value; }
+            get { return _money; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string StoreCode
+        {
+            set { _storecode = value; }
+            get { return _storecode; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime? CreateTime
+        {
+            set { _createtime = value; }
+            get { return _createtime; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime? PayTime
+        {
+            set { _paytime = value; }
+            get { return _paytime; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime? AppointmentTime
+        {
+            set { _appointmenttime = value; }
+            get { return _appointmenttime; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string ExperienceVoucherCode
+        {
+            set { _experiencevouchercode = value; }
+            get { return _experiencevouchercode; }
+        }
+        #endregion Model
+
+    }
 }
 

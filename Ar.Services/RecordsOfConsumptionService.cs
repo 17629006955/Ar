@@ -64,7 +64,7 @@ namespace Ar.Services
             return true;
         }
 
-        public bool PayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime,decimal money,string couponCode="")
+        public bool PayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime,decimal money, string storeId, string couponCode="")
         {
             IProductInfoService _productInfoService = new ProductInfoService();
             DateTime now = DateTime.Now;
@@ -73,12 +73,12 @@ namespace Ar.Services
             IUserStoreService  _userStoreService = new UserStoreService();
             IUseWalletService _useWalletService = new UseWalletService();
             var p = _productInfoService.GetProductInfo(productCode);
-            var userSotre=_userStoreService.GetUserStorebyUserCode(userCode);
+            //var userSotre=_userStoreService.GetUserStorebyUserCode(userCode);
             Order order = new Order();
             order.Money = p.ExperiencePrice;
             order.Number = 1;
             order.PayTime = now;
-            order.StoreCode = userSotre.UserStoreCode;
+            order.StoreCode = storeId;
             order.UserCode = userCode;
             order.ProductCode = productCode;
             order.CreateTime = now;
