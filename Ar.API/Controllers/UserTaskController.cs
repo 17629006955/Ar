@@ -31,9 +31,18 @@ namespace Ar.API.Controllers
             IUserTaskService _service = new UserTaskService();
             try
             {
-                var list = _service.GetUserTaskList(userCode);
+                if (UserAuthorization)
+                {
+                    var list = _service.GetUserTaskList(userCode);
                 result.Resource = list;
                 result.Status = Result.SUCCEED;
+                }
+                else
+                {
+                    result.Status = ResultType;
+                    result.Resource = ReAccessToken;
+                    result.Msg = TokenMessage;
+                }
             }
             catch(Exception ex)
             {
@@ -57,9 +66,18 @@ namespace Ar.API.Controllers
             IUserTaskService _service = new UserTaskService();
             try
             {
-                var list = _service.GetUserTaskByCode(orderCode);
+                if (UserAuthorization)
+                {
+                    var list = _service.GetUserTaskByCode(orderCode);
                 result.Resource = list;
                 result.Status = Result.SUCCEED;
+                }
+                else
+                {
+                    result.Status = ResultType;
+                    result.Resource = ReAccessToken;
+                    result.Msg = TokenMessage;
+                }
             }
             catch (Exception ex)
             {
@@ -83,9 +101,18 @@ namespace Ar.API.Controllers
             IUserTaskService _service = new UserTaskService();
             try
             {
-                var list = _service.UpdateUserTask(orderCode, isComplete);
+                if (UserAuthorization)
+                {
+                    var list = _service.UpdateUserTask(orderCode, isComplete);
                 result.Resource = list;
                 result.Status = Result.SUCCEED;
+                }
+                else
+                {
+                    result.Status = ResultType;
+                    result.Resource = ReAccessToken;
+                    result.Msg = TokenMessage;
+                }
             }
             catch (Exception ex)
             {

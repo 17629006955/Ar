@@ -95,6 +95,8 @@ namespace Ar.API.Controllers
                     LogHelper.WriteLog("store.appid " + store.appid);
                     Common.Secret = store.secret?.Trim();
                     LogHelper.WriteLog("store.secret " + store.secret);
+                    Common.Mchid = store.mchid?.Trim();
+                    LogHelper.WriteLog("store.mchid " + store.mchid);
                     result.Status = Result.SUCCEED;
                     result.Resource = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + Common.Appid.Trim() + "&redirect_uri=" + HttpUtility.UrlEncode(ConfigurationManager.AppSettings["redirect_uri"].ToString().Trim()) + "&response_type=code&scope=" + ConfigurationManager.AppSettings["scope"].ToString() + "&state=STATE#wechat_redirect";
                 }

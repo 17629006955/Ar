@@ -221,6 +221,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\" />
+    <Folder Include="lib\" />
     <Folder Include="Log\LogError\" />
     <Folder Include="Log\LogInfo\" />
     <Folder Include="Models\" />

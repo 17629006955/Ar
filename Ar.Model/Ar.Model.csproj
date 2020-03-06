@@ -85,10 +85,17 @@
     <Compile Include="WxAccessToken.cs" />
     <Compile Include="WxCertification.cs" />
     <Compile Include="WxCode.cs" />
+    <Compile Include="WxOrder.cs" />
     <Compile Include="WxUserInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ar.Common\Ar.Common.csproj">
+      <Project>{F060918F-4B4A-4D25-9E61-004F292B0FB6}</Project>
+      <Name>Ar.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

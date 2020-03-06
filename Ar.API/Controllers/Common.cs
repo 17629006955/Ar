@@ -5,6 +5,7 @@ using Aliyun.Acs.Core.Profile;
 using Ar.Common;
 using Ar.Common.tool;
 using Ar.Model;
+using log4net;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ using System.Net;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Script.Serialization;
+using WxPayAPI;
 
 namespace Ar.API.Controllers
 {
@@ -22,6 +24,7 @@ namespace Ar.API.Controllers
     {
         public static string Appid { get; set; }
         public static string Secret { get; set; }
+        public static string Mchid { get; set; }
 
         public static MessageReturn SendMessageCode(string pheone)
         {
@@ -110,6 +113,39 @@ namespace Ar.API.Controllers
             var wxAccessToken = jsonSerialize.Deserialize<WxAccessToken>(content);
             return wxAccessToken;
         }
-      
+        public static string wxJsApiParam { get; set; } //H5调起JS API参数
+        public static string  wxPayOrderSomething(string openid,string total_fee,string couponType,string stoeName)
+        {
+            
+            //var url = ConfigurationManager.AppSettings["wxpay"].ToString() + "?" + "grant_type=client_credential&appid=" + Appid + "&secret=" + Secret;
+
+            //检测是否给当前页面传递了相关参数
+            if (string.IsNullOrEmpty(openid) || string.IsNullOrEmpty(total_fee))
+            {
+
+                return "没有相关参数,用户数据错误";
+            }
+            else
+            {
+
+                ////若传递了相关参数，则调统一下单接口，获得后续相关接口的入口参数
+                JsApiPay jsApiPay = new JsApiPay();
+                //jsApiPay.openid = openid;
+                //jsApiPay.total_fee = int.Parse(total_fee);
+
+                //JSAPI支付预处理
+
+                WxPayData unifiedOrderResult = jsApiPay.GetUnifiedOrderResult(Appid, Mchid, total_fee, stoeName, couponType,openid);
+                //wxJsApiParam = jsApiPay.GetJsApiParameters();//获取H5调起JS API参数                    
+
+                LogHelper.WriteLog("wxJsApiParam:" + wxJsApiParam);
+                //在页面上显示订单信息
+                return unifiedOrderResult.GetValue("prepay_id")?.ToString();
+            }
+
+           
+           
+        }
+
     }
 }

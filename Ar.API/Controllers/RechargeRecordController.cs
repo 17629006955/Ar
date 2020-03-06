@@ -39,7 +39,7 @@ namespace Ar.API.Controllers
             }
                 else
                 {
-                result.Status = Result.FAILURE;
+                result.Status = ResultType;
                 result.Resource = ReAccessToken;
                 result.Msg = TokenMessage;
             }
@@ -109,7 +109,7 @@ namespace Ar.API.Controllers
                 }
                 else
                 {
-                    result.Status = Result.FAILURE;
+                    result.Status = ResultType;
                     result.Resource = ReAccessToken;
                     result.Msg = TokenMessage;
                 }
@@ -144,7 +144,7 @@ namespace Ar.API.Controllers
                 }
                 else
                 {
-                    result.Status = Result.FAILURE;
+                    result.Status = ResultType;
                     result.Resource = ReAccessToken;
                     result.Msg = TokenMessage;
                 }
@@ -178,7 +178,7 @@ namespace Ar.API.Controllers
                 }
                 else
                 {
-                    result.Status = Result.FAILURE;
+                    result.Status = ResultType;
                     result.Resource = ReAccessToken;
                     result.Msg = TokenMessage;
                 }
@@ -213,7 +213,7 @@ namespace Ar.API.Controllers
                 }
                 else
                 {
-                    result.Status = Result.FAILURE;
+                    result.Status = ResultType;
                     result.Resource = ReAccessToken;
                     result.Msg = TokenMessage;
                 }

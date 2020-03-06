@@ -141,7 +141,7 @@ namespace Ar.API.Controllers.BaseContolles
                 Certification certification = certificationService.ExistsUserToken(token);
                 if (certification != null)
                 {
-                    if (certification.CreateTime > DateTime.Now.AddMinutes(-5))
+                    if (certification.CreateTime > DateTime.Now.AddHours(-1))
                     {
                         result = true;
                         ResultType = Result.SUCCEED;
@@ -149,7 +149,7 @@ namespace Ar.API.Controllers.BaseContolles
                     else
                     {
                         TokenMessage = "需重新认证";
-                        ResultType = Result.FAILURE;
+                        ResultType = Result.USER_AUTH_ERROR;
                         ReAccessToken = certification.ReAccessToken;
                     }
 
