@@ -10,12 +10,13 @@ namespace Ar.Services
 {
     public class CouponService : ICouponService
     {
-        public object GetCoupon()
+        public object GetCoupon(string userCode)
         {
             DynamicParameters paras = new DynamicParameters();
-            IList<Coupon> isUserList = DapperSqlHelper.FindToList<Coupon>("select *  from [dbo].[Coupon]  where IsUsed=1", null, false);
-            IList<Coupon> lapseList = DapperSqlHelper.FindToList<Coupon>("select *  from [dbo].[Coupon] where IsUsed=1 or (isnull(VersionEndTime,'9999-9-9')<getdate())", null, false);
-            IList<Coupon> takeEffectList = DapperSqlHelper.FindToList<Coupon>("select *  from [dbo].[Coupon] where isnull(IsUsed,0)=0 and  isnull(VersionEndTime,'9999-9-9')>=getdate()", null, false);
+            paras.Add("@userCode", userCode, System.Data.DbType.String);
+            IList<Coupon> isUserList = DapperSqlHelper.FindToList<Coupon>("select *  from [dbo].[Coupon]  where IsUsed=1 and UserCode=@userCode", paras, false);
+            IList<Coupon> lapseList = DapperSqlHelper.FindToList<Coupon>("select *  from [dbo].[Coupon] where  UserCode=@userCode and  (IsUsed=1   or (isnull(VersionEndTime,'9999-9-9')<getdate()))", paras, false);
+            IList<Coupon> takeEffectList = DapperSqlHelper.FindToList<Coupon>("select *  from [dbo].[Coupon] where UserCode=@userCode and   isnull(IsUsed,0)=0 and  isnull(VersionEndTime,'9999-9-9')>=getdate()", paras, false);
             return new 
             {
                 isUserList= isUserList,

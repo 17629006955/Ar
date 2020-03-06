@@ -5,7 +5,7 @@ namespace Ar.IServices
 {
     public interface ICouponService
     {
-        object GetCoupon();
+        object GetCoupon(string userCode);
         Coupon GetCouponByCode(string code);
         IList<Coupon> GetCouponList(string userCode);
         bool UsedUpdate(string couponCode,string userCode);

@@ -22,9 +22,9 @@ namespace Ar.API.Controllers
         /// 获取优惠券
         /// </summary>
         /// <returns></returns>
-        ////http://localhost:10010//api/Coupon/GetCoupon
+        ////http://localhost:10010//api/Coupon/GetCouponByUserCode?userCode=1
         [HttpGet]
-        public IHttpActionResult GetCoupon()
+        public IHttpActionResult GetCouponByUserCode(string userCode)
         {
             SimpleResult result = new SimpleResult();
             ICouponService _service = new CouponService();
@@ -32,7 +32,7 @@ namespace Ar.API.Controllers
             {
                 if (UserAuthorization)
                 {
-                    var list = _service.GetCoupon();
+                    var list = _service.GetCoupon(userCode);
                     result.Resource = list;
                     result.Status = Result.SUCCEED;
                 }
