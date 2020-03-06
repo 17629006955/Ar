@@ -10,7 +10,7 @@ namespace Ar.Services
     {
         public IList<ListType> GetListType()
         {
-            IList<ListType> list = DapperSqlHelper.FindToList<ListType>("select * from [dbo].[ListType] where Status=1",null,false);
+            IList<ListType> list = DapperSqlHelper.FindToList<ListType>("select top 5 * from [dbo].[ListType] where Status=1",null,false);
             return list;
         }
     }
