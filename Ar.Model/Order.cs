@@ -36,7 +36,9 @@ namespace AR.Model
 		private DateTime? _paytime;
 		private DateTime? _appointmenttime;
 		private string _experiencevouchercode;
+        private string _wxPrepayId;
         private bool _isWriteOff;
+        
         /// <summary>
         /// 
         /// </summary>
@@ -117,6 +119,15 @@ namespace AR.Model
 			set{ _experiencevouchercode=value;}
 			get{return _experiencevouchercode;}
 		}
+        /// <summary>
+		/// 
+		/// </summary>
+		public string WxPrepayId
+        {
+            set { _wxPrepayId = value; }
+            get { return _wxPrepayId; }
+        }
+        
         public bool IsWriteOff
         {
             set { _isWriteOff = value; }

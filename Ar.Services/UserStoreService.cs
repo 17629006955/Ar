@@ -33,7 +33,17 @@ namespace Ar.Services
             UserStore userone = DapperSqlHelper.FindOne<UserStore>("select * from [dbo].[UserStore] where   UserCode=@userCode", paras, false);
             return userone;
         }
-     
+        public UserStore GetUserStorebyUserCodestoreCode(string userCode,string storeCode)
+        {
+
+            DynamicParameters paras = new DynamicParameters();
+            paras.Add("@userCode", userCode, System.Data.DbType.String);
+            paras.Add("@MembershipCardStore", storeCode, System.Data.DbType.String);
+            
+            UserStore userone = DapperSqlHelper.FindOne<UserStore>("select * from [dbo].[UserStore] where   UserCode=@userCode and MembershipCardStore=@MembershipCardStore", paras, false);
+            return userone;
+        }
+
         public int  CreateUserStore(UserStore userStore)
         {
             DynamicParameters paras = new DynamicParameters();

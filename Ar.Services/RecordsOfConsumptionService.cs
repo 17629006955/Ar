@@ -93,7 +93,7 @@ namespace Ar.Services
             }
             return true;
         }
-        public Order WxPayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string couponCode = "")
+        public Order WxPayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string wxPrepayId,string couponCode = "")
         {
             IProductInfoService _productInfoService = new ProductInfoService();
             DateTime now = DateTime.Now;
@@ -113,12 +113,13 @@ namespace Ar.Services
             order.CreateTime = now;
             order.ExperienceVoucherCode = couponCode;
             order.AppointmentTime = dateTime;
-           
-             _orderService.InsertOrder(order);
+            order.WxPrepayId = wxPrepayId;
+            _orderService.InsertOrder(order);
              
              
             return order;
         }
+      
         public bool IsWriteOffUser(string phone)
         {
             DynamicParameters paras = new DynamicParameters();

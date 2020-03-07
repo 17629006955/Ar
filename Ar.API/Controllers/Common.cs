@@ -114,16 +114,16 @@ namespace Ar.API.Controllers
             return wxAccessToken;
         }
         public static string wxJsApiParam { get; set; } //H5调起JS API参数
-        public static string  wxPayOrderSomething(string openid,string total_fee,string couponType,string stoeName)
+        public static Wxprepay wxPayOrderSomething(string openid,string total_fee,string couponType,string stoeName)
         {
-            
-            //var url = ConfigurationManager.AppSettings["wxpay"].ToString() + "?" + "grant_type=client_credential&appid=" + Appid + "&secret=" + Secret;
 
+            //var url = ConfigurationManager.AppSettings["wxpay"].ToString() + "?" + "grant_type=client_credential&appid=" + Appid + "&secret=" + Secret;
+            Wxprepay wxprepay = new Wxprepay();
             //检测是否给当前页面传递了相关参数
             if (string.IsNullOrEmpty(openid) || string.IsNullOrEmpty(total_fee))
             {
 
-                return "没有相关参数,用户数据错误";
+                return null;
             }
             else
             {
@@ -134,18 +134,43 @@ namespace Ar.API.Controllers
                 //jsApiPay.total_fee = int.Parse(total_fee);
 
                 //JSAPI支付预处理
-
-                WxPayData unifiedOrderResult = jsApiPay.GetUnifiedOrderResult(Appid, Mchid, total_fee, stoeName, couponType,openid);
+                var prepayid = WxPayApi.GenerateOutTradeNo();
+                WxPayData unifiedOrderResult = jsApiPay.GetUnifiedOrderResult(Appid, Mchid, total_fee, stoeName, couponType,openid, prepayid);
                 wxJsApiParam = jsApiPay.GetJsApiParameters();//获取H5调起JS API参数                    
 
                 LogHelper.WriteLog("wxJsApiParam:" + wxJsApiParam);
                 //在页面上显示订单信息
-                return wxJsApiParam;
+                wxprepay.wxJsApiParam = wxJsApiParam;
+                wxprepay.prepayid = prepayid;
+                return wxprepay;
             }
 
            
            
         }
+        public static string wxPayOrderQuery(string out_trade_no)
+        {
 
+            WxPayData data = new WxPayData();
+            if (!string.IsNullOrEmpty(out_trade_no))//如果微信订单号存在，则以微信订单号为准
+            {
+                data.SetValue("transaction_id", out_trade_no);
+            }
+            else
+            {
+                throw new WxPayException("订单查询接口中，out_trade_no填一个！");
+            }
+ 
+            WxPayData result = WxPayApi.OrderQuery(data, Appid, Mchid);//提交订单查询请求给API，接收返回数据
+            if (result.IsSet("result_code") && result.GetValue("result_code").ToString() == "SUCCESS" && result.IsSet("trade_state") && result.GetValue("trade_state").ToString() == "SUCCESS")
+            {
+                return result.GetValue("time_end").ToString() ;
+            }else
+                { return null; }
+
+        }
+
+        
+       
     }
 }

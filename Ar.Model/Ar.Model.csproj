@@ -87,6 +87,7 @@
     <Compile Include="WxCertification.cs" />
     <Compile Include="WxCode.cs" />
     <Compile Include="WxOrder.cs" />
+    <Compile Include="Wxprepay.cs" />
     <Compile Include="WxUserInfo.cs" />
   </ItemGroup>
   <ItemGroup>

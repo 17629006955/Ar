@@ -14,5 +14,6 @@ namespace Ar.IServices
         UserStore GetUserStorebyUserCode(string userCode);
 
         int CreateUserStore(UserStore userStore);
+        UserStore GetUserStorebyUserCodestoreCode(string userCode, string storeCode);
     }
 }

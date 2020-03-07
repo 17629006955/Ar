@@ -34,6 +34,20 @@ namespace Ar.API.Controllers
                 if (UserAuthorization)
                 {
                     var list = _service.GetOrderList(userCode);
+                    foreach (var item in list)
+                    {
+                        if (!string.IsNullOrEmpty(item.WxPrepayId))
+                        {
+                            var PayTime = Common.wxPayOrderQuery(item.WxPrepayId);
+                            if (!string.IsNullOrEmpty(PayTime))
+                            {
+                                item.PayTime = Convert.ToDateTime(PayTime);
+                                _service.UpdateOrder(item);
+                            }
+                            
+                        }
+
+                    }
                     result.Resource = list;
                     result.Status = Result.SUCCEED;
                 }

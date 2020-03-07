@@ -140,15 +140,15 @@ namespace WxPayAPI
          * @return 统一下单结果
          * @失败时抛异常WxPayException
          */
-        public WxPayData GetUnifiedOrderResult(string appid, string mchid,string total_fee, string stoeName,string couponType,string openid )
+        public WxPayData GetUnifiedOrderResult(string appid, string mchid,string total_fee, string stoeName,string couponType,string openid ,string out_trade_no)
         {
             //统一下单
             WxPayData data = new WxPayData();
+
             
-      
             data.SetValue("body", ConfigurationManager.AppSettings["Company"].ToString()+stoeName);
             data.SetValue("attach", stoeName);
-            data.SetValue("out_trade_no", WxPayApi.GenerateOutTradeNo());
+            data.SetValue("out_trade_no", out_trade_no);
             data.SetValue("total_fee", total_fee);
             data.SetValue("time_start", DateTime.Now.ToString("yyyyMMddHHmmss"));
             data.SetValue("time_expire", DateTime.Now.AddMinutes(10).ToString("yyyyMMddHHmmss"));

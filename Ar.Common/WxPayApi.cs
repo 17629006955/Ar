@@ -76,7 +76,7 @@ namespace WxPayAPI
         * @throws WxPayException
         * @return 成功时返回订单查询结果，其他抛异常
         */
-        public static WxPayData OrderQuery(WxPayData inputObj, int timeOut = 6)
+        public static WxPayData OrderQuery(WxPayData inputObj, string appid, string mch_id,int timeOut = 6)
         {
             string url = "https://api.mch.weixin.qq.com/pay/orderquery";
             //检测必填参数
@@ -85,8 +85,8 @@ namespace WxPayAPI
                 throw new WxPayException("订单查询接口中，out_trade_no、transaction_id至少填一个！");
             }
 
-            inputObj.SetValue("appid", WxPayConfig.GetConfig().GetAppID());//公众账号ID
-            inputObj.SetValue("mch_id", WxPayConfig.GetConfig().GetMchID());//商户号
+            inputObj.SetValue("appid", appid);//公众账号ID
+            inputObj.SetValue("mch_id", mch_id);//商户号
             inputObj.SetValue("nonce_str", WxPayApi.GenerateNonceStr());//随机字符串
             inputObj.SetValue("sign_type", WxPayData.SIGN_TYPE_HMAC_SHA256);//签名类型
             inputObj.SetValue("sign", inputObj.MakeSign());//签名
