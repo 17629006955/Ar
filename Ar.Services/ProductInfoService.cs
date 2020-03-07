@@ -13,7 +13,7 @@ namespace Ar.Services
     {
         public IList<ProductInfo> GetProductInfoList()
         {
-            IList<ProductInfo> list = DapperSqlHelper.FindToList<ProductInfo>("select * from [dbo].[ProductInfo] where isnull(VersionEndTime,'9999-9-9')>=getdate() ", null, false);
+            IList<ProductInfo> list = DapperSqlHelper.FindToList<ProductInfo>("select ProductCode,ProductName,ExperiencePrice,Imageurl from [dbo].[ProductInfo] where VersionEndTime is null", null, false);
             foreach(var p in list)
             {
                 p.TypeShowList = GetTypeShow(p.ProductCode);
@@ -42,7 +42,7 @@ namespace Ar.Services
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@productCode", code, System.Data.DbType.String);
-            ProductInfo productInfo = DapperSqlHelper.FindOne<ProductInfo>("select  ProductCode,ProductName,ExperiencePrice,Imageurl,Instructions,Thriller,videourl,SpecialRequirements,ExperiencePopulation from [dbo].[ProductInfo] where ProductCode=@productCode and VersionEndTime is null", paras, false);
+            ProductInfo productInfo = DapperSqlHelper.FindOne<ProductInfo>("select  ProductCode,ProductName,ExperiencePrice,Imageurl,Instructions,Thriller,videourl,SpecialRequirements,ExperiencePopulation from [dbo].[ProductInfo] where ProductCode=@productCode and isnull(VersionEndTime,'9999-09-09')>getdate()", paras, false);
             productInfo.TypeShowList = GetTypeShow(productInfo.ProductCode);
             return productInfo;
         }
@@ -52,7 +52,7 @@ namespace Ar.Services
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@listCode", listCode, System.Data.DbType.String);
             IList<ProductInfo> list = DapperSqlHelper.FindToList<ProductInfo>(@"select a.ProductCode,a.ProductName,a.ExperiencePrice,a.Imageurl from [dbo].[ProductInfo] a ,[dbo].[ProductList] b where a.ProductCode=b.ProductCode and b.Status=1
-              and b.ListCode=@listCode  and a.VersionEndTime is null", paras, false);
+              and b.ListCode=@listCode  and isnull(a.VersionEndTime,'9999-09-09')>getdate()", paras, false);
             foreach (var p in list)
             {
                 p.TypeShowList = GetTypeShow(p.ProductCode);
@@ -73,7 +73,7 @@ namespace Ar.Services
             date.Add(DateTime.Now.AddDays(2));
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@productCode", productCode, System.Data.DbType.String);
-            PayPage productInfo = DapperSqlHelper.FindOne<PayPage>("select  ProductCode,ProductName,ExperiencePrice,Imageurl from [dbo].[ProductInfo] where ProductCode=@productCode and VersionEndTime is null", paras, false);
+            PayPage productInfo = DapperSqlHelper.FindOne<PayPage>("select  ProductCode,ProductName,ExperiencePrice,Imageurl from [dbo].[ProductInfo] where ProductCode=@productCode and  isnull(VersionEndTime,'9999-09-09')>getdate()", paras, false);
             productInfo.Store = "";
             productInfo.PeopleCount = 1;
             productInfo.SelectDate = date;
