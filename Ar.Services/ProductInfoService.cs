@@ -48,7 +48,7 @@ namespace Ar.Services
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@productCode", code, System.Data.DbType.String);
-            ProductInfo productInfo = DapperSqlHelper.FindOne<ProductInfo>("select  ProductCode,ProductName,ExperiencePrice,Imageurl,Instructions,Thriller,videourl,SpecialRequirements,ExperiencePopulation from [dbo].[ProductInfo] where ProductCode=@productCode and isnull(VersionEndTime,'9999-09-09')>getdate()", paras, false);
+            ProductInfo productInfo = DapperSqlHelper.FindOne<ProductInfo>("select * from [dbo].[ProductInfo] where ProductCode=@productCode and isnull(VersionEndTime,'9999-09-09')>getdate()", paras, false);
             productInfo.TypeShowList = GetTypeShow(productInfo.ProductCode);
             return productInfo;
         }
