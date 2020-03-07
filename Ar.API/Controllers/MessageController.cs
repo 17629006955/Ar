@@ -62,20 +62,45 @@ namespace Ar.API.Controllers
         /// <returns></returns>
       
         [HttpPost]
-        //http://localhost:10010//api/Message/BangMessageCode?phone=18235139350&verificationCode=232232&userCode=121ewe
-        public IHttpActionResult BangMessageCode(string phone,string verificationCode, string userCode,DateTime birthday)
+        //http://localhost:10010//api/Message/BangMessageCode?phone=18235139350&verificationCode=232232&userCode=121ewe&birthday='yyyy-mm-dd'
+        public IHttpActionResult BangMessageCode(string phone,string verificationCode, string userCode,string birthday)
         {
             SimpleResult result = new SimpleResult();
             if (UserAuthorization)
             {
                 if (verificationService.CheckVerification(phone, verificationCode))
                 {
-                    //写入到手机号和和数据库
-                    var count = userInfo.UpdateByPhone(userCode, phone, birthday);
-                    result.Resource = count;
-                    result.Status = Result.SUCCEED;
+                    DateTime birthdaydate = new DateTime();
+                    if (DateTime.TryParse(birthday, out birthdaydate))
+                    {
+                        var use = userInfo.GetUserByCode(userCode);
+                        if (use != null)
+                        {
+                            //写入到手机号和和数据库
+                            var count = userInfo.UpdateByPhone(userCode, phone, birthdaydate);
+                            if (count > 0)
+                            {
+                                result.Resource = count;
+                                result.Status = Result.SUCCEED;
+                            }
+                            else
+                            {
+                                result.Status = Result.SYSTEM_ERROR;
+                                result.Resource = "添加没有成功，请重试。";
+                            }
+                        }else
+                            {
+                            result.Status = Result.SYSTEM_ERROR;
+                            result.Resource = "当前用户不存在";
+                        }
+                    }
+                    else {
+                        result.Status = Result.SYSTEM_ERROR;
+                        result.Resource = "选择生日有误";
+                    }
                 }
                 else {
+                    result.Status = Result.SYSTEM_ERROR; 
                     result.Msg = "验证码错误或者已经过期，请重新获取验证码。";
                 }
             }

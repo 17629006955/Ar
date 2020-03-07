@@ -28,8 +28,8 @@ namespace Ar.Services
         public Coupon GetCouponByCode(string code)
         {
             DynamicParameters paras = new DynamicParameters();
-            paras.Add("@CouponCode", code, System.Data.DbType.String);
-            Coupon record = DapperSqlHelper.FindOne<Coupon>("select a.*,b.CouponTypeName from [dbo].[Coupon] a,[dbo].[CouponType] b  where a.CouponCode=@CouponCode  and a.CouponTypeCode=b.CouponTypeCode", paras, false);
+            paras.Add("@CouponUseCode", code, System.Data.DbType.String);
+            Coupon record = DapperSqlHelper.FindOne<Coupon>("select a.*,b.CouponTypeName from [dbo].[Coupon] a,[dbo].[CouponType] b  where a.CouponUseCode=@CouponUseCode  and a.CouponTypeCode=b.CouponTypeCode", paras, false);
             return record;
         }
 
@@ -47,9 +47,9 @@ namespace Ar.Services
         public bool UsedUpdate(string couponCode,string userCode)
         {
             DynamicParameters paras = new DynamicParameters();
-            paras.Add("@code", couponCode, System.Data.DbType.String);
+            paras.Add("@CouponUseCode", couponCode, System.Data.DbType.String);
             paras.Add("@userCode", userCode, System.Data.DbType.String);
-            string sql = "update [dbo].[Coupon] set IsUsed=1, UseTime=getdate(),CouponUseCode=@userCode where CouponCode=@code";
+            string sql = "update [dbo].[Coupon] set IsUsed=1, UseTime=getdate(),userCode=@userCode where CouponUseCode=@CouponUseCode";
             DapperSqlHelper.ExcuteNonQuery<Coupon>(sql, paras, false);
             return true;
         }
@@ -60,10 +60,10 @@ namespace Ar.Services
         public bool GiveedUpdate(string couponCode,string userCode)
         {
             DynamicParameters paras = new DynamicParameters();
-            paras.Add("@code", couponCode, System.Data.DbType.String);
-            string sql1 = "select * from [dbo].[Coupon] where CouponCode=@code ";
+            paras.Add("@CouponUseCode", couponCode, System.Data.DbType.String);
+            string sql1 = "select * from [dbo].[Coupon] where CouponUseCode=@code ";
             Coupon coupon= DapperSqlHelper.FindOne<Coupon>(sql1, paras, false);
-            string sql = "update [dbo].[Coupon] set IsGiveed=1, GiveedTime=getdate() where CouponCode=@code";
+            string sql = "update [dbo].[Coupon] set IsGiveed=1, GiveedTime=getdate() where CouponUseCode=@CouponUseCode";
             DapperSqlHelper.ExcuteNonQuery<Coupon>(sql, paras, false);
             coupon.CouponCode = GetMaxCode();
             coupon.UserCode = userCode;
@@ -74,16 +74,17 @@ namespace Ar.Services
         public  bool InsertCouponByUser(string couponCode, string userCode)
         {
             DynamicParameters paras = new DynamicParameters();
-            paras.Add("@code", couponCode, System.Data.DbType.String);
-            string sql1 = "select * from [dbo].[Coupon] where CouponCode=@code ";
+            paras.Add("@CouponUseCode", couponCode, System.Data.DbType.String);
+            paras.Add("@userCode", userCode, System.Data.DbType.String);
+            string sql1 = "select * from [dbo].[Coupon] where CouponUseCode=@CouponUseCode ";
             Coupon coupon = DapperSqlHelper.FindOne<Coupon>(sql1, paras, false);
-            if (coupon == null)
+            if (coupon == null|| coupon.VersionEndTime<DateTime.Now)
             {
                 return false;
             }
             else
             {
-                string sql = "update [dbo].[Coupon] set UserCode=@userCode  where CouponCode=@code";
+                string sql = "update [dbo].[Coupon] set UserCode=@userCode  where CouponUseCode=@CouponUseCode";
                 DapperSqlHelper.ExcuteNonQuery<Coupon>(sql, paras, false);
             }
             return true;
