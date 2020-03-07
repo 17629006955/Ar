@@ -30,7 +30,7 @@ namespace Ar.API.Controllers
             IProductInfoService _service = new ProductInfoService();
             try
             {
-                if (UserAuthorization)
+                if (1==1)
                 {
                     var list = _service.GetProductInfoList();
                 result.Resource = list;

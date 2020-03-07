@@ -41,8 +41,8 @@ namespace AR.Model
 		private Single _thriller;
 		private string _instructions;
         private List<string> _typeShowList;
-        private ListType _GameCategory;
-
+        private string _listTypeCode;
+        private string _listTypeName;
         private string _store;
 
         private List<DateTime> _selectDate;
@@ -150,12 +150,17 @@ namespace AR.Model
             set { _typeShowList = value; }
             get { return _typeShowList; }
         }
-        public ListType GameCategoryList
+        public string ListTypeCode
         {
-            set { _GameCategory = value; }
-            get { return _GameCategory; }
+            set { _listTypeCode = value; }
+            get { return _listTypeCode; }
         }
-        
+
+        public string ListTypeName
+        {
+            set { _listTypeName = value; }
+            get { return _listTypeName; }
+        }
 
         public string Store
         {

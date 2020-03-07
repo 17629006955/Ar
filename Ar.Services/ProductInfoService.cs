@@ -11,16 +11,20 @@ namespace Ar.Services
 {
     public class ProductInfoService : IProductInfoService
     {
+
         public IList<ProductInfo> GetProductInfoList()
         {
-            IList<ProductInfo> list = DapperSqlHelper.FindToList<ProductInfo>("select * from [dbo].[ProductInfo] where isnull(VersionEndTime,'9999-09-09')>getdate()", null, false);
-            foreach(var p in list)
+            IList<ProductInfo> list = DapperSqlHelper.FindToList<ProductInfo>(@"SELECT distinc a.ListTypeCode,a.ListTypeName,b.*
+              FROM [dbo].[ListType] a, [dbo].[ProductInfo] b,[dbo].[ProductList] c
+              WHERE a.ListTypeCode = c.ListCode AND c.ProductCode = b.ProductCode and isnull(b.VersionEndTime, '9999-09-09') > getdate() AND a.Status = 1", null, false);
+            foreach (var p in list)
             {
                 p.TypeShowList = GetTypeShow(p.ProductCode);
-                p.GameCategoryList = GameCategoryShow(p.ProductCode);
             }
             return list;
         }
+
+
 
         public List<string> GetTypeShow(string code)
         {
@@ -38,11 +42,13 @@ namespace Ar.Services
             IList<ListType> list = DapperSqlHelper.FindToList<ListType>(sql, paras, false);
             return list.FirstOrDefault();
         }
+
+        
         public ProductInfo GetProductInfo(string code)
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@productCode", code, System.Data.DbType.String);
-            ProductInfo productInfo = DapperSqlHelper.FindOne<ProductInfo>("select  ProductCode,ProductName,ExperiencePrice,Imageurl,Instructions,Thriller,videourl,SpecialRequirements,ExperiencePopulation from [dbo].[ProductInfo] where ProductCode=@productCode and isnull(VersionEndTime,'9999-09-09')>getdate()", paras, false);
+            ProductInfo productInfo = DapperSqlHelper.FindOne<ProductInfo>("select * from [dbo].[ProductInfo] where ProductCode=@productCode and isnull(VersionEndTime,'9999-09-09')>getdate()", paras, false);
             productInfo.TypeShowList = GetTypeShow(productInfo.ProductCode);
             return productInfo;
         }
