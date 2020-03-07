@@ -10,6 +10,7 @@ namespace Ar.IServices
     /// </summary>
     public interface IRecordsOfConsumptionService
     {
+        bool IsWriteOffUser(string phone);
         RecordsOfConsumption GetRecordsOfConsumptionByCode(string code);
         IList<RecordsOfConsumption> GetRecordsOfConsumptionList();
 

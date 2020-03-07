@@ -14,11 +14,13 @@ using System.Web.Script.Serialization;
 using Ar.IServices;
 using Ar.Services;
 using System.Transactions;
+using AR.Model;
 
 namespace Ar.API.Controllers
 {
     public class RecordsOfConsumptionController : BaseApiController
     {
+        IUserInfo userInfo = new UserInfo();
         /// <summary>
         /// 获取消费记录
         /// </summary>
@@ -263,6 +265,7 @@ namespace Ar.API.Controllers
             {
                 if (UserAuthorization)
                 {
+
                     using (var scope = new TransactionScope())//创建事务
                     {
                         IOrderService _orderService = new OrderService();
@@ -291,25 +294,149 @@ namespace Ar.API.Controllers
             return Json(result);
 
         }
-
         /// <summary>
-        ///订单核销
+        /// 是否是核销人员
         /// </summary>
-        /// <param name="code"></param>
+        /// <param name="orderCode"></param>
         /// <returns></returns>
-        ////http://localhost:10010//api/RecordsOfConsumption/WriteOff?phone=18235139350&orderCode=1
         [HttpGet]
-        public IHttpActionResult WriteOff(string phone, string orderCode)
+        [HttpPost]
+        //http://localhost:10010//api/RecordsOfConsumption/IsWriteOffUser?userCode=1 
+        public IHttpActionResult IsWriteOffUser(string userCode)
         {
             SimpleResult result = new SimpleResult();
             IRecordsOfConsumptionService _service = new RecordsOfConsumptionService();
             try
             {
+
                 if (UserAuthorization)
                 {
-                    var re = _service.WriteOff(phone, orderCode);
-                    result.Resource = re;
-                    result.Status = Result.SUCCEED;
+                    var use = userInfo.GetUserByCode(userCode);
+                    if (use != null )
+                    {
+
+                        var re = _service.IsWriteOffUser(use.Phone);
+                        result.Resource = re;
+                        result.Status = Result.SUCCEED;
+
+                    }
+                    else
+                    {
+                        result.Resource = "没有当前用户";
+                        result.Status = Result.SYSTEM_ERROR;
+                    }
+                }
+                else
+                {
+                    result.Status = Result.FAILURE;
+                    result.Resource = ReAccessToken;
+                    result.Msg = TokenMessage;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Status = Result.FAILURE;
+                result.Msg = ex.Message;
+            }
+            return Json(result);
+        }
+        /// <summary>
+        /// 获取核销码
+        /// </summary>
+        /// <param name="orderCode"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [HttpPost]
+        //http://localhost:10010//api/RecordsOfConsumption/WriteOff?orderCode=1 
+        public IHttpActionResult WriteOff(string orderCode)
+        {
+            SimpleResult result = new SimpleResult();
+            IOrderService _orderservice = new OrderService();
+            IWriteOffService _writeOffServicee = new WriteOffService();
+            try
+            {
+
+                if (UserAuthorization)
+                {
+                    var order = _orderservice.GetOrderByCode(orderCode);
+                    if (order != null && !order.IsWriteOff)
+                    {
+                        _writeOffServicee.Delete(orderCode);
+                        WriteOff writeOff = new WriteOff();
+                        writeOff.WriteOffCode = Guid.NewGuid().ToString();
+                        writeOff.OrderCode = orderCode;
+                        writeOff.CreateTime = DateTime.Now;
+                        _writeOffServicee.CreateWriteOff(writeOff);
+                        result.Resource = writeOff.WriteOffCode;
+                        result.Status = Result.SUCCEED;
+                        
+                    }
+                    else
+                    {
+                        result.Resource = "订单已经被核销";
+                        result.Status = Result.SYSTEM_ERROR;
+                    }
+                }
+                else
+                {
+                    result.Status = Result.FAILURE;
+                    result.Resource = ReAccessToken;
+                    result.Msg = TokenMessage;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Status = Result.FAILURE;
+                result.Msg = ex.Message;
+            }
+            return Json(result);
+        }
+        /// <summary>
+        ///订单核销
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+            ////http://localhost:10010//api/RecordsOfConsumption/WriteOff?userCode=68add88&phone=18235139350&orderCode=1&writeOffCode=hjhhjh
+        [HttpGet]
+        [HttpPost]
+        public IHttpActionResult WriteOff(string userCode, string orderCode,string writeOffCode)
+        {
+            SimpleResult result = new SimpleResult();
+            IRecordsOfConsumptionService _service = new RecordsOfConsumptionService();
+            IWriteOffService _writeOffServicee = new WriteOffService();
+            try
+            {
+                if (UserAuthorization)
+                {
+                    var use = userInfo.GetUserByCode(userCode);
+                    if (use != null)
+                    {
+                        if (!string.IsNullOrEmpty(use.Phone))
+                        {
+
+                            if (_writeOffServicee.CheckWriteOff(orderCode, writeOffCode))
+                            {
+                                var re = _service.WriteOff(use.Phone, orderCode);
+                                result.Resource = re;
+                                result.Status = Result.SUCCEED;
+                            }
+                            else
+                            {
+                                result.Resource = "核销二维码已经失效请用户重新打开二维码";
+                                result.Status = Result.SYSTEM_ERROR;
+                            }
+                        }
+                        else
+                        {
+                            result.Resource = "请您绑定手机号再核销";
+                            result.Status = Result.SYSTEM_ERROR;
+                        }
+                    }
+                    else
+                    {
+                        result.Resource = "没有当前用户";
+                        result.Status = Result.SYSTEM_ERROR;
+                    }
                 }
                 else
                 {

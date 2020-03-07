@@ -119,7 +119,18 @@ namespace Ar.Services
              
             return order;
         }
-       
+        public bool IsWriteOffUser(string phone)
+        {
+            DynamicParameters paras = new DynamicParameters();
+            paras.Add("@phone", phone, System.Data.DbType.String);
+            string sql = @"select ID as Code from [dbo].[TDF_SYSTEM_USER] where PHONE=@phone";
+            var list = DapperSqlHelper.FindToList<User>(sql, paras, false);
+            if (list.Count > 0)
+            {
+             return true;
+            }
+            return false;
+        }
         /// <summary>
         /// 核销
         /// </summary>

@@ -36,10 +36,11 @@ namespace AR.Model
 		private DateTime? _paytime;
 		private DateTime? _appointmenttime;
 		private string _experiencevouchercode;
-		/// <summary>
-		/// 
-		/// </summary>
-		public string OrderCode
+        private bool _isWriteOff;
+        /// <summary>
+        /// 
+        /// </summary>
+        public string OrderCode
 		{
 			set{ _ordercode=value;}
 			get{return _ordercode;}
@@ -116,9 +117,14 @@ namespace AR.Model
 			set{ _experiencevouchercode=value;}
 			get{return _experiencevouchercode;}
 		}
-		#endregion Model
+        public bool IsWriteOff
+        {
+            set { _isWriteOff = value; }
+            get { return _isWriteOff; }
+        }
+        #endregion Model
 
-	}
+    }
 
 
     public partial class OrderShow
@@ -140,6 +146,7 @@ namespace AR.Model
         private DateTime? _appointmenttime;
         private string _experiencevouchercode;
         private string _orderState;
+        private bool _isWriteOff;
         /// <summary>
         /// 
         /// </summary>
@@ -243,6 +250,12 @@ namespace AR.Model
             set { _experiencevouchercode = value; }
             get { return _experiencevouchercode; }
         }
+        public bool IsWriteOff
+        {
+            set { _isWriteOff = value; }
+            get { return _isWriteOff; }
+        }
+        
         #endregion Model
 
     }

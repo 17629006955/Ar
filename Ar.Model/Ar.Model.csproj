@@ -82,6 +82,7 @@
     <Compile Include="UserTask.cs" />
     <Compile Include="UseWallet.cs" />
     <Compile Include="Verification.cs" />
+    <Compile Include="WriteOff.cs" />
     <Compile Include="WxAccessToken.cs" />
     <Compile Include="WxCertification.cs" />
     <Compile Include="WxCode.cs" />

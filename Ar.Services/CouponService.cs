@@ -14,12 +14,12 @@ namespace Ar.Services
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@userCode", userCode, System.Data.DbType.String);
-            IList<Coupon> isUserList = DapperSqlHelper.FindToList<Coupon>("select *  from [dbo].[Coupon]  where IsUsed=1 and UserCode=@userCode", paras, false);
-            IList<Coupon> lapseList = DapperSqlHelper.FindToList<Coupon>("select *  from [dbo].[Coupon] where  UserCode=@userCode and  (IsUsed=1   or (isnull(VersionEndTime,'9999-9-9')<getdate()))", paras, false);
-            IList<Coupon> takeEffectList = DapperSqlHelper.FindToList<Coupon>("select *  from [dbo].[Coupon] where UserCode=@userCode and   isnull(IsUsed,0)=0 and  isnull(VersionEndTime,'9999-9-9')>=getdate()", paras, false);
+            //IList<Coupon> isUserList = DapperSqlHelper.FindToList<Coupon>("select *  from [dbo].[Coupon] a,[dbo].[CouponType] b  where a.UserCode=@userCode and a.CouponTypeCode=b.CouponTypeCode and a.IsUsed=1 ", paras, false);
+            IList<CouponShow> lapseList = DapperSqlHelper.FindToList<CouponShow>("select *  from [dbo].[Coupon] a,[dbo].[CouponType] b  where a.UserCode=@userCode and a.CouponTypeCode=b.CouponTypeCode  and  (a.IsUsed=1   or (isnull(a.VersionEndTime,'9999-9-9')<getdate()))", paras, false);
+            IList<CouponShow> takeEffectList = DapperSqlHelper.FindToList<CouponShow>("select *  from [dbo].[Coupon] a,[dbo].[CouponType] b  where a.UserCode=@userCode and a.CouponTypeCode=b.CouponTypeCode  and   isnull(a.IsUsed,0)=0 and  isnull(a.VersionEndTime,'9999-9-9')>=getdate()", paras, false);
             return new 
             {
-                isUserList= isUserList,
+               // isUserList= isUserList,
                 lapseList= lapseList,
                 takeEffectList= takeEffectList
             };

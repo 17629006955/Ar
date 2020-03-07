@@ -17,123 +17,183 @@
 using System;
 namespace AR.Model
 {
-	/// <summary>
-	/// Coupon:实体类(属性说明自动提取数据库字段的描述信息)
-	/// </summary>
-	[Serializable]
-	public partial class Coupon
-	{
-		public Coupon()
-		{}
-		#region Model
-		private string _couponcode;
-		private string _usercode;
-		private string _coupontypecode;
+    /// <summary>
+    /// Coupon:实体类(属性说明自动提取数据库字段的描述信息)
+    /// </summary>
+    [Serializable]
+    public partial class Coupon
+    {
+        public Coupon()
+        { }
+        #region Model
+        private string _couponcode;
+        private string _usercode;
+        private string _coupontypecode;
         private string _coupontypeName;
         private DateTime? _createtime;
-		private DateTime? _strattime;
-		private DateTime? _versionendtime;
-		private bool _isused;
-		private bool _isgiveed;
-		private DateTime? _usetime;
-		private DateTime? _giveedtime;
-		private string _couponusecode;
-		/// <summary>
-		/// 
-		/// </summary>
-		public string CouponCode
-		{
-			set{ _couponcode=value;}
-			get{return _couponcode;}
-		}
-		/// <summary>
-		/// 
-		/// </summary>
-		public string UserCode
-		{
-			set{ _usercode=value;}
-			get{return _usercode;}
-		}
-		/// <summary>
-		/// 
-		/// </summary>
-		public string CouponTypeCode
-		{
-			set{ _coupontypecode=value;}
-			get{return _coupontypecode;}
-		}
+        private DateTime? _strattime;
+        private DateTime? _versionendtime;
+        private bool _isused;
+        private bool _isgiveed;
+        private DateTime? _usetime;
+        private DateTime? _giveedtime;
+        private string _couponusecode;
+        private Decimal _money;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string CouponCode
+        {
+            set { _couponcode = value; }
+            get { return _couponcode; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string UserCode
+        {
+            set { _usercode = value; }
+            get { return _usercode; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string CouponTypeCode
+        {
+            set { _coupontypecode = value; }
+            get { return _coupontypecode; }
+        }
 
         public string CouponTypeName
         {
             set { _coupontypeName = value; }
             get { return _coupontypeName; }
         }
+        public Decimal Money
+        {
+            set { _money = value; }
+            get { return _money; }
+        }
+
         /// <summary>
         /// 
         /// </summary>
         public DateTime? CreateTime
-		{
-			set{ _createtime=value;}
-			get{return _createtime;}
-		}
-		/// <summary>
-		/// 
-		/// </summary>
-		public DateTime? StratTime
-		{
-			set{ _strattime=value;}
-			get{return _strattime;}
-		}
-		/// <summary>
-		/// 
-		/// </summary>
-		public DateTime? VersionEndTime
-		{
-			set{ _versionendtime=value;}
-			get{return _versionendtime;}
-		}
-		/// <summary>
-		/// 
-		/// </summary>
-		public bool IsUsed
-		{
-			set{ _isused=value;}
-			get{return _isused;}
-		}
-		/// <summary>
-		/// 
-		/// </summary>
-		public bool IsGiveed
-		{
-			set{ _isgiveed=value;}
-			get{return _isgiveed;}
-		}
-		/// <summary>
-		/// 
-		/// </summary>
-		public DateTime? UseTime
-		{
-			set{ _usetime=value;}
-			get{return _usetime;}
-		}
-		/// <summary>
-		/// 
-		/// </summary>
-		public DateTime? GiveedTime
-		{
-			set{ _giveedtime=value;}
-			get{return _giveedtime;}
-		}
-		/// <summary>
-		/// 
-		/// </summary>
-		public string CouponUseCode
-		{
-			set{ _couponusecode=value;}
-			get{return _couponusecode;}
-		}
-		#endregion Model
+        {
+            set { _createtime = value; }
+            get { return _createtime; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime? StratTime
+        {
+            set { _strattime = value; }
+            get { return _strattime; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime? VersionEndTime
+        {
+            set { _versionendtime = value; }
+            get { return _versionendtime; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsUsed
+        {
+            set { _isused = value; }
+            get { return _isused; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsGiveed
+        {
+            set { _isgiveed = value; }
+            get { return _isgiveed; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime? UseTime
+        {
+            set { _usetime = value; }
+            get { return _usetime; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime? GiveedTime
+        {
+            set { _giveedtime = value; }
+            get { return _giveedtime; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string CouponUseCode
+        {
+            set { _couponusecode = value; }
+            get { return _couponusecode; }
+        }
+        #endregion Model
+    }
 
-	}
+    [Serializable]
+    public partial class CouponShow
+    {
+        public CouponShow()
+        { }
+        private string _couponcode;
+        private string _usercode;
+        private string _coupontypecode;
+        private string _coupontypeName;
+        private DateTime? _createtime;
+        private DateTime? _strattime;
+        private DateTime? _versionendtime;
+        private bool _isused;
+        private bool _isgiveed;
+        private DateTime? _usetime;
+        private DateTime? _giveedtime;
+        private string _couponusecode;
+        private Decimal _money;
+
+
+
+        public string CouponTypeName
+        {
+            set { _coupontypeName = value; }
+            get { return _coupontypeName; }
+        }
+        public Decimal Money
+        {
+            set { _money = value; }
+            get { return _money; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime? VersionEndTime
+        {
+            set { _versionendtime = value; }
+            get { return _versionendtime; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string CouponUseCode
+        {
+            set { _couponusecode = value; }
+            get { return _couponusecode; }
+        }
+
+
+
+    }
 }
-

@@ -13,10 +13,11 @@ namespace Ar.Services
     {
         public IList<ProductInfo> GetProductInfoList()
         {
-            IList<ProductInfo> list = DapperSqlHelper.FindToList<ProductInfo>("select ProductCode,ProductName,ExperiencePrice,Imageurl from [dbo].[ProductInfo] where VersionEndTime is null", null, false);
+            IList<ProductInfo> list = DapperSqlHelper.FindToList<ProductInfo>("select * from [dbo].[ProductInfo] where isnull(VersionEndTime,'9999-9-9')>=getdate() ", null, false);
             foreach(var p in list)
             {
                 p.TypeShowList = GetTypeShow(p.ProductCode);
+                p.GameCategoryList = GameCategoryShow(p.ProductCode);
             }
             return list;
         }
@@ -28,6 +29,14 @@ namespace Ar.Services
             string sql = @"SELECT b.ProductTypeName FROM ProductTypeList a, ProductType b WHERE a.ProductTypeCode= b.ProductTypeCode AND a.ProductCode= @productCode";
             IList<ProductType> list =DapperSqlHelper.FindToList<ProductType>(sql, paras, false);
             return list.Select(p => p.ProductTypeName).ToList();
+        }
+        public List<ListType> GameCategoryShow(string code)
+        {
+            DynamicParameters paras = new DynamicParameters();
+            paras.Add("@productCode", code, System.Data.DbType.String);
+            string sql = @"SELECT b.ListTypeCode,b.ListTypeName FROM ProductList a, List b WHERE a.ProductListCode= b.ProductListCode AND a.ProductCode= @productCode";
+            IList<ListType> list = DapperSqlHelper.FindToList<ListType>(sql, paras, false);
+            return list.ToList();
         }
         public ProductInfo GetProductInfo(string code)
         {
