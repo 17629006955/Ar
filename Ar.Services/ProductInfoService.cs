@@ -13,7 +13,7 @@ namespace Ar.Services
     {
         public IList<ProductInfo> GetProductInfoList()
         {
-            IList<ProductInfo> list = DapperSqlHelper.FindToList<ProductInfo>("select ProductCode,ProductName,ExperiencePrice,Imageurl from [dbo].[ProductInfo] where VersionEndTime is null", null, false);
+            IList<ProductInfo> list = DapperSqlHelper.FindToList<ProductInfo>("select ProductCode,ProductName,ExperiencePrice,Imageurl from [dbo].[ProductInfo] where isnull(VersionEndTime,'9999-09-09')>getdate()", null, false);
             foreach(var p in list)
             {
                 p.TypeShowList = GetTypeShow(p.ProductCode);
