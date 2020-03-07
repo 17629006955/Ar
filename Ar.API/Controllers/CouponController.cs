@@ -136,10 +136,10 @@ namespace Ar.API.Controllers
             {
                 if (UserAuthorization)
                 {
-                    var re = _service.InsertCouponByUser(couponCode,userCode);
+                    var re = _service.InsertCouponByUser(couponCode, userCode);
                     result.Resource = re;
-                    result.Status = re?Result.SUCCEED: Result.FAILURE;
-                    result.Msg = re ?"":"优惠卷不存在！";
+                    result.Status = re?Result.SUCCEED: Result.SYSTEM_ERROR;
+                    result.Msg = re ?"":"优惠卷不存在或者已经过期！";
                 }
                 else
                 {

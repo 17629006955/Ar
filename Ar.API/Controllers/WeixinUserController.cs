@@ -216,7 +216,15 @@ namespace Ar.API.Controllers
                         {
                             
                             user.Code = Guid.NewGuid().ToString();
-                            user.Sex = wxuserinfo.sex;
+                            if (wxuserinfo.sex == 0)
+                            {
+                                user.Sex = true;
+                            }
+                            else
+                            {
+                                user.Sex = false;
+                            }
+                          
                             user.UserIamgeUrl = wxuserinfo.headimgurl;
                             user.UserName = wxuserinfo.nickname;
                             user.CreateTime = DateTime.Now;

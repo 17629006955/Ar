@@ -224,7 +224,7 @@ namespace Ar.API.Controllers
                         else
                         {
                             result.Resource = "微信下单失败，重新提交订单";
-                            result.Status = Result.FAILURE;
+                            result.Status = Result.SYSTEM_ERROR;
                         }
                         scope.Complete();//这是最后提交事务
                     }
