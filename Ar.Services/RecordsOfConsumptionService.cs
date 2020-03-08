@@ -33,7 +33,7 @@ namespace Ar.Services
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@UserCode", userCode, System.Data.DbType.String);
             IList<RecordsOfConsumption> list = DapperSqlHelper.FindToList<RecordsOfConsumption>(@"select * from [dbo].[RecordsOfConsumption] where UserCode=@UserCode 
-             RechargeTypeCode not in (select RechargeTypeCode from dbo.RechargeType ) ", paras, false);
+            and RechargeTypeCode not in (select RechargeTypeCode from dbo.RechargeType ) ", paras, false);
             return list;
         }
         public bool InsertRecore(string typeCode,string userCode,decimal? recordsMoney,string explain)
