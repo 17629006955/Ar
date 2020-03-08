@@ -90,8 +90,8 @@ namespace Ar.Services
                     decimal? accountPrincipal = 0;
                     if (tempmoney >= 0)
                     {
-                        donationAmount = w.DonationAmount;
-                        accountPrincipal = w.AccountPrincipal;
+                        donationAmount = 0;
+                        accountPrincipal = 0;
                     }else
                     {
                         donationAmount = w.DonationAmount- money * (1-ratio);

@@ -25,7 +25,7 @@ namespace Ar.Services
             IList<Order> list = DapperSqlHelper.FindToList<Order>(@"select a.*,b.ProductCode,b.ProductName,b.Imageurl,b.videourl,
                  case when ISNULL(a.PayTime,'')='' then 0 
 				 WHEN   ISNULL(a.PayTime,'')!='' AND 
-				a.IsWriteOff=1 THEN  1
+				isnull(a.IsWriteOff,0)=1 THEN  1
 				WHEN  ISNULL(a.PayTime,'')!='' AND 
 				ISNULL(a.IsWriteOff,0)=0 THEN  2 end OrderState 
                 from [dbo].[Order] a,[dbo].[ProductInfo] b  where a.UserCode=@userCode  
