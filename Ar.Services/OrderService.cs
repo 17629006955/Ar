@@ -25,9 +25,9 @@ namespace Ar.Services
             IList<Order> list = DapperSqlHelper.FindToList<Order>(@"select a.*,b.ProductCode,b.ProductName,b.Imageurl,b.videourl,
                  case when ISNULL(a.PayTime,'')='' then 0 
 				 WHEN   ISNULL(a.PayTime,'')!='' AND 
-				a.IsWriteOff=1 THEN  '已使用'
+				a.IsWriteOff=1 THEN  1
 				WHEN  ISNULL(a.PayTime,'')!='' AND 
-				ISNULL(a.IsWriteOff,0)=0 THEN  '未使用' end OrderState 
+				ISNULL(a.IsWriteOff,0)=0 THEN  2 end OrderState 
                 from [dbo].[Order] a,[dbo].[ProductInfo] b  where a.UserCode=@userCode  
              and b.ProductCode = a.ProductCode", paras, false);
             return list;
@@ -38,7 +38,7 @@ namespace Ar.Services
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@userCode", userCode, System.Data.DbType.String);
             IList<Order> list = DapperSqlHelper.FindToList<Order>(@"select a.*,b.ProductCode,b.ProductName,b.Imageurl,b.videourl,
-                '已支付' OrderState 
+               1 OrderState 
                 from [dbo].[Order] a,[dbo].[ProductInfo] b  where a.UserCode=@userCode 
              and b.ProductCode = a.ProductCode and isnull(a.PayTime,'')!='' ", paras, false);
             return list;
@@ -49,7 +49,7 @@ namespace Ar.Services
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@userCode", userCode, System.Data.DbType.String);
             IList<Order> list = DapperSqlHelper.FindToList<Order>(@"select a.*,b.ProductCode,b.ProductName,b.Imageurl,b.videourl,
-                '待支付' OrderState 
+                0 OrderState 
                 from [dbo].[Order] a,[dbo].[ProductInfo] b  where a.UserCode=@userCode 
              and b.ProductCode = a.ProductCode and isnull(a.PayTime,'') ='' ", paras, false);
             return list;

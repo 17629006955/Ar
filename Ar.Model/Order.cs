@@ -39,7 +39,7 @@ namespace AR.Model
         private string _wxPrepayId;
         private bool _isWriteOff;
         private string _productName;
-        private string _orderState;
+        private int _orderState;
         private string _imageurl;
         private string _videourl;
 
@@ -131,7 +131,7 @@ namespace AR.Model
             get { return _productName; }
         }
 
-        public string OrderState
+        public int OrderState
         {
             set { _orderState = value; }
             get { return _orderState; }
