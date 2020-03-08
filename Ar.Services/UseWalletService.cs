@@ -94,8 +94,8 @@ namespace Ar.Services
                         accountPrincipal = 0;
                     }else
                     {
-                        donationAmount = w.DonationAmount- money * (1-ratio);
-                        accountPrincipal = w.AccountPrincipal - money * ratio;
+                        donationAmount = w.DonationAmount- money * ratio;
+                        accountPrincipal = w.AccountPrincipal - money * (1 - ratio) ;
                     }
                     DynamicParameters paras = new DynamicParameters();
                     paras.Add("@WalletCode", w.WalletCode, System.Data.DbType.String);
