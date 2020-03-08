@@ -87,10 +87,10 @@ namespace Ar.Services
             order.AppointmentTime = dateTime;
             using (var scope = new TransactionScope())//创建事务
             {
-                if (string.IsNullOrEmpty(orderCode))
+                if (!string.IsNullOrEmpty(orderCode))
                 {
                     var temporder = _orderService.GetOrderByCode(orderCode);
-                    if (order != null && order.UserCode == userCode)
+                    if (temporder != null && order.UserCode == userCode)
                     {
                         order.OrderCode = temporder.OrderCode;
                         order.CreateTime = temporder.CreateTime;

@@ -158,20 +158,20 @@ namespace Ar.API.Controllers
                                 }
                                 else
                                 {
-                                    result.Status = Result.FAILURE;
+                                    result.Status = Result.SYSTEM_ERROR;
                                     result.Msg = "账号余额不足";
                                     result.Resource = null;
                                 }
                             }
                             else if (n == 1)
                             {
-                                result.Status = Result.FAILURE;
+                                result.Status = Result.SYSTEM_ERROR;
                                 result.Msg = "优惠卷不存在";
                                 result.Resource = null;
                             }
                             else if (n == 2)
                             {
-                                result.Status = Result.FAILURE;
+                                result.Status = Result.SYSTEM_ERROR;
                                 result.Msg = "优惠卷已经被使用";
                                 result.Resource = null;
                             }
