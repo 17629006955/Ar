@@ -145,37 +145,48 @@ namespace Ar.API.Controllers
                 {
                     if (param.paytype == 0)
                     {
+                        var isPay = true;
                         if (!string.IsNullOrEmpty(param.couponCode))
                         {
                             var n = _couponService.Exist(param.couponCode);
-                            if (n == 3)
-                            {
-                                if (_useWalletService.ExistMoney(param.userCode, param.money))
-                                {
-                                    var re = _service.PayOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money, param.storeId, param.orderCode,param.couponCode);
-                                    result.Resource = re;
-                                    result.Status = Result.SUCCEED;
-                                }
-                                else
-                                {
-                                    result.Status = Result.SYSTEM_ERROR;
-                                    result.Msg = "账号余额不足";
-                                    result.Resource = null;
-                                }
-                            }
-                            else if (n == 1)
+                            if (n == 1)
                             {
                                 result.Status = Result.SYSTEM_ERROR;
                                 result.Msg = "优惠卷不存在";
                                 result.Resource = null;
+                                isPay = false;
                             }
                             else if (n == 2)
                             {
                                 result.Status = Result.SYSTEM_ERROR;
                                 result.Msg = "优惠卷已经被使用";
                                 result.Resource = null;
+                                isPay = false;
                             }
+                        }
 
+                        if (isPay)
+                        {
+                            if (_useWalletService.ExistMoney(param.userCode, param.money))
+                            {
+                                var re = _service.PayOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money, param.storeId, param.orderCode, param.couponCode);
+                                result.Resource = re;
+                                if (re)
+                                {
+                                    result.Status = Result.SUCCEED;
+                                }
+                                else
+                                {
+                                    result.Status = Result.SYSTEM_ERROR;
+                                    result.Msg = "商品已失效或不存在";
+                                }
+                            }
+                            else
+                            {
+                                result.Status = Result.SYSTEM_ERROR;
+                                result.Msg = "账号余额不足";
+                                result.Resource = null;
+                            }
                         }
                     }
                     else

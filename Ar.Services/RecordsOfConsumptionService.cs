@@ -90,7 +90,7 @@ namespace Ar.Services
                 if (!string.IsNullOrEmpty(orderCode))
                 {
                     var temporder = _orderService.GetOrderByCode(orderCode);
-                    if (temporder != null && order.UserCode == userCode)
+                    if (temporder != null && temporder.UserCode == userCode)
                     {
                         order.OrderCode = temporder.OrderCode;
                         order.CreateTime = temporder.CreateTime;
@@ -111,6 +111,7 @@ namespace Ar.Services
             }
             return true;
         }
+
         public Order WxPayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string wxPrepayId, string orderCode = "", string couponCode = "")
         {
             IProductInfoService _productInfoService = new ProductInfoService();

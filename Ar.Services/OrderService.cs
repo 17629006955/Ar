@@ -74,7 +74,7 @@ namespace Ar.Services
             DynamicParameters paras = new DynamicParameters();
             if (string.IsNullOrEmpty(order.OrderCode))
             {
-                order.OrderCode = GetMaxCode();
+                order.OrderCode = Guid.NewGuid().ToString();
             }
             paras.Add("@OrderCode", order.OrderCode, System.Data.DbType.String);
             paras.Add("@UserCode", order.UserCode, System.Data.DbType.String);
