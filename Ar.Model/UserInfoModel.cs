@@ -18,9 +18,7 @@ namespace Ar.Model
         //未使用的订单数据
         public int orders { get; set; }
    
-       
-
-
+        public  object useWalletInfo { get; set; }
 
     }
 }

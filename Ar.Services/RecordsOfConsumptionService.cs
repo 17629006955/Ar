@@ -32,7 +32,8 @@ namespace Ar.Services
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@UserCode", userCode, System.Data.DbType.String);
-            IList<RecordsOfConsumption> list = DapperSqlHelper.FindToList<RecordsOfConsumption>(@"select * from [dbo].[RecordsOfConsumption] where UserCode=@UserCode", paras, false);
+            IList<RecordsOfConsumption> list = DapperSqlHelper.FindToList<RecordsOfConsumption>(@"select * from [dbo].[RecordsOfConsumption] where UserCode=@UserCode 
+             RechargeTypeCode not in (select RechargeTypeCode from dbo.RechargeType ) ", paras, false);
             return list;
         }
         public bool InsertRecore(string typeCode,string userCode,decimal? recordsMoney,string explain)
@@ -64,13 +65,13 @@ namespace Ar.Services
             return true;
         }
 
-        public bool PayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime,decimal money, string storeId, string couponCode="")
+        public bool PayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string storeId, string orderCode = "", string couponCode = "")
         {
             IProductInfoService _productInfoService = new ProductInfoService();
             DateTime now = DateTime.Now;
-           ICouponService _couponService = new CouponService();
+            ICouponService _couponService = new CouponService();
             IOrderService _orderService = new OrderService();
-            IUserStoreService  _userStoreService = new UserStoreService();
+            IUserStoreService _userStoreService = new UserStoreService();
             IUseWalletService _useWalletService = new UseWalletService();
             var p = _productInfoService.GetProductInfo(productCode);
             //var userSotre=_userStoreService.GetUserStorebyUserCode(userCode);
@@ -86,37 +87,61 @@ namespace Ar.Services
             order.AppointmentTime = dateTime;
             using (var scope = new TransactionScope())//创建事务
             {
-                _orderService.InsertOrder(order);
+                if (string.IsNullOrEmpty(orderCode))
+                {
+                    var temporder = _orderService.GetOrderByCode(orderCode);
+                    if (order != null && order.UserCode == userCode)
+                    {
+                        order.OrderCode = temporder.OrderCode;
+                        order.CreateTime = temporder.CreateTime;
+                        _orderService.UpdateOrder(order);
+                    }
+                    else
+                    {
+                        _orderService.InsertOrder(order);
+                    }
+                }
+                else
+                {
+                    _orderService.InsertOrder(order);
+                }
                 _couponService.UsedUpdate(couponCode, userCode);
                 _useWalletService.UpdateData(userCode, money);
                 scope.Complete();//这是最后提交事务
             }
             return true;
         }
-        public Order WxPayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string wxPrepayId,string couponCode = "")
+        public Order WxPayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string wxPrepayId, string orderCode = "", string couponCode = "")
         {
             IProductInfoService _productInfoService = new ProductInfoService();
             DateTime now = DateTime.Now;
-            
+
             IOrderService _orderService = new OrderService();
             IUserStoreService _userStoreService = new UserStoreService();
-     
+
             var p = _productInfoService.GetProductInfo(productCode);
             var userSotre = _userStoreService.GetUserStorebyUserCode(userCode);
+            var tempOrder = _orderService.GetOrderByCode(orderCode);
             Order order = new Order();
+            if (tempOrder != null && tempOrder.UserCode == userCode)
+            {
+                order.OrderCode = tempOrder.OrderCode;
+                order.CreateTime = tempOrder.CreateTime;
+            }
+            else
+            {
+                order.CreateTime = now;
+            }
             order.Money = p.ExperiencePrice;
             order.Number = 1;
             order.PayTime = now;
             order.StoreCode = userSotre.UserStoreCode;
             order.UserCode = userCode;
             order.ProductCode = productCode;
-            order.CreateTime = now;
             order.ExperienceVoucherCode = couponCode;
             order.AppointmentTime = dateTime;
             order.WxPrepayId = wxPrepayId;
             _orderService.InsertOrder(order);
-             
-             
             return order;
         }
       
