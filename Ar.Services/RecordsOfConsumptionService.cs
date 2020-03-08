@@ -40,7 +40,7 @@ namespace Ar.Services
             var tempRecord = DapperSqlHelper.FindOne<RecordsOfConsumption>("SELECT MAX(RecordsOfConsumptionCode) RecordsOfConsumptionCode FROM [dbo].[RecordsOfConsumption]", null, false);
             if (tempRecord != null && !string.IsNullOrEmpty(tempRecord.RecordsOfConsumptionCode))
             {
-                tempRecord.RecordsOfConsumptionCode = tempRecord.RecordsOfConsumptionCode;
+                tempRecord.RecordsOfConsumptionCode = Guid.NewGuid().ToString();
             }
             else
             {

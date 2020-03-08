@@ -115,13 +115,11 @@ namespace Ar.Services
         public bool InsertUseWallet(UseWallet wallet)
         {
             string sql = "";
-            var userInfo=GetUseWallet(wallet.UserCode);
-            if (userInfo.Count == 0)
-            {
+          
                 var tempWallet = DapperSqlHelper.FindOne<UseWallet>("SELECT MAX(WalletCode) WalletCode,MAX(Sort) Sort FROM [dbo].[UseWallet]", null, false);
                 if (tempWallet != null)
                 {
-                    wallet.WalletCode = tempWallet.WalletCode;
+                    //wallet.WalletCode = Guid.NewGuid().ToString();
                     wallet.Sort = tempWallet.Sort + 1;
                 }
                 else
@@ -140,12 +138,7 @@ namespace Ar.Services
                       1, 
                       @Sort)";
 
-            }
-            else
-            {
-                sql = @"update [dbo].[UseWallet] set AccountPrincipal=@AccountPrincipal,DonationAmount=@DonationAmount
-                 where WalletCode=@WalletCode";
-            }
+          
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@WalletCode", wallet.WalletCode, System.Data.DbType.String);
             paras.Add("@UserCode", wallet.UserCode, System.Data.DbType.String);
