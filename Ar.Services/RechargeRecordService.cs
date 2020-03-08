@@ -25,11 +25,11 @@ namespace Ar.Services
             IList<RechargeRecord> list = DapperSqlHelper.FindToList<RechargeRecord>(@"select * from [dbo].[RechargeRecord]", null, false);
             return list;
         }
-        public IList<RechargeType> GetRechargeRecordListByUserCode(string userCode)
+        public IList<RechargeTypeshow> GetRechargeRecordListByUserCode(string userCode)
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@userCode", userCode, System.Data.DbType.String);
-            IList<RechargeType> list = DapperSqlHelper.FindToList<RechargeType>(@"select b.RechargeTypeCode,b.RechargeTypeName,b.Status,b.Money,b.DonationAmount from [dbo].[RecordsOfConsumption] a  ,[dbo].[RechargeType] b
+            IList<RechargeTypeshow> list = DapperSqlHelper.FindToList<RechargeTypeshow>(@"select b.RechargeTypeCode,b.RechargeTypeName,b.Status,b.Money,b.DonationAmount,a.CreateTime from [dbo].[RecordsOfConsumption] a  ,[dbo].[RechargeType] b
               WHERE a.RechargeTypeCode=b.RechargeTypeCode
               AND b.Status=1 and a.UserCode=@userCode", paras, false);
             return list;
@@ -45,7 +45,7 @@ namespace Ar.Services
             var type=s.GetRechargeTypeByCode(typeCode);
            var donationAmount=type.DonationAmount;
             var money = type.Money;
-            var ratio = donationAmount / money;
+            var ratio = donationAmount / (money+ donationAmount);
             var explain = "充值类型" + type.RechargeTypeName + ",本金：" + money + ".赠送：+" + donationAmount;
             //RechargeRecord record = new RechargeRecord()
             //{
@@ -72,7 +72,7 @@ namespace Ar.Services
                 //钱包
                 us.InsertUseWallet(wallet);
                 //消费记录
-                cs.InsertRecore(typeCode, userCode, decimal.Parse(money.ToString()), explain);
+                cs.InsertRecore(typeCode, userCode, decimal.Parse(money.ToString()), explain,null, null);
                 scope.Complete();
             }
             //充值

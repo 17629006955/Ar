@@ -76,8 +76,13 @@ namespace Ar.Services
         }
         public bool UpdateData(string userCode, decimal money)
         {
+            IRecordsOfConsumptionService _recordsOfConsumption = new RecordsOfConsumptionService();
             decimal total = 0;
+            decimal? kouchumoney = 0m;
             IList<UseWallet> list = GetUseWallet(userCode);
+            list= list.OrderBy(t => t.Sort).ToList();
+            decimal? recordsdonationAmount = 0m;
+            decimal? recordsaccountPrincipal = 0m;
             foreach (var w in list)
             {
                 if (w.AccountPrincipal > 0)
@@ -90,12 +95,18 @@ namespace Ar.Services
                     decimal? accountPrincipal = 0;
                     if (tempmoney >= 0)
                     {
+                        recordsdonationAmount = recordsdonationAmount + w.AccountPrincipal;
+                        recordsaccountPrincipal = recordsaccountPrincipal + w.DonationAmount;
                         donationAmount = 0;
                         accountPrincipal = 0;
-                    }else
+                        kouchumoney = recordsdonationAmount + recordsaccountPrincipal;
+                    }
+                    else
                     {
-                        donationAmount = w.DonationAmount- money * ratio;
-                        accountPrincipal = w.AccountPrincipal - money * (1 - ratio) ;
+                        donationAmount = w.DonationAmount-((money- kouchumoney) -((money - kouchumoney) * (1 - ratio)));
+                        accountPrincipal = w.AccountPrincipal -(money- kouchumoney) * (1 - ratio) ;
+                        recordsdonationAmount= recordsdonationAmount+ ((money - kouchumoney) - ((money - kouchumoney) * (1 - ratio)));
+                        recordsaccountPrincipal = recordsaccountPrincipal + (money - kouchumoney) * (1 - ratio);
                     }
                     DynamicParameters paras = new DynamicParameters();
                     paras.Add("@WalletCode", w.WalletCode, System.Data.DbType.String);
@@ -106,21 +117,31 @@ namespace Ar.Services
                 }
                 if (total >= money)
                 {
+                    _recordsOfConsumption.InsertRecore("0", userCode, money, "", recordsdonationAmount, recordsaccountPrincipal, false);
                     return true;
                 }
             }
+          
             return true;
         }
 
         public bool InsertUseWallet(UseWallet wallet)
         {
             string sql = "";
-          
-                var tempWallet = DapperSqlHelper.FindOne<UseWallet>("SELECT MAX(WalletCode) WalletCode,MAX(Sort) Sort FROM [dbo].[UseWallet]", null, false);
+            DynamicParameters parasuser = new DynamicParameters();
+            parasuser.Add("@userCode", wallet.UserCode, System.Data.DbType.String);
+            var tempWallet = DapperSqlHelper.FindOne<UseWallet>("SELECT MAX(WalletCode) WalletCode,MAX(Sort) Sort FROM [dbo].[UseWallet]where UserCode=@userCode ", parasuser, false);
                 if (tempWallet != null)
                 {
-                    //wallet.WalletCode = Guid.NewGuid().ToString();
+                //wallet.WalletCode = Guid.NewGuid().ToString();
+                if (tempWallet.Sort == null)
+                {
+                    wallet.Sort = 1;
+                }
+                else
+                {
                     wallet.Sort = tempWallet.Sort + 1;
+                }
                 }
                 else
                 {
@@ -145,7 +166,7 @@ namespace Ar.Services
             paras.Add("@AccountPrincipal", wallet.AccountPrincipal, System.Data.DbType.String);
             paras.Add("@DonationAmount", wallet.DonationAmount, System.Data.DbType.String);
             paras.Add("@Ratio", wallet.Ratio, System.Data.DbType.String);
-            paras.Add("@Sort", wallet.Sort, System.Data.DbType.String);
+            paras.Add("@Sort", wallet.Sort, System.Data.DbType.Int32);
             int i = DapperSqlHelper.ExcuteNonQuery<UseWallet>(sql, paras, false);
             return true;
         }

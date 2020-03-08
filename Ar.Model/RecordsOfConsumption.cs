@@ -34,6 +34,8 @@ namespace AR.Model
 		private string _explain;
 		private DateTime? _createtime;
         private bool _isRecharging;
+        private decimal? _RecordsDonationAmountMoney;
+        private decimal? _RecordsAccountPrincipalMoney;
 
         public bool IsRecharging
         {
@@ -95,8 +97,27 @@ namespace AR.Model
 			set{ _createtime=value;}
 			get{return _createtime;}
 		}
-		#endregion Model
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal? RecordsDonationAmountMoney
+        {
 
-	}
+            set { _RecordsDonationAmountMoney = value; }
+            get { return _RecordsDonationAmountMoney; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal? RecordsAccountPrincipalMoney
+        {
+
+            set { _RecordsAccountPrincipalMoney = value; }
+            get { return _RecordsAccountPrincipalMoney; }
+        }
+        #endregion Model
+
+    }
+    
 }
 

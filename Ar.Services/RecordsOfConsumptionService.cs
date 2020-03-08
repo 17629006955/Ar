@@ -36,7 +36,7 @@ namespace Ar.Services
             and RechargeTypeCode not in (select RechargeTypeCode from dbo.RechargeType ) ", paras, false);
             return list;
         }
-        public bool InsertRecore(string typeCode,string userCode,decimal? recordsMoney,string explain,bool IsRecharging=true)
+        public bool InsertRecore(string typeCode,string userCode,decimal? recordsMoney,string explain, decimal? recordsdonationAmount, decimal? recordsaccountPrincipal,bool IsRecharging=true)
         {
             var tempRecord = DapperSqlHelper.FindOne<RecordsOfConsumption>("SELECT MAX(RecordsOfConsumptionCode) RecordsOfConsumptionCode FROM [dbo].[RecordsOfConsumption]", null, false);
             if (tempRecord != null && !string.IsNullOrEmpty(tempRecord.RecordsOfConsumptionCode))
@@ -56,15 +56,23 @@ namespace Ar.Services
             paras.Add("@Explain", explain, System.Data.DbType.String);
             paras.Add("@IsRecharging", IsRecharging, System.Data.DbType.Int16);
             paras.Add("@RecordsOfConsumptionCode", tempRecord.RecordsOfConsumptionCode, System.Data.DbType.String);
+            paras.Add("@recordsdonationAmount", recordsdonationAmount, System.Data.DbType.Decimal);
+            paras.Add("@recordsaccountPrincipal", recordsaccountPrincipal, System.Data.DbType.Decimal);
             var n = DapperSqlHelper.ExcuteNonQuery<RecordsOfConsumption>(@"INSERT INTO [dbo].[RecordsOfConsumption]
-           ([RecordsOfConsumptionCode],[UserCode] ,[RechargeTypeCode]  ,[RecordsMoney],Explain,CreateTime,IsRecharging) 
+           ([RecordsOfConsumptionCode],[UserCode] ,[RechargeTypeCode]  ,[RecordsMoney],Explain,CreateTime,IsRecharging,RecordsDonationAmountMoney,RecordsAccountPrincipalMoney) 
             VALUES  ( @RecordsOfConsumptionCode, 
                       @UserCode, 
                       @RechargeTypeCode, 
                       @RecordsMoney, 
                       @Explain, 
-                      getdate(),@IsRecharging)", paras, false);
-            return true;
+                      getdate(),@IsRecharging,@recordsdonationAmount,@recordsaccountPrincipal)", paras, false);
+            if (n > 0)
+            {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
 
         public string  PayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string storeId, string orderCode = "", string couponCode = "")
@@ -111,7 +119,7 @@ namespace Ar.Services
                 {
                     msg=_orderService.InsertOrder(order);
                 }
-                 InsertRecore("0", userCode,money, "",false);
+                
                 _couponService.UsedUpdate(couponCode, userCode);
                 _useWalletService.UpdateData(userCode, money);
                 scope.Complete();//这是最后提交事务

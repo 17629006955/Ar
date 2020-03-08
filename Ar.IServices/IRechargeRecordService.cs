@@ -26,7 +26,7 @@ namespace Ar.IServices
         /// 获取充值记录根据用户
         /// </summary>
         /// <returns></returns>
-        IList<RechargeType> GetRechargeRecordListByUserCode(string userCode);
+        IList<RechargeTypeshow> GetRechargeRecordListByUserCode(string userCode);
 
         /// <summary>
         ///充值
