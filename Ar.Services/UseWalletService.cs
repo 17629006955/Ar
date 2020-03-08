@@ -85,16 +85,16 @@ namespace Ar.Services
                     var ratio = decimal.Parse(w.Ratio);
                     var tempTotal = decimal.Parse((w.AccountPrincipal + w.DonationAmount).ToString());
                     total = total + tempTotal;
-                    money = money - total;
+                   var tempmoney = money - total;
                     decimal? donationAmount = 0;
                     decimal? accountPrincipal = 0;
-                    if (money >= 0)
+                    if (tempmoney >= 0)
                     {
                         donationAmount = w.DonationAmount;
                         accountPrincipal = w.AccountPrincipal;
                     }else
                     {
-                        donationAmount = w.DonationAmount- money* (1-ratio);
+                        donationAmount = w.DonationAmount- money * (1-ratio);
                         accountPrincipal = w.AccountPrincipal - money * ratio;
                     }
                     DynamicParameters paras = new DynamicParameters();

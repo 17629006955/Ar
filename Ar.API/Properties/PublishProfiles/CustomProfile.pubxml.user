@@ -25,13 +25,13 @@
       <publishTime>03/08/2020 11:35:36</publishTime>
     </File>
     <File Include="bin/App_global.asax.compiled">
-      <publishTime>03/08/2020 18:04:13</publishTime>
+      <publishTime>03/08/2020 18:52:41</publishTime>
     </File>
     <File Include="bin/App_global.asax.dll">
-      <publishTime>03/08/2020 18:04:12</publishTime>
+      <publishTime>03/08/2020 18:52:41</publishTime>
     </File>
     <File Include="bin/Ar.API.dll">
-      <publishTime>03/08/2020 18:04:05</publishTime>
+      <publishTime>03/08/2020 18:52:33</publishTime>
     </File>
     <File Include="bin/Ar.API.pdb">
       <publishTime>03/08/2020 11:17:34</publishTime>
@@ -43,13 +43,13 @@
       <publishTime>03/08/2020 10:33:54</publishTime>
     </File>
     <File Include="bin/Ar.IServices.dll">
-      <publishTime>03/08/2020 17:38:56</publishTime>
+      <publishTime>03/08/2020 18:52:28</publishTime>
     </File>
     <File Include="bin/Ar.IServices.pdb">
       <publishTime>03/08/2020 10:33:55</publishTime>
     </File>
     <File Include="bin/Ar.Model.dll">
-      <publishTime>03/08/2020 17:38:56</publishTime>
+      <publishTime>03/08/2020 18:52:28</publishTime>
     </File>
     <File Include="bin/Ar.Model.pdb">
       <publishTime>03/08/2020 10:33:55</publishTime>
@@ -61,7 +61,7 @@
       <publishTime>03/04/2020 22:34:52</publishTime>
     </File>
     <File Include="bin/Ar.Services.dll">
-      <publishTime>03/08/2020 17:38:56</publishTime>
+      <publishTime>03/08/2020 18:52:28</publishTime>
     </File>
     <File Include="bin/Ar.Services.pdb">
       <publishTime>03/08/2020 11:17:30</publishTime>
@@ -301,7 +301,7 @@
       <publishTime>03/08/2020 11:35:36</publishTime>
     </File>
     <File Include="PrecompiledApp.config">
-      <publishTime>03/08/2020 18:04:06</publishTime>
+      <publishTime>03/08/2020 18:52:34</publishTime>
     </File>
     <File Include="Web.config">
       <publishTime>03/08/2020 16:08:12</publishTime>

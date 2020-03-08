@@ -33,9 +33,9 @@ namespace AR.Model
         private decimal? _recordsmoney;
 		private string _explain;
 		private DateTime? _createtime;
-        private int _isRecharging;
+        private bool _isRecharging;
 
-        public int IsRecharging
+        public bool IsRecharging
         {
             set { _isRecharging = value; }
             get { return _isRecharging; }
