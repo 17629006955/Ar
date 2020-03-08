@@ -14,7 +14,7 @@ namespace Ar.Services
 
         public IList<ProductInfo> GetProductInfoList()
         {
-            IList<ProductInfo> list = DapperSqlHelper.FindToList<ProductInfo>(@"SELECT distinc a.ListTypeCode,a.ListTypeName,b.*
+            IList<ProductInfo> list = DapperSqlHelper.FindToList<ProductInfo>(@"SELECT DISTINCT a.ListTypeCode,a.ListTypeName,b.*
               FROM [dbo].[ListType] a, [dbo].[ProductInfo] b,[dbo].[ProductList] c
               WHERE a.ListTypeCode = c.ListCode AND c.ProductCode = b.ProductCode and isnull(b.VersionEndTime, '9999-09-09') > getdate() AND a.Status = 1", null, false);
             foreach (var p in list)
