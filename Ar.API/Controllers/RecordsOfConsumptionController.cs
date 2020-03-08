@@ -139,10 +139,19 @@ namespace Ar.API.Controllers
             ICouponService _couponService = new CouponService();
             IUseWalletService _useWalletService = new UseWalletService();
             IStoreService _stoeservice = new StoreService();
+            IProductInfoService _productInfoService = new ProductInfoService();
             try
             {
                 if (UserAuthorization)
                 {
+                    var isExistProduct = _productInfoService.IsExistProduct(param.productCode);
+                    if (!isExistProduct)
+                    {
+                        result.Status = Result.SYSTEM_ERROR;
+                        result.Msg = "商品已失效或不存在";
+                        result.Resource = null;
+                    }
+
                     if (param.paytype == 0)
                     {
                         var isPay = true;
@@ -171,15 +180,7 @@ namespace Ar.API.Controllers
                             {
                                 var re = _service.PayOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money, param.storeId, param.orderCode, param.couponCode);
                                 result.Resource = re;
-                                if (re)
-                                {
-                                    result.Status = Result.SUCCEED;
-                                }
-                                else
-                                {
-                                    result.Status = Result.SYSTEM_ERROR;
-                                    result.Msg = "商品已失效或不存在";
-                                }
+                                result.Status = Result.SUCCEED;
                             }
                             else
                             {

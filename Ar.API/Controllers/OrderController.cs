@@ -31,7 +31,7 @@ namespace Ar.API.Controllers
             IOrderService _service = new OrderService();
             try
             {
-                if (UserAuthorization)
+                if (1==1)
                 {
                     var list = _service.GetOrderList(userCode);
                     foreach (var item in list)

@@ -84,6 +84,8 @@ namespace Ar.API.Controllers
                     userInfo.customerService = customerService;
                     var orders = _OrderService.GetOrderList(usercode);
                     userInfo.useWalletInfo = _useWalletService.GetUseWalletInfoByUserCode(usercode);
+                    var conponList=_CouponService.GetUserCoupon(usercode);
+                    userInfo.useCouponCount = conponList.Any()?conponList.Count:0;
                     if (orders != null)
                     {
                         userInfo.orders = orders.Count;

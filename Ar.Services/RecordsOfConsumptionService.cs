@@ -36,7 +36,7 @@ namespace Ar.Services
             and RechargeTypeCode not in (select RechargeTypeCode from dbo.RechargeType ) ", paras, false);
             return list;
         }
-        public bool InsertRecore(string typeCode,string userCode,decimal? recordsMoney,string explain)
+        public bool InsertRecore(string typeCode,string userCode,decimal? recordsMoney,string explain,bool IsRecharging=true)
         {
             var tempRecord = DapperSqlHelper.FindOne<RecordsOfConsumption>("SELECT MAX(RecordsOfConsumptionCode) RecordsOfConsumptionCode FROM [dbo].[RecordsOfConsumption]", null, false);
             if (tempRecord != null && !string.IsNullOrEmpty(tempRecord.RecordsOfConsumptionCode))
@@ -49,29 +49,33 @@ namespace Ar.Services
 
             }
             DynamicParameters paras = new DynamicParameters();
+            paras.Add("@IsRecharging", IsRecharging, System.Data.DbType.String);
             paras.Add("@UserCode", userCode, System.Data.DbType.String);
             paras.Add("@RechargeTypeCode", typeCode, System.Data.DbType.String);
             paras.Add("@RecordsMoney", recordsMoney, System.Data.DbType.Decimal);
             paras.Add("@Explain", explain, System.Data.DbType.String);
+            paras.Add("@IsRecharging", IsRecharging, System.Data.DbType.Int16);
             paras.Add("@RecordsOfConsumptionCode", tempRecord.RecordsOfConsumptionCode, System.Data.DbType.String);
             var n = DapperSqlHelper.ExcuteNonQuery<RecordsOfConsumption>(@"INSERT INTO [dbo].[RecordsOfConsumption]
-           ([RecordsOfConsumptionCode],[UserCode] ,[RechargeTypeCode]  ,[RecordsMoney],Explain,CreateTime) 
+           ([RecordsOfConsumptionCode],[UserCode] ,[RechargeTypeCode]  ,[RecordsMoney],Explain,CreateTime,IsRecharging) 
             VALUES  ( @RecordsOfConsumptionCode, 
                       @UserCode, 
                       @RechargeTypeCode, 
                       @RecordsMoney, 
                       @Explain, 
-                      getdate())", paras, false);
+                      getdate(),@IsRecharging)", paras, false);
             return true;
         }
 
-        public bool PayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string storeId, string orderCode = "", string couponCode = "")
+        public string  PayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string storeId, string orderCode = "", string couponCode = "")
         {
+            string msg = "";
             IProductInfoService _productInfoService = new ProductInfoService();
             DateTime now = DateTime.Now;
             ICouponService _couponService = new CouponService();
             IOrderService _orderService = new OrderService();
             IUserStoreService _userStoreService = new UserStoreService();
+            IRecordsOfConsumptionService _recordsOfConsumption = new RecordsOfConsumptionService();
             IUseWalletService _useWalletService = new UseWalletService();
             var p = _productInfoService.GetProductInfo(productCode);
             //var userSotre=_userStoreService.GetUserStorebyUserCode(userCode);
@@ -85,6 +89,7 @@ namespace Ar.Services
             order.CreateTime = now;
             order.ExperienceVoucherCode = couponCode;
             order.AppointmentTime = dateTime;
+
             using (var scope = new TransactionScope())//创建事务
             {
                 if (!string.IsNullOrEmpty(orderCode))
@@ -95,21 +100,23 @@ namespace Ar.Services
                         order.OrderCode = temporder.OrderCode;
                         order.CreateTime = temporder.CreateTime;
                         _orderService.UpdateOrder(order);
+                        msg = temporder.OrderCode;
                     }
                     else
                     {
-                        _orderService.InsertOrder(order);
+                        msg = _orderService.InsertOrder(order);
                     }
                 }
                 else
                 {
-                    _orderService.InsertOrder(order);
+                    msg=_orderService.InsertOrder(order);
                 }
+                 InsertRecore("0", userCode,money, "",false);
                 _couponService.UsedUpdate(couponCode, userCode);
                 _useWalletService.UpdateData(userCode, money);
                 scope.Complete();//这是最后提交事务
             }
-            return true;
+            return msg;
         }
 
         public Order WxPayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string wxPrepayId, string orderCode = "", string couponCode = "")

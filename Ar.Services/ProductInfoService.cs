@@ -43,7 +43,15 @@ namespace Ar.Services
             return list.FirstOrDefault();
         }
 
-        
+        public bool  IsExistProduct(string code)
+        {
+            DynamicParameters paras = new DynamicParameters();
+            paras.Add("@productCode", code, System.Data.DbType.String);
+            ProductInfo productInfo = DapperSqlHelper.FindOne<ProductInfo>("select * from [dbo].[ProductInfo] where ProductCode=@productCode and isnull(VersionEndTime,'9999-09-09')>getdate()", paras, false);
+            return productInfo!=null;
+        }
+
+
         public ProductInfo GetProductInfo(string code)
         {
             DynamicParameters paras = new DynamicParameters();
