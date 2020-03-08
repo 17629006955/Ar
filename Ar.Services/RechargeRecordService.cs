@@ -59,12 +59,13 @@ namespace Ar.Services
             UseWallet wallet = new UseWallet()
             {
                 WalletCode = Guid.NewGuid().ToString(),
-                UserCode= userCode,
+                UserCode = userCode,
                 AccountPrincipal = money,
                 DonationAmount = donationAmount,
                 Ratio = decimal.Round(decimal.Parse(ratio.ToString()), 2).ToString(),
                 Status = true,
-                Sort = 1
+                Sort = 1,
+                IsMissionGiveaway = false
             };
             using (var scope = new TransactionScope())//创建事务
             {

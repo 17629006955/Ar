@@ -34,10 +34,11 @@ namespace AR.Model
         private string _ratio;
 		private bool _status;
 		private int? _sort;
-		/// <summary>
-		/// 
-		/// </summary>
-		public string WalletCode
+        private bool _IsMissionGiveaway;
+        /// <summary>
+        /// 
+        /// </summary>
+        public string WalletCode
 		{
 			set{ _walletcode=value;}
 			get{return _walletcode;}
@@ -98,8 +99,16 @@ namespace AR.Model
 			set{ _sort=value;}
 			get{return _sort;}
 		}
-		#endregion Model
+        /// <summary>
+		/// 
+		/// </summary>
+		public bool IsMissionGiveaway
+        {
+            set { _IsMissionGiveaway = value; }
+            get { return _IsMissionGiveaway; }
+        }
+        #endregion Model
 
-	}
+    }
 }
 

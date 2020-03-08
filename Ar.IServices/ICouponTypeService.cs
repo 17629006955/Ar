@@ -7,6 +7,7 @@ namespace Ar.IServices
     {
         CouponType GetCouponTypeByCode(string code);
         IList<CouponType> GetCouponTypeList();
+        CouponType GetCouponTypeByIsGivedType();
 
     }
 }

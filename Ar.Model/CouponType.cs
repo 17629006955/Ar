@@ -29,10 +29,11 @@ namespace AR.Model
 		private string _coupontypecode;
 		private string _coupontypename;
 		private bool _status;
-		/// <summary>
-		/// 
-		/// </summary>
-		public string CouponTypeCode
+        private bool _isGivedType;
+        /// <summary>
+        /// 
+        /// </summary>
+        public string CouponTypeCode
 		{
 			set{ _coupontypecode=value;}
 			get{return _coupontypecode;}
@@ -53,8 +54,13 @@ namespace AR.Model
 			set{ _status=value;}
 			get{return _status;}
 		}
-		#endregion Model
+        public bool IsGivedType
+        {
+            set { _isGivedType = value; }
+            get { return _isGivedType; }
+        }
+        #endregion Model
 
-	}
+    }
 }
 

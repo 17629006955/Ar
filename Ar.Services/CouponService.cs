@@ -24,12 +24,32 @@ namespace Ar.Services
                 takeEffectList= takeEffectList
             };
         }
+        public bool checkCoupon(string userCode)
+        {
+            DynamicParameters paras = new DynamicParameters();
+            paras.Add("@userCode", userCode, System.Data.DbType.String);
+            IList<CouponShow> lapseList = DapperSqlHelper.FindToList<CouponShow>("select *  from [dbo].[Coupon] a where a.UserCode=@userCode and IsGiveed=1", paras, false);
+
+            if (lapseList.Count >= 2)
+            {
+                return false;
+            } else
+            {
+                return true;
+            }
+        }
 
         public Coupon GetCouponByCode(string code)
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@CouponUseCode", code, System.Data.DbType.String);
             Coupon record = DapperSqlHelper.FindOne<Coupon>("select a.*,b.CouponTypeName from [dbo].[Coupon] a,[dbo].[CouponType] b  where a.CouponUseCode=@CouponUseCode  and a.CouponTypeCode=b.CouponTypeCode", paras, false);
+            return record;
+        }
+        public Coupon GetgivedCoupon()
+        {
+            DynamicParameters paras = new DynamicParameters();
+            Coupon record = DapperSqlHelper.FindOne<Coupon>("select a.*,b.CouponTypeName from [dbo].[Coupon] a,[dbo].[CouponType] b  where  IsGiveed=true and a.UserCode=null", paras, false);
             return record;
         }
 
@@ -70,7 +90,8 @@ namespace Ar.Services
             Insert(coupon);
             return true;
         }
-
+        
+       
         public  bool InsertCouponByUser(string couponCode, string userCode)
         {
             DynamicParameters paras = new DynamicParameters();
@@ -89,6 +110,7 @@ namespace Ar.Services
             }
             return true;
         }
+       
         public bool Insert(Coupon coupon)
         {
             DynamicParameters paras = new DynamicParameters();
@@ -99,13 +121,14 @@ namespace Ar.Services
             paras.Add("@CouponCode", coupon.CouponCode, System.Data.DbType.String);
             paras.Add("@UserCode", coupon.UserCode, System.Data.DbType.String);
             paras.Add("@CouponTypeCode", coupon.CouponTypeCode, System.Data.DbType.String);
+            paras.Add("@IsGiveed", coupon.IsGiveed, System.Data.DbType.String);
             paras.Add("@StratTime", coupon.StratTime, System.Data.DbType.String);
             paras.Add("@VersionEndTime", coupon.VersionEndTime, System.Data.DbType.String);
             paras.Add("@CouponUseCode", coupon.CouponUseCode, System.Data.DbType.String);
             string sql=(@"insert into [dbo].[Coupon] (CouponCode,UserCode,CouponTypeCode,CreateTime,
                     StratTime,VersionEndTime,IsUsed,IsGiveed,UseTime,GiveedTime,CouponUseCode)
                 values(@CouponCode,@UserCode,@CouponTypeCode,getdate(),@StratTime,@VersionEndTime,
-                 0,0,null,null,@CouponUseCode)");
+                 0,@IsGiveed, null,getdate(),@CouponUseCode)");
             DapperSqlHelper.ExcuteNonQuery<Coupon>(sql, paras, false);
             return true;
         }

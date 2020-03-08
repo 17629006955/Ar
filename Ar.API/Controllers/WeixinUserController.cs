@@ -157,7 +157,45 @@ namespace Ar.API.Controllers
           
 
         }
+        [HttpGet]
+        [HttpPost]
+        //http://localhost:10010//api/WeixinUser/Wxconfig?storeCode=4&url=https://aidezahuopu.com/ar/a
+        public IHttpActionResult Wxconfig(string storeCode,string url)
+        {
+            SimpleResult result = new SimpleResult();
+            var store = storeService.GetStore(storeCode);
+            if (store != null)
+            {
+                Common.Appid = store.appid?.Trim();
+                LogHelper.WriteLog("store.appid " + store.appid);
+                Common.Secret = store.secret?.Trim();
+                LogHelper.WriteLog("store.secret " + store.secret);
+                Common.Mchid = store.mchid?.Trim();
+                LogHelper.WriteLog("store.mchid " + store.mchid);
+                LogHelper.WriteLog("微信进来");
+                if (Common.GetWxConfig(url) != null)
+                {
+                    result.Status = Result.SUCCEED;
+                    result.Resource = Common.GetWxConfig(url);
+                }
+                else
+                {
+                    result.Status = Result.USER_AUTH_ERROR;
+                    result.Resource = "获取配置失败重新获取";
+                }
 
+            }
+            else
+            {
+                result.Status = Result.SYSTEM_ERROR;
+                result.Resource = "店铺没有配置";
+            }
+
+
+            return Json(result);
+
+        }
+        
 
 
         //http://localhost:10010//api/WeixinUser/Getaccess_token?authorizationCode=18235139350&membershipCardStore=3

@@ -86,8 +86,10 @@
     <Compile Include="WxAccessToken.cs" />
     <Compile Include="WxCertification.cs" />
     <Compile Include="WxCode.cs" />
+    <Compile Include="WxConfig.cs" />
     <Compile Include="WxOrder.cs" />
     <Compile Include="Wxprepay.cs" />
+    <Compile Include="Wxticket.cs" />
     <Compile Include="WxUserInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -13,6 +13,8 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Script.Serialization;
@@ -113,6 +115,88 @@ namespace Ar.API.Controllers
             var wxAccessToken = jsonSerialize.Deserialize<WxAccessToken>(content);
             return wxAccessToken;
         }
+        public static Wxticket wxticket(string access_token)
+        {
+            var url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token="+ access_token + "&type=jsapi";
+            HttpWebResponse response = HttpWebResponseUtility.CreateGetHttpResponse(url, 60000, null, null);
+            Stream responseStream = response.GetResponseStream();
+            StreamReader reader = new StreamReader(responseStream);
+            var content = reader.ReadToEnd();
+            JavaScriptSerializer jsonSerialize = new JavaScriptSerializer();
+
+            var Wxticket = jsonSerialize.Deserialize<Wxticket>(content);
+            return Wxticket;
+        }
+        public static WxConfig GetWxConfig(string url)
+        {
+            WxConfig wxConfig = new WxConfig();
+            var accessToken = wxAccessToken();
+            if (accessToken != null)
+            {
+                if (!string.IsNullOrEmpty(accessToken.access_token))
+                {
+                    var wt = wxticket(accessToken.access_token);
+                    if (!string.IsNullOrEmpty(wt?.ticket))
+                    {
+                        url = url.Split('#')[0];
+                        var jsapi_ticket = wt?.ticket;
+                        wxConfig.appId = Appid;
+                        wxConfig.debug = true;
+                        wxConfig.nonceStr = WxPayApi.GenerateNonceStr();
+                        wxConfig.timestamp = WxPayApi.GenerateTimeStamp();
+                        if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["jsApiList"].ToString()))
+                        {
+                            var st = ConfigurationManager.AppSettings["jsApiList"].ToString().Split(',');
+                            foreach (var item in st)
+                            {
+                                wxConfig.jsApiList.Add(item);
+                            }
+
+                        }
+
+                        wxConfig.signature = signature(jsapi_ticket, wxConfig.nonceStr, wxConfig.timestamp, url);
+                    }
+                }
+                else
+
+                {
+                    return null;
+                }
+
+            }
+            return wxConfig;
+        }
+        public static string signature(string jsapi_ticket, string noncestr, string timestamp, string url)
+        {
+            var string1= "jsapi_ticket ="+ jsapi_ticket + "&noncestr="+ noncestr + "&timestamp"+ timestamp + "&url=" + url;
+            return SHA1(string1, Encoding.UTF8);
+        }
+        
+        /// <summary>
+        /// SHA1 加密，返回大写字符串
+        /// </summary>
+        /// <param name="content">需要加密字符串</param>
+        /// <param name="encode">指定加密编码</param>
+        /// <returns>返回40位大写字符串</returns>
+        public static string SHA1(string content, Encoding encode)
+        {
+            try
+            {
+                SHA1 sha1 = new SHA1CryptoServiceProvider();
+                byte[] bytes_in = encode.GetBytes(content);
+                byte[] bytes_out = sha1.ComputeHash(bytes_in);
+                sha1.Dispose();
+                string result = BitConverter.ToString(bytes_out);
+                result = result.Replace("-", "");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("SHA1加密出错：" + ex.Message);
+            }
+        }
+
+
         public static string wxJsApiParam { get; set; } //H5调起JS API参数
         public static Wxprepay wxPayOrderSomething(string openid,string total_fee,string couponType,string stoeName)
         {

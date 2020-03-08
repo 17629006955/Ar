@@ -13,6 +13,7 @@ using System.Web.Http;
 using System.Web.Script.Serialization;
 using Ar.IServices;
 using Ar.Services;
+using AR.Model;
 
 namespace Ar.API.Controllers
 {
@@ -156,25 +157,82 @@ namespace Ar.API.Controllers
             return Json(result);
 
         }
-
         /// <summary>
-        /// 获取优惠券
+        /// 生成随机字母与数字
+        /// </summary>
+        /// <param name="Length">生成长度</param>
+        /// <param name="Sleep">是否要在生成前将当前线程阻止以避免重复</param>
+        public string Str(int Length, bool Sleep)
+        {
+            if (Sleep) System.Threading.Thread.Sleep(3);
+            char[] Pattern = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+            string result = "";
+            int n = Pattern.Length;
+            System.Random random = new Random(~unchecked((int)DateTime.Now.Ticks));
+            for (int i = 0; i < Length; i++)
+            {
+                int rnd = random.Next(0, n);
+                result += Pattern[rnd];
+            }
+            return result;
+        }
+        /// <summary>
+        /// 获取完成任务优惠券
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        ////http://localhost:10010//api/Coupon/GiveedUpdate?couponCode=c0e2af18-3019-4ba7-82b1-9dadba34b07d&userCode=1
+        ////http://localhost:10010//api/Coupon/GiveedUpdate?phone=18235139350
         [HttpGet]
-        public IHttpActionResult GiveedUpdate(string couponCode, string userCode)
+        public IHttpActionResult GiveedUpdate(string phone)
         {
             SimpleResult result = new SimpleResult();
             ICouponService _service = new CouponService();
+            IUserInfo _userservice = new UserInfo();
+            ICouponTypeService _couponTypeservice = new CouponTypeService();
             try
             {
                 if (UserAuthorization)
                 {
-                    bool re = _service.GiveedUpdate(couponCode,userCode);
-                    result.Resource = re;
-                    result.Status = Result.SUCCEED;
+                    
+                    var user= _userservice.GetUserByphone( phone);
+                    //判断是不是已经领够了2次
+                    if (user!=null && user.IsMember)
+                    {
+                        if (_service.checkCoupon(user.Code))
+                        {
+                            var couponType =_couponTypeservice.GetCouponTypeByIsGivedType();
+                            if (couponType!=null)
+                            {
+                                Coupon coupon = new Coupon();
+                                coupon.CouponCode = Guid.NewGuid().ToString();
+                                coupon.UserCode = user.Code;
+                                coupon.CouponTypeCode = couponType.CouponTypeCode;
+                                coupon.StratTime = DateTime.Now;
+                                coupon.VersionEndTime = DateTime.MaxValue;
+                                coupon.IsGiveed = true;
+                                coupon.CouponUseCode = Str(10, true);
+                                //没有添加任务优惠券
+                                var re = _service.Insert(coupon);
+                                result.Resource = re;
+                                result.Status = Result.SUCCEED;
+                            }
+                            else {
+                                result.Resource = "赠送任务已经结束";
+                                result.Status = Result.SYSTEM_ERROR;
+                            }
+                        }
+                        else
+                        {
+                            result.Resource = "已经达到任务奖励上限";
+                            
+                            result.Status = Result.SYSTEM_ERROR;
+                        }
+                    } else
+                    {
+                        result.Resource = "您还没有注册会员";
+                        result.Status = Result.SYSTEM_ERROR;
+                    }
+                   
                 }
                 else
                 {

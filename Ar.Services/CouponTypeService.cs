@@ -17,6 +17,12 @@ namespace Ar.Services
             CouponType record = DapperSqlHelper.FindOne<CouponType>("select * from [dbo].[CouponType] where  CouponTypeCode=@code", paras, false);
             return record;
         }
+        public CouponType GetCouponTypeByIsGivedType()
+        {
+            DynamicParameters paras = new DynamicParameters();
+            CouponType record = DapperSqlHelper.FindOne<CouponType>("select * from [dbo].[CouponType] where  IsGivedType=1", paras, false);
+            return record;
+        }
 
         public IList<CouponType> GetCouponTypeList()
         {
