@@ -49,7 +49,7 @@ namespace Ar.Services
             var explain = "充值类型" + type.RechargeTypeName + ",本金：" + money + ".赠送：+" + donationAmount;
             RechargeRecord record = new RechargeRecord()
             {
-                RechargeRecordCode = "1",
+                RechargeRecordCode = GetMaxCode(),
                 UserCode = userCode,
                 RechargeAmount = money,
                 CreateTime = DateTime.Now,
@@ -58,7 +58,7 @@ namespace Ar.Services
             IList<UseWallet> useWallet = us.GetUseWallet(userCode);
             UseWallet wallet = new UseWallet()
             {
-                WalletCode = "1",
+                WalletCode = Guid.NewGuid().ToString(),
                 AccountPrincipal = money,
                 DonationAmount = donationAmount,
                 Ratio = decimal.Round(decimal.Parse(ratio.ToString()), 2).ToString(),

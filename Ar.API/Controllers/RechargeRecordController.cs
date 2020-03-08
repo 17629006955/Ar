@@ -25,6 +25,7 @@ namespace Ar.API.Controllers
         /// <returns></returns>
         ////http://localhost:10010//api/RechargeRecord/GetRechargeRecordList
         [HttpGet]
+        [HttpPost]
         public IHttpActionResult GetRechargeRecordList()
         {
             SimpleResult result = new SimpleResult();
@@ -60,6 +61,7 @@ namespace Ar.API.Controllers
         /// <returns></returns>
         ////http://localhost:10010//api/RechargeRecord/GetRechargeRecordListByUserCode?userCode=1
         [HttpGet]
+        [HttpPost]
         public IHttpActionResult GetRechargeRecordListByUserCode(string userCode)
         {
             SimpleResult result = new SimpleResult();
@@ -95,6 +97,7 @@ namespace Ar.API.Controllers
         /// <returns></returns>
         ////http://localhost:10010//api/RechargeRecord/GetRechargeRecordByCode?code=1
         [HttpGet]
+        [HttpPost]
         public IHttpActionResult GetRechargeRecordByCode(string code)
         {
             SimpleResult result = new SimpleResult();
@@ -130,6 +133,7 @@ namespace Ar.API.Controllers
         /// <returns></returns>
         ////http://localhost:10010//api/RechargeRecord/Recharge?typeCode=1&userCode=1
         [HttpGet]
+        [HttpPost]
         public IHttpActionResult Recharge(string typeCode, string userCode)
         {
             SimpleResult result = new SimpleResult();
@@ -199,6 +203,7 @@ namespace Ar.API.Controllers
         /// <returns></returns>
         ////http://localhost:10010//api/RechargeRecord/GetRechargePage?userCode=1
         [HttpGet]
+        [HttpPost]
         public IHttpActionResult GetRechargePage(string userCode)
         {
             SimpleResult result = new SimpleResult();
