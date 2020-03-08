@@ -16,7 +16,9 @@ namespace Ar.IServices
         int Exist(string code);
 
         bool InsertCouponByUser(string couponCode, string userCode);
-  
+
+        IList<CouponShow> GetUserCoupon(string userCode);
+
 
     }
 }

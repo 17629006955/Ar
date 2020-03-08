@@ -11,7 +11,7 @@ namespace Ar.IServices
         IList<Order> GetNOPayOrderList(string userCode);
 
         void UpdateOrder(Order order);
-        void InsertOrder(Order order);
+        string InsertOrder(Order order);
 
     }
 }

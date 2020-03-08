@@ -19,6 +19,7 @@ namespace Ar.IServices
         /// <returns></returns>
         IList<ProductInfo> GetProductInfoList();
 
+         bool IsExistProduct(string code);
         /// <summary>
         /// 根据code获取产品信息
         /// </summary>

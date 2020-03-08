@@ -24,6 +24,14 @@ namespace Ar.Services
                 takeEffectList= takeEffectList
             };
         }
+
+        public IList<CouponShow> GetUserCoupon(string userCode)
+        {
+            DynamicParameters paras = new DynamicParameters();
+            paras.Add("@userCode", userCode, System.Data.DbType.String);
+            IList<CouponShow> takeEffectList = DapperSqlHelper.FindToList<CouponShow>("select *  from [dbo].[Coupon] a,[dbo].[CouponType] b  where a.UserCode=@userCode and a.CouponTypeCode=b.CouponTypeCode  and   isnull(a.IsUsed,0)=0 and  isnull(a.VersionEndTime,'9999-9-9')>=getdate()", paras, false);
+            return takeEffectList;
+        }
         public bool checkCoupon(string userCode)
         {
             DynamicParameters paras = new DynamicParameters();
@@ -155,7 +163,7 @@ namespace Ar.Services
             }
             else
             {
-                Coupon record = DapperSqlHelper.FindOne<Coupon>("select * from [dbo].[Coupon]  where IsUsed=1 and CouponCode=@CouponCode", paras, false);
+                Coupon record = DapperSqlHelper.FindOne<Coupon>("select * from [dbo].[Coupon]  where IsUsed=1 and CouponUseCode=@CouponCode", paras, false);
                 if (record != null)
                 {
                     return 1;//优惠卷被使用

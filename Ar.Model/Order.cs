@@ -38,7 +38,12 @@ namespace AR.Model
 		private string _experiencevouchercode;
         private string _wxPrepayId;
         private bool _isWriteOff;
-        
+        private string _productName;
+        private int _orderState;
+        private string _imageurl;
+        private string _videourl;
+
+        private string _orderNO;
         /// <summary>
         /// 
         /// </summary>
@@ -119,6 +124,37 @@ namespace AR.Model
 			set{ _experiencevouchercode=value;}
 			get{return _experiencevouchercode;}
 		}
+
+        public string ProductName
+        {
+            set { _productName = value; }
+            get { return _productName; }
+        }
+
+        public int OrderState
+        {
+            set { _orderState = value; }
+            get { return _orderState; }
+        }
+
+        public string Imageurl
+        {
+            set { _imageurl = value; }
+            get { return _imageurl; }
+        }
+
+        public string OrderNO
+        {
+            set { _orderNO = value; }
+            get { return _orderNO; }
+        }
+        public string Videourl
+        {
+            set { _videourl = value; }
+            get { return _videourl; }
+        }
+
+
         /// <summary>
 		/// 
 		/// </summary>

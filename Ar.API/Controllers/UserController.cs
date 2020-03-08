@@ -73,6 +73,7 @@ namespace Ar.API.Controllers
             IOrderService _OrderService = new OrderService();
             ICouponService _CouponService = new CouponService();
             UserInfoModel userInfo = new UserInfoModel();
+            IUseWalletService _useWalletService = new UseWalletService();
             try
             {
                 if (UserAuthorization)
@@ -82,6 +83,9 @@ namespace Ar.API.Controllers
                     var customerService = _customerServiceS.GetCustomerService(store);
                     userInfo.customerService = customerService;
                     var orders = _OrderService.GetOrderList(usercode);
+                    userInfo.useWalletInfo = _useWalletService.GetUseWalletInfoByUserCode(usercode);
+                    var conponList=_CouponService.GetUserCoupon(usercode);
+                    userInfo.useCouponCount = conponList.Any()?conponList.Count:0;
                     if (orders != null)
                     {
                         userInfo.orders = orders.Count;

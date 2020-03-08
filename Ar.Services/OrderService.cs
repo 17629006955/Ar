@@ -23,8 +23,12 @@ namespace Ar.Services
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@userCode", userCode, System.Data.DbType.String);
             IList<Order> list = DapperSqlHelper.FindToList<Order>(@"select a.*,b.ProductCode,b.ProductName,b.Imageurl,b.videourl,
-                case when a.PayTime is null then '待支付' else '已支付' end OrderState 
-                from [dbo].[Order] a,[dbo].[ProductInfo] b  where a.UserCode=@userCode 
+                 case when ISNULL(a.PayTime,'')='' then 0 
+				 WHEN   ISNULL(a.PayTime,'')!='' AND 
+				isnull(a.IsWriteOff,0)=1 THEN  1
+				WHEN  ISNULL(a.PayTime,'')!='' AND 
+				ISNULL(a.IsWriteOff,0)=0 THEN  2 end OrderState 
+                from [dbo].[Order] a,[dbo].[ProductInfo] b  where a.UserCode=@userCode  
              and b.ProductCode = a.ProductCode", paras, false);
             return list;
         }
@@ -34,7 +38,7 @@ namespace Ar.Services
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@userCode", userCode, System.Data.DbType.String);
             IList<Order> list = DapperSqlHelper.FindToList<Order>(@"select a.*,b.ProductCode,b.ProductName,b.Imageurl,b.videourl,
-                '已支付' OrderState 
+               1 OrderState 
                 from [dbo].[Order] a,[dbo].[ProductInfo] b  where a.UserCode=@userCode 
              and b.ProductCode = a.ProductCode and isnull(a.PayTime,'')!='' ", paras, false);
             return list;
@@ -45,7 +49,7 @@ namespace Ar.Services
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@userCode", userCode, System.Data.DbType.String);
             IList<Order> list = DapperSqlHelper.FindToList<Order>(@"select a.*,b.ProductCode,b.ProductName,b.Imageurl,b.videourl,
-                '待支付' OrderState 
+                0 OrderState 
                 from [dbo].[Order] a,[dbo].[ProductInfo] b  where a.UserCode=@userCode 
              and b.ProductCode = a.ProductCode and isnull(a.PayTime,'') ='' ", paras, false);
             return list;
@@ -69,12 +73,12 @@ namespace Ar.Services
             DapperSqlHelper.ExcuteNonQuery<Order>(sql, paras, false);
         }
 
-        public void InsertOrder(Order order)
+        public string InsertOrder(Order order)
         {
             DynamicParameters paras = new DynamicParameters();
             if (string.IsNullOrEmpty(order.OrderCode))
             {
-                order.OrderCode = GetMaxCode();
+                order.OrderCode = Guid.NewGuid().ToString();
             }
             paras.Add("@OrderCode", order.OrderCode, System.Data.DbType.String);
             paras.Add("@UserCode", order.UserCode, System.Data.DbType.String);
@@ -90,6 +94,7 @@ namespace Ar.Services
                     values(@OrderCode,@UserCode,@ProductCode,@Number,@Money,@StoreCode,
                     getdate(),@PayTime,@AppointmentTime,@ExperienceVoucherCode)";
             DapperSqlHelper.ExcuteNonQuery<Order>(sql, paras, false);
+            return order.OrderCode;
         }
 
         public string GetMaxCode()

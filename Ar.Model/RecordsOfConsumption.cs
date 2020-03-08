@@ -33,10 +33,18 @@ namespace AR.Model
         private decimal? _recordsmoney;
 		private string _explain;
 		private DateTime? _createtime;
-		/// <summary>
-		/// 
-		/// </summary>
-		public string RecordsOfConsumptionCode
+        private bool _isRecharging;
+
+        public bool IsRecharging
+        {
+            set { _isRecharging = value; }
+            get { return _isRecharging; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string RecordsOfConsumptionCode
 		{
 			set{ _recordsofconsumptioncode=value;}
 			get{return _recordsofconsumptioncode;}

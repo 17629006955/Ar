@@ -36,8 +36,8 @@ namespace Ar.API.Controllers
                 if (UserAuthorization)
                 {
                     var list = _service.GetRecordsOfConsumptionList();
-                result.Resource = list;
-                result.Status = Result.SUCCEED;
+                    result.Resource = list;
+                    result.Status = Result.SUCCEED;
                 }
                 else
                 {
@@ -46,7 +46,7 @@ namespace Ar.API.Controllers
                     result.Msg = TokenMessage;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
@@ -71,8 +71,8 @@ namespace Ar.API.Controllers
                 if (UserAuthorization)
                 {
                     var list = _service.GetRecordsOfConsumptionByCode(code);
-                result.Resource = list;
-                result.Status = Result.SUCCEED;
+                    result.Resource = list;
+                    result.Status = Result.SUCCEED;
                 }
                 else
                 {
@@ -131,71 +131,82 @@ namespace Ar.API.Controllers
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        ////http://localhost:10010//api/RecordsOfConsumption/PayOrder?productCode=1&userCode=1&peopleCount=1&dateTime=2019-12-07&money=9&storeId=1&couponCode=1ac31b4d-e383-447a-9417-9c66ca9e6004 
         [HttpPost]
-        public IHttpActionResult PayOrder(int paytype , string storecode, string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money,string storeId, string couponCode = "")
+        public IHttpActionResult PayOrder([FromBody] PayOrderParam param)
         {
             SimpleResult result = new SimpleResult();
             IRecordsOfConsumptionService _service = new RecordsOfConsumptionService();
             ICouponService _couponService = new CouponService();
             IUseWalletService _useWalletService = new UseWalletService();
             IStoreService _stoeservice = new StoreService();
+            IProductInfoService _productInfoService = new ProductInfoService();
             try
             {
                 if (UserAuthorization)
                 {
-                    if (paytype == 0)
+                    var isExistProduct = _productInfoService.IsExistProduct(param.productCode);
+                    if (!isExistProduct)
                     {
-                        if (!string.IsNullOrEmpty(couponCode))
+                        result.Status = Result.SYSTEM_ERROR;
+                        result.Msg = "商品已失效或不存在";
+                        result.Resource = null;
+                    }
+
+                    if (param.paytype == 0)
+                    {
+                        var isPay = true;
+                        if (!string.IsNullOrEmpty(param.couponCode))
                         {
-                            var n = _couponService.Exist(couponCode);
-                            if (n == 3)
+                            var n = _couponService.Exist(param.couponCode);
+                            if (n == 1)
                             {
-                                if (_useWalletService.ExistMoney(userCode, money))
-                                {
-                                    var re = _service.PayOrder(productCode, userCode, peopleCount, dateTime, money, storeId, couponCode);
-                                    result.Resource = re;
-                                    result.Status = Result.SUCCEED;
-                                }
-                                else
-                                {
-                                    result.Status = Result.FAILURE;
-                                    result.Msg = "账号余额不足";
-                                    result.Resource = null;
-                                }
-                            }
-                            else if (n == 1)
-                            {
-                                result.Status = Result.FAILURE;
+                                result.Status = Result.SYSTEM_ERROR;
                                 result.Msg = "优惠卷不存在";
                                 result.Resource = null;
+                                isPay = false;
                             }
                             else if (n == 2)
                             {
-                                result.Status = Result.FAILURE;
+                                result.Status = Result.SYSTEM_ERROR;
                                 result.Msg = "优惠卷已经被使用";
                                 result.Resource = null;
+                                isPay = false;
                             }
+                        }
 
+                        if (isPay)
+                        {
+                            if (_useWalletService.ExistMoney(param.userCode, param.money))
+                            {
+                                var re = _service.PayOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money, param.storeId, param.orderCode, param.couponCode);
+                                result.Resource = re;
+                                result.Status = Result.SUCCEED;
+                            }
+                            else
+                            {
+                                result.Status = Result.SYSTEM_ERROR;
+                                result.Msg = "账号余额不足";
+                                result.Resource = null;
+                            }
                         }
                     }
                     else
                     {
                         using (var scope = new TransactionScope())//创建事务
                         {
-                         
+
                             IUserStoreService _userStoreservice = new UserStoreService();
-                            var store = _stoeservice.GetStore(storecode);
-                            var couponser = _couponService.GetCouponByCode(couponCode);
-                            var userStoreser = _userStoreservice.GetUserStorebyUserCodestoreCode(userCode, storecode);
-                            if (userStoreser!=null)
+                            var store = _stoeservice.GetStore(param.storeId);
+                            var couponser = _couponService.GetCouponByCode(param.couponCode);
+                            var userStoreser = _userStoreservice.GetUserStorebyUserCodestoreCode(param.userCode, param.storeId);
+                            if (userStoreser != null)
                             {
                                 //生成微信预支付订单
-                                var wxprepay = Common.wxPayOrderSomething(userStoreser.OpenID, money.ToString(), couponser.CouponTypeName, store.StoreName);
+                                var wxprepay = Common.wxPayOrderSomething(userStoreser.OpenID, param.money.ToString(), couponser.CouponTypeName, store.StoreName);
                                 if (wxprepay != null)
                                 {
-                                    var order = _service.WxPayOrder(productCode, userCode, peopleCount, dateTime, money, wxprepay.prepayid, couponCode);
-                                    
+                                    var order = _service.WxPayOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money, wxprepay.prepayid, param.couponCode);
+
                                     WxOrder wxorder = new WxOrder();
                                     wxorder.order = order;
                                     wxorder.wxJsApiParam = wxprepay.wxJsApiParam;
@@ -217,7 +228,7 @@ namespace Ar.API.Controllers
                         }
 
                     }
-                   
+
                 }
                 else
                 {
@@ -258,7 +269,7 @@ namespace Ar.API.Controllers
                     {
                         IOrderService _orderService = new OrderService();
                         ICouponService _couponService = new CouponService();
-                        var order= _orderService.GetOrderByCode(orderCode);
+                        var order = _orderService.GetOrderByCode(orderCode);
                         order.PayTime = DateTime.Now;
                         _orderService.UpdateOrder(order);
                         _couponService.UsedUpdate(couponCode, userCode);
@@ -300,7 +311,7 @@ namespace Ar.API.Controllers
                 if (UserAuthorization)
                 {
                     var use = userInfo.GetUserByCode(userCode);
-                    if (use != null )
+                    if (use != null)
                     {
 
                         var re = _service.IsWriteOffUser(use.Phone);
@@ -357,7 +368,7 @@ namespace Ar.API.Controllers
                         _writeOffServicee.CreateWriteOff(writeOff);
                         result.Resource = writeOff.WriteOffCode;
                         result.Status = Result.SUCCEED;
-                        
+
                     }
                     else
                     {
@@ -387,7 +398,7 @@ namespace Ar.API.Controllers
             ////http://localhost:10010//api/RecordsOfConsumption/WriteOff?userCode=68add88&phone=18235139350&orderCode=1&writeOffCode=hjhhjh
         [HttpGet]
         [HttpPost]
-        public IHttpActionResult WriteOff(string userCode, string orderCode,string writeOffCode)
+        public IHttpActionResult WriteOff(string userCode, string orderCode, string writeOffCode)
         {
             SimpleResult result = new SimpleResult();
             IRecordsOfConsumptionService _service = new RecordsOfConsumptionService();
@@ -442,4 +453,18 @@ namespace Ar.API.Controllers
 
         }
     }
+
+    public class PayOrderParam
+    {
+        public string orderCode { get; set; }
+        public int paytype { get; set; }
+       public  string productCode { get; set; }
+        public string userCode { get; set; }
+        public string peopleCount { get; set; }
+        public DateTime dateTime { get; set; }
+        public string couponCode { get; set; }
+        public decimal money { get; set; }
+        public string storeId  { get; set; }
+    }
+
 }
