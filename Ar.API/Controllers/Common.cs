@@ -144,6 +144,7 @@ namespace Ar.API.Controllers
                         wxConfig.debug = true;
                         wxConfig.nonceStr = WxPayApi.GenerateNonceStr();
                         wxConfig.timestamp = WxPayApi.GenerateTimeStamp();
+                        wxConfig.jsApiList = new List<string>();
                         if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["jsApiList"].ToString()))
                         {
                             var st = ConfigurationManager.AppSettings["jsApiList"].ToString().Split(',');
