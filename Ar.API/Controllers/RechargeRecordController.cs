@@ -71,6 +71,7 @@ namespace Ar.API.Controllers
                 if (UserAuthorization)
                 {
                     var list = _service.GetRechargeRecordListByUserCode(userCode);
+                    list = list.OrderByDescending(t => t.Createtime)?.ToList();
                     result.Resource = list;
                     result.Status = Result.SUCCEED;
                 }

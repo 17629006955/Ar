@@ -95,18 +95,17 @@ namespace Ar.Services
                     decimal? accountPrincipal = 0;
                     if (tempmoney >= 0)
                     {
-                        recordsdonationAmount = recordsdonationAmount + w.AccountPrincipal;
-                        recordsaccountPrincipal = recordsaccountPrincipal + w.DonationAmount;
+                      
                         donationAmount = 0;
                         accountPrincipal = 0;
-                        kouchumoney = recordsdonationAmount + recordsaccountPrincipal;
+                        kouchumoney = w.AccountPrincipal + w.DonationAmount;
                     }
                     else
                     {
                         donationAmount = w.DonationAmount-((money- kouchumoney) -((money - kouchumoney) * (1 - ratio)));
                         accountPrincipal = w.AccountPrincipal -(money- kouchumoney) * (1 - ratio) ;
-                        recordsdonationAmount= recordsdonationAmount+ ((money - kouchumoney) - ((money - kouchumoney) * (1 - ratio)));
-                        recordsaccountPrincipal = recordsaccountPrincipal + (money - kouchumoney) * (1 - ratio);
+                        recordsdonationAmount= (money  - (money* (1 - ratio)));
+                        recordsaccountPrincipal = money* (1 - ratio);
                     }
                     DynamicParameters paras = new DynamicParameters();
                     paras.Add("@WalletCode", w.WalletCode, System.Data.DbType.String);

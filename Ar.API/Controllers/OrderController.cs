@@ -48,6 +48,7 @@ namespace Ar.API.Controllers
                         }
 
                     }
+                    list = list.OrderByDescending(t => t.CreateTime)?.ToList();
                     result.Resource = list;
                     result.Status = Result.SUCCEED;
                 }

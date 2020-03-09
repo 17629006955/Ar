@@ -107,6 +107,7 @@ namespace Ar.API.Controllers
                 if (UserAuthorization)
                 {
                     var list = _service.GetRecordsOfConsumptionListByUserCode(userCode);
+                    list=list.OrderByDescending(t => t.CreateTime)?.ToList(); 
                     result.Resource = list;
                     result.Status = Result.SUCCEED;
                 }
