@@ -74,6 +74,7 @@ namespace Ar.API.Controllers
             ICouponService _CouponService = new CouponService();
             UserInfoModel userInfo = new UserInfoModel();
             IUseWalletService _useWalletService = new UseWalletService();
+            IUserTaskService _userTaskService = new UserTaskService();
             try
             {
                 if (UserAuthorization)
@@ -88,12 +89,17 @@ namespace Ar.API.Controllers
                     userInfo.useCouponCount = conponList.Any()?conponList.Count:0;
                     if (orders != null)
                     {
-                        userInfo.orders = orders.Count;
+                        userInfo.orders = orders.Where(p=>p.PayTime!=null && p.IsWriteOff==false).Count();
                     }
                     var coupons = _CouponService.GetCouponList(usercode);
                     if (coupons != null)
                     {
-                        userInfo.coupons = coupons.Count;
+                        userInfo.coupons = coupons.Where(c=>c.IsUsed==false).Count();
+                    }
+                    var userTask= _userTaskService.GetUserTaskList(user.Code);
+                    if (userTask != null)
+                    {
+                        userInfo.userTask= userTask.Where(t=>t.IsComplete==false).Count();
                     }
                     result.Resource = userInfo;
                     result.Status = Result.SUCCEED;

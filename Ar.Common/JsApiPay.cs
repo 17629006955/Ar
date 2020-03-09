@@ -152,6 +152,10 @@ namespace WxPayAPI
             data.SetValue("total_fee", total_fee);
             data.SetValue("time_start", DateTime.Now.ToString("yyyyMMddHHmmss"));
             data.SetValue("time_expire", DateTime.Now.AddMinutes(10).ToString("yyyyMMddHHmmss"));
+            if (string.IsNullOrEmpty(couponType) )
+            {
+                couponType = "无优惠";
+            }
             data.SetValue("goods_tag", couponType);
             data.SetValue("trade_type", "JSAPI");
             data.SetValue("openid", openid);
@@ -160,7 +164,7 @@ namespace WxPayAPI
             if (!result.IsSet("appid") || !result.IsSet("prepay_id") || result.GetValue("prepay_id").ToString() == "")
             {
                 Log.Error(this.GetType().ToString(), "UnifiedOrder response error!");
-                throw new WxPayException("UnifiedOrder response error!");
+                throw new WxPayException(result.GetValue("return_msg").ToString());
             }
 
             unifiedOrderResult = result;

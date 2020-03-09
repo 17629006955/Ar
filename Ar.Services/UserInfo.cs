@@ -61,7 +61,7 @@ namespace Ar.Services
             paras.Add("@phone", phone, System.Data.DbType.String);
             paras.Add("@Code", userCode, System.Data.DbType.String);
             paras.Add("@birthday", birthday, System.Data.DbType.DateTime);
-            return DapperSqlHelper.ExcuteNonQuery<User>(@"Update  [dbo].[User] set phone=@phone,birthday=@birthday where Code=@Code", paras, false);
+            return DapperSqlHelper.ExcuteNonQuery<User>(@"Update  [dbo].[User] set phone=@phone,IsMember= 1,birthday=@birthday where Code=@Code", paras, false);
 
 
         }

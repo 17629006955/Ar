@@ -221,10 +221,11 @@ namespace Ar.API.Controllers
                                 var store = _stoeservice.GetStore(param.storeId);
                                 var couponser = _couponService.GetCouponByCode(param.couponCode);
                                 var userStoreser = _userStoreservice.GetUserStorebyUserCodestoreCode(param.userCode, param.storeId);
-                                if (userStoreser != null)
+                                if (userStoreser != null )
                                 {
+
                                     //生成微信预支付订单
-                                    var wxprepay = Common.wxPayOrderSomething(userStoreser.OpenID, param.money.ToString(), couponser.CouponTypeName, store.StoreName);
+                                    var wxprepay = Common.wxPayOrderSomething(userStoreser.OpenID, param.money.ToString(), couponser?.CouponTypeName, store);
                                     if (wxprepay != null)
                                     {
                                         var order = _service.WxPayOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money, wxprepay.prepayid, param.couponCode);

@@ -150,7 +150,7 @@ namespace Ar.Services
             }
             order.Money = p.ExperiencePrice;
             order.Number = 1;
-            order.PayTime = now;
+            order.PayTime = null;
             order.StoreCode = userSotre.UserStoreCode;
             order.UserCode = userCode;
             order.ProductCode = productCode;

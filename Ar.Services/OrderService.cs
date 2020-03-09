@@ -86,7 +86,8 @@ namespace Ar.Services
             DynamicParameters paras = new DynamicParameters();
             if (string.IsNullOrEmpty(order.OrderCode))
             {
-                order.OrderCode = WxPayApi.GenerateOutTradeNo().ToString();
+                order.OrderCode = Guid.NewGuid().ToString();
+                order.OrderNO = WxPayApi.GenerateOutTradeNo().ToString();
             }
             paras.Add("@OrderCode", order.OrderCode, System.Data.DbType.String);
             paras.Add("@UserCode", order.UserCode, System.Data.DbType.String);
@@ -97,10 +98,11 @@ namespace Ar.Services
             paras.Add("@PayTime", order.PayTime, System.Data.DbType.DateTime);
             paras.Add("@AppointmentTime", order.AppointmentTime, System.Data.DbType.DateTime);
             paras.Add("@ExperienceVoucherCode", order.ExperienceVoucherCode, System.Data.DbType.String);
+            paras.Add("@OrderNO", order.OrderNO, System.Data.DbType.String);
             string sql = @"insert into [dbo].[Order](OrderCode,UserCode,ProductCode,Number,Money,StoreCode,
-                    CreateTime,PayTime,AppointmentTime,ExperienceVoucherCode)
+                    CreateTime,PayTime,AppointmentTime,ExperienceVoucherCode,OrderNO)
                     values(@OrderCode,@UserCode,@ProductCode,@Number,@Money,@StoreCode,
-                    getdate(),@PayTime,@AppointmentTime,@ExperienceVoucherCode)";
+                    getdate(),@PayTime,@AppointmentTime,@ExperienceVoucherCode,@OrderNO)";
             DapperSqlHelper.ExcuteNonQuery<Order>(sql, paras, false);
             return order.OrderCode;
         }

@@ -154,7 +154,7 @@ namespace Ar.API.Controllers
                         var type = s.GetRechargeTypeByCode(typeCode);
                         var donationAmount = type.DonationAmount;
                         var money = type.Money;
-                        var wxprepay = Common.wxPayOrderSomething(userStoreser.OpenID, money.ToString(), type.RechargeTypeName, store.StoreName);
+                        var wxprepay = Common.wxPayOrderSomething(userStoreser.OpenID, money.ToString(), type.RechargeTypeName, store);
                         if (wxprepay != null)
                         {
                            //更新充值预订单

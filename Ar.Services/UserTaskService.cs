@@ -14,7 +14,7 @@ namespace Ar.Services
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@UserTaskCode", UserTaskCode, System.Data.DbType.String);
-            UserTaskshow task = DapperSqlHelper.FindOne<UserTaskshow>(@"select u.* ,t.TasKName,t.TaskTarget,t.Reward,t.Integral from [dbo].[UserTask] u join [dbo].[Task] t on t.TaskCode=u.TaskCode
+            UserTaskshow task = DapperSqlHelper.FindOne<UserTaskshow>(@"select u.* ,t.TasKName,t.TaskTarget,t.Reward,t.Integral,t.TaskCode from [dbo].[UserTask] u join [dbo].[Task] t on t.TaskCode=u.TaskCode
 where u.UserTaskCode=@UserTaskCode
 ", paras, false);
             return task;
@@ -24,7 +24,7 @@ where u.UserTaskCode=@UserTaskCode
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@userCode", userCode, System.Data.DbType.String);
-            IList<UserTaskshow> list = DapperSqlHelper.FindToList<UserTaskshow>(@"select u.* ,t.TasKName,t.TaskTarget,t.Reward,t.Integral from [dbo].[UserTask] u join [dbo].[Task] t on t.TaskCode=u.TaskCode where  u.userCode=@userCode", paras, false);
+            IList<UserTaskshow> list = DapperSqlHelper.FindToList<UserTaskshow>(@"select u.* ,t.TasKName,t.TaskTarget,t.Reward,t.Integral,t.TaskCode from [dbo].[UserTask] u join [dbo].[Task] t on t.TaskCode=u.TaskCode where  u.userCode=@userCode", paras, false);
             return list;
         }
 

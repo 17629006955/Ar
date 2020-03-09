@@ -21,6 +21,8 @@ namespace Ar.Model
         public  object useWalletInfo { get; set; }
 
         public int useCouponCount { get; set; }
+        public int userTask { get; set; }
+        
 
     }
 }

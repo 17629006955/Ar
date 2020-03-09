@@ -5,6 +5,7 @@ using Aliyun.Acs.Core.Profile;
 using Ar.Common;
 using Ar.Common.tool;
 using Ar.Model;
+using AR.Model;
 using log4net;
 using Newtonsoft.Json;
 using System;
@@ -199,7 +200,7 @@ namespace Ar.API.Controllers
 
 
         public static string wxJsApiParam { get; set; } //H5调起JS API参数
-        public static Wxprepay wxPayOrderSomething(string openid,string total_fee,string couponType,string stoeName)
+        public static Wxprepay wxPayOrderSomething(string openid,string total_fee,string couponType, Store store)
         {
 
             //var url = ConfigurationManager.AppSettings["wxpay"].ToString() + "?" + "grant_type=client_credential&appid=" + Appid + "&secret=" + Secret;
@@ -220,7 +221,7 @@ namespace Ar.API.Controllers
 
                 //JSAPI支付预处理
                 var prepayid = WxPayApi.GenerateOutTradeNo();
-                WxPayData unifiedOrderResult = jsApiPay.GetUnifiedOrderResult(Appid, Mchid, total_fee, stoeName, couponType,openid, prepayid);
+                WxPayData unifiedOrderResult = jsApiPay.GetUnifiedOrderResult(store.appid.Trim(), store.mchid.Trim(), total_fee, store.StoreName, couponType,openid, prepayid);
                 wxJsApiParam = jsApiPay.GetJsApiParameters();//获取H5调起JS API参数                    
 
                 LogHelper.WriteLog("wxJsApiParam:" + wxJsApiParam);

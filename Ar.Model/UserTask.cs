@@ -97,6 +97,7 @@ namespace AR.Model
         private string _tasktarget;
         private string _reward;
         private int? _integral;
+        private string _taskcode;
         /// <summary>
         /// 
         /// </summary>
@@ -104,6 +105,14 @@ namespace AR.Model
         {
             set { _userTaskcode = value; }
             get { return _userTaskcode; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string TaskCode
+        {
+            set { _taskcode = value; }
+            get { return _taskcode; }
         }
         /// <summary>
         /// 
