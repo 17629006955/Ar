@@ -19,6 +19,7 @@ using System.Security.Cryptography;
 using Ar.Common;
 using System.Web.Security;
 using System.Net.Http;
+using System.Transactions;
 
 namespace Ar.API.Controllers
 {
@@ -237,53 +238,68 @@ namespace Ar.API.Controllers
                         //3.1 创建认证信息
                         certificationService.CreateUserCertification(certification);
                     }
+                    IUserTaskService _userTaskService = new UserTaskService();
                     //3.2用OpenID检查用户 没有的话创建用户信息待写
-                    User user = new User();
-                    var userStore = userStoreService.GetUserStoreby(wxAccessToken.openid);
-                    if (userStore!=null)
-                    {
-                        user = userInfo.GetUserByCode(userStore.UserCode);
-                    }
-                    // 用OpenID获取用户信息然后创建用户信息
-                    else
-                    {
-                       
-
-                        var wxuserinfo=Common.wxuserInfo(wxAccessToken.access_token, wxAccessToken.openid);
-                        if (wxuserinfo != null)
+                    //using (var scope = new TransactionScope())//创建事务
+                    //{
+                        User user = new User();
+                        var userStore = userStoreService.GetUserStoreby(wxAccessToken.openid);
+                        if (userStore != null)
                         {
-                            
-                            user.Code = Guid.NewGuid().ToString();
-                            if (wxuserinfo.sex == 0)
+                            user = userInfo.GetUserByCode(userStore.UserCode);
+                            if (_userTaskService.GetUserTaskList(user.Code).Count()!=2)
                             {
-                                user.Sex = true;
+                                _userTaskService.InsertUserTask(user.Code, "1");
+                                _userTaskService.InsertUserTask(user.Code, "2");
+                            }
+                        }
+                        // 用OpenID获取用户信息然后创建用户信息
+                        else
+                        {
+
+
+                            var wxuserinfo = Common.wxuserInfo(wxAccessToken.access_token, wxAccessToken.openid);
+                            if (wxuserinfo != null)
+                            {
+
+                                user.Code = Guid.NewGuid().ToString();
+                                if (wxuserinfo.sex == 0)
+                                {
+                                    user.Sex = true;
+                                }
+                                else
+                                {
+                                    user.Sex = false;
+                                }
+
+                                user.UserIamgeUrl = wxuserinfo.headimgurl;
+                                user.UserName = wxuserinfo.nickname;
+                                user.CreateTime = DateTime.Now;
+                                userInfo.CreateUser(user);
+                                UserStore userStorew = new UserStore();
+                                userStorew.OpenID = wxAccessToken.openid;
+                                userStorew.UserStoreCode = Guid.NewGuid().ToString();
+                                userStorew.UserCode = user.Code;
+                                userStorew.MembershipCardStore = membershipCardStore;
+                                userStoreService.CreateUserStore(userStorew);
+                                
+                                _userTaskService.InsertUserTask(user.Code, "1");
+                                _userTaskService.InsertUserTask(user.Code, "2");
                             }
                             else
                             {
-                                user.Sex = false;
+                                result.Msg = "请使用微信获取用户信息失败";
                             }
-                          
-                            user.UserIamgeUrl = wxuserinfo.headimgurl;
-                            user.UserName = wxuserinfo.nickname;
-                            user.CreateTime = DateTime.Now;
-                            userInfo.CreateUser(user);
-                            UserStore userStorew = new UserStore();
-                            userStorew.OpenID = wxAccessToken.openid;
-                            userStorew.UserStoreCode = Guid.NewGuid().ToString();
-                            userStorew.UserCode = user.Code;
-                            userStorew.MembershipCardStore = membershipCardStore;
-                            userStoreService.CreateUserStore(userStorew);
                         }
-                        else {
-                            result.Msg = "请使用微信获取用户信息失败";
-                        }
-                    }
+                     
                     result.Status =  Result.SUCCEED;
                     FristModel fristModel = new FristModel();
                     fristModel.certification = certification;
                     fristModel.userInfo = user;
                     result.Resource = fristModel;
                     result.Msg = "请使用AccessToken请求认证";
+                    //    scope.Complete();//这是最后提交事务
+                    //}
                 }
                 else
                 {

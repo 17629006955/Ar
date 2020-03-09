@@ -48,7 +48,7 @@ namespace Ar.Services
             IList<Order> list = DapperSqlHelper.FindToList<Order>(@"select a.*,b.ProductCode,b.ProductName,b.Imageurl,b.videourl,
                2 OrderState 
                 from [dbo].[Order] a,[dbo].[ProductInfo] b  where a.UserCode=@userCode 
-             and b.ProductCode = a.ProductCode and isnull(a.PayTime,'')!='' and isnull(a.IsWriteOff,0)=1", paras, false);
+             and b.ProductCode = a.ProductCode and isnull(a.PayTime,'')!='' and isnull(a.IsWriteOff,0)=0", paras, false);
             return list;
         }
 

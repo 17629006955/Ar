@@ -26,7 +26,7 @@ namespace AR.Model
 		public UserTask()
 		{}
 		#region Model
-		private string _ordercode;
+		private string _userTaskcode;
 		private string _taskcode;
 		private bool _iscomplete;
 		private DateTime? _taskstarttime;
@@ -35,10 +35,10 @@ namespace AR.Model
 		/// <summary>
 		/// 
 		/// </summary>
-		public string OrderCode
-		{
-			set{ _ordercode=value;}
-			get{return _ordercode;}
+		public string UserTaskCode
+        {
+			set{ _userTaskcode = value;}
+			get{return _userTaskcode; }
 		}
 		/// <summary>
 		/// 
@@ -83,5 +83,94 @@ namespace AR.Model
 		#endregion Model
 
 	}
+    public partial class UserTaskshow
+    {
+        public UserTaskshow()
+        { }
+        #region Model
+        private string _userTaskcode;
+        private string _tasKName;
+        private bool _iscomplete;
+        private DateTime? _taskstarttime;
+        private DateTime? _taskendtime;
+        private string _usercode;
+        private string _tasktarget;
+        private string _reward;
+        private int? _integral;
+        /// <summary>
+        /// 
+        /// </summary>
+        public string UserTaskCode
+        {
+            set { _userTaskcode = value; }
+            get { return _userTaskcode; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string TasKName
+        {
+            set { _tasKName = value; }
+            get { return _tasKName; }
+        }
+        /// <summary>
+		/// 
+		/// </summary>
+		public string TaskTarget
+        {
+            set { _tasktarget = value; }
+            get { return _tasktarget; }
+        }
+        /// <summary>
+		/// 
+		/// </summary>
+		public string Reward
+        {
+            set { _reward = value; }
+            get { return _reward; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsComplete
+        {
+            set { _iscomplete = value; }
+            get { return _iscomplete; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime? TaskStartTime
+        {
+            set { _taskstarttime = value; }
+            get { return _taskstarttime; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime? TaskEndTime
+        {
+            set { _taskendtime = value; }
+            get { return _taskendtime; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int? Integral
+        {
+            set { _integral = value; }
+            get { return _integral; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string UserCode
+        {
+            set { _usercode = value; }
+            get { return _usercode; }
+        }
+        #endregion Model
+
+    }
 }
 

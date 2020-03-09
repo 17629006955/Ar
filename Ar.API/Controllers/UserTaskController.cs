@@ -58,9 +58,9 @@ namespace Ar.API.Controllers
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        ////http://localhost:10010//api/UserTask/GetUserTaskByCode?orderCode=1
+        ////http://localhost:10010//api/UserTask/GetUserTaskByCode?UserTaskCode=1
         [HttpGet]
-        public IHttpActionResult GetUserTaskByCode(string orderCode)
+        public IHttpActionResult GetUserTaskByCode(string UserTaskCode)
         {
             SimpleResult result = new SimpleResult();
             IUserTaskService _service = new UserTaskService();
@@ -68,7 +68,7 @@ namespace Ar.API.Controllers
             {
                 if (UserAuthorization)
                 {
-                    var list = _service.GetUserTaskByCode(orderCode);
+                    var list = _service.GetUserTaskByCode(UserTaskCode);
                 result.Resource = list;
                 result.Status = Result.SUCCEED;
                 }
@@ -95,7 +95,7 @@ namespace Ar.API.Controllers
         /// <returns></returns>
         ////http://localhost:10010//api/UserTask/UpdateUserTask?orderCode=1&isComplete=1
         [HttpGet]
-        public IHttpActionResult UpdateUserTask(string orderCode,int isComplete)
+        public IHttpActionResult UpdateUserTask(string UserTaskCode, int isComplete)
         {
             SimpleResult result = new SimpleResult();
             IUserTaskService _service = new UserTaskService();
@@ -103,7 +103,7 @@ namespace Ar.API.Controllers
             {
                 if (UserAuthorization)
                 {
-                    var list = _service.UpdateUserTask(orderCode, isComplete);
+                    var list = _service.UpdateUserTask(UserTaskCode, isComplete);
                 result.Resource = list;
                 result.Status = Result.SUCCEED;
                 }
@@ -123,39 +123,6 @@ namespace Ar.API.Controllers
 
         }
 
-        /// <summary>
-        ///  插入
-        /// </summary>
-        /// <param name="code"></param>
-        /// <returns></returns>
-        ////http://localhost:10010//api/UserTask/InsertUserTask
-        [HttpPost]
-        public IHttpActionResult InsertUserTask(UserTask userTask)
-        {
-            SimpleResult result = new SimpleResult();
-            IUserTaskService _service = new UserTaskService();
-            try
-            {
-                if (UserAuthorization)
-                {
-                    var list = _service.InsertUserTask(userTask);
-                result.Resource = list;
-                result.Status = Result.SUCCEED;
-                }
-                else
-                {
-                    result.Status = ResultType;
-                    result.Resource = ReAccessToken;
-                    result.Msg = TokenMessage;
-                }
-            }
-            catch (Exception ex)
-            {
-                result.Status = Result.FAILURE;
-                result.Msg = ex.Message;
-            }
-            return Json(result);
-
-        }
+        
     }
 }

@@ -10,60 +10,75 @@ namespace Ar.Services
 {
     public class UserTaskService : IUserTaskService
     {
-        public UserTask GetUserTaskByCode(string orderCode)
+        public UserTaskshow GetUserTaskByCode(string UserTaskCode)
         {
             DynamicParameters paras = new DynamicParameters();
-            paras.Add("@orderCode", orderCode, System.Data.DbType.String);
-            UserTask task = DapperSqlHelper.FindOne<UserTask>("select * from [dbo].[UserTask] where OrderCode=@orderCode", paras, false);
+            paras.Add("@UserTaskCode", UserTaskCode, System.Data.DbType.String);
+            UserTaskshow task = DapperSqlHelper.FindOne<UserTaskshow>(@"select u.* ,t.TasKName,t.TaskTarget,t.Reward,t.Integral from [dbo].[UserTask] u join [dbo].[Task] t on t.TaskCode=u.TaskCode
+where u.UserTaskCode=@UserTaskCode
+", paras, false);
             return task;
         }
 
-        public IList<UserTask> GetUserTaskList(string userCode)
+        public IList<UserTaskshow> GetUserTaskList(string userCode)
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@userCode", userCode, System.Data.DbType.String);
-            IList<UserTask> list = DapperSqlHelper.FindToList<UserTask>(@"select * from [dbo].[UserTask]  where  userCode=@userCode", paras, false);
+            IList<UserTaskshow> list = DapperSqlHelper.FindToList<UserTaskshow>(@"select u.* ,t.TasKName,t.TaskTarget,t.Reward,t.Integral from [dbo].[UserTask] u join [dbo].[Task] t on t.TaskCode=u.TaskCode where  u.userCode=@userCode", paras, false);
             return list;
         }
 
-        public bool UpdateUserTask(string orderCode,int IsComplete)
+        public bool UpdateUserTask(string UserTaskCode, int IsComplete)
         {
             DynamicParameters paras = new DynamicParameters();
-            paras.Add("@OrderCode", orderCode, System.Data.DbType.String);
+            paras.Add("@UserTaskCode", UserTaskCode, System.Data.DbType.String);
             paras.Add("@IsComplete", IsComplete, System.Data.DbType.Int32);
-            string sql = "update [dbo].[UserTask] set IsComplete=@IsComplete ,TaskEndTime=getDate() where OrderCode=@OrderCode";
+            string sql = "update [dbo].[UserTask] set IsComplete=@IsComplete ,TaskEndTime=getDate() where UserTaskCode=@UserTaskCode";
             DapperSqlHelper.ExcuteNonQuery<UserTask>(sql, paras, false);
             return true;
         }
 
-        public bool InsertUserTask(UserTask userTask)
+        public bool InsertUserTask(string userCode,string type)
         {
             DynamicParameters paras = new DynamicParameters();
-            if (string.IsNullOrEmpty(userTask.OrderCode))
+            UserTask userTask = new UserTask();
+            if (string.IsNullOrEmpty(userTask.UserTaskCode))
             {
-                userTask.OrderCode = GetMaxCode();
+                userTask.UserTaskCode = GetMaxCode();
+                userTask.UserCode = userCode;
+                userTask.TaskCode = type;
+                userTask.TaskStartTime = DateTime.Now;
+                userTask.TaskEndTime = DateTime.MaxValue;
+                userTask.IsComplete = false;
             }
-            paras.Add("@OrderCode", userTask.OrderCode, System.Data.DbType.String);
+            paras.Add("@UserTaskCode", userTask.UserTaskCode, System.Data.DbType.String);
             paras.Add("@TaskCode", userTask.TaskCode, System.Data.DbType.String);
-            paras.Add("@IsComplete", userTask.IsComplete, System.Data.DbType.String);
+            paras.Add("@IsComplete", userTask.IsComplete, System.Data.DbType.Boolean);
             paras.Add("@TaskStartTime", userTask.TaskStartTime, System.Data.DbType.String);
             paras.Add("@TaskEndTime", userTask.TaskEndTime, System.Data.DbType.String);
             paras.Add("@UserCode", userTask.UserCode, System.Data.DbType.String);
-            User userone = DapperSqlHelper.FindOne<User>(@"INSERT INTO [dbo].[UserTask]
-            ([OrderCode],[TaskCode] ,[IsComplete]  ,[TaskStartTime] ,
+            int count = DapperSqlHelper.ExcuteNonQuery<UserTask>(@"INSERT INTO [dbo].[UserTask]
+            ([UserTaskCode],[TaskCode] ,[IsComplete]  ,[TaskStartTime] ,
             [TaskEndTime],[UserCode]) 
-            VALUES  ( OrderCode=@OrderCode, 
-                      IsComplete=@IsComplete, 
-                      TaskStartTime=@TaskStartTime, 
-                      TaskEndTime=@TaskEndTime, 
-                      UserCode=@UserCode, 
+            VALUES  ( @UserTaskCode, 
+                      @TaskCode, 
+                      @IsComplete, 
+                      @TaskStartTime, 
+                      @TaskEndTime, 
+                      @UserCode
                       )", paras, false);
-            return true;
+            if (count > 0)
+            {
+                return true;
+            } else
+            {
+                return false;
+            }
         }
         public string GetMaxCode()
         {
-            var task = DapperSqlHelper.FindOne<UserTask>("SELECT MAX(OrderCode) OrderCode FROM [dbo].[UserTask]", null, false);
-            var code = task != null ? Convert.ToInt32(task.OrderCode) + 1 : 1;
+            var task = DapperSqlHelper.FindOne<UserTask>("SELECT MAX(UserTaskCode) UserTaskCode FROM [dbo].[UserTask]", null, false);
+            var code = task != null ? Convert.ToInt32(task.UserTaskCode) + 1 : 1;
             return code.ToString();
         }
     }
