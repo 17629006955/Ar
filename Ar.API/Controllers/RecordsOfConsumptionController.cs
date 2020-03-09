@@ -107,7 +107,7 @@ namespace Ar.API.Controllers
                 if (UserAuthorization)
                 {
                     var list = _service.GetRecordsOfConsumptionListByUserCode(userCode);
-                    list=list.OrderByDescending(t => t.CreateTime)?.ToList(); 
+                    list = list.OrderByDescending(t => t.CreateTime)?.ToList();
                     result.Resource = list;
                     result.Status = Result.SUCCEED;
                 }
@@ -193,39 +193,61 @@ namespace Ar.API.Controllers
                     }
                     else
                     {
-                        using (var scope = new TransactionScope())//创建事务
+                        var isPay = true;
+                        if (!string.IsNullOrEmpty(param.couponCode))
                         {
-
-                            IUserStoreService _userStoreservice = new UserStoreService();
-                            var store = _stoeservice.GetStore(param.storeId);
-                            var couponser = _couponService.GetCouponByCode(param.couponCode);
-                            var userStoreser = _userStoreservice.GetUserStorebyUserCodestoreCode(param.userCode, param.storeId);
-                            if (userStoreser != null)
+                            var n = _couponService.Exist(param.couponCode);
+                            if (n == 1)
                             {
-                                //生成微信预支付订单
-                                var wxprepay = Common.wxPayOrderSomething(userStoreser.OpenID, param.money.ToString(), couponser.CouponTypeName, store.StoreName);
-                                if (wxprepay != null)
-                                {
-                                    var order = _service.WxPayOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money, wxprepay.prepayid, param.couponCode);
+                                result.Status = Result.SYSTEM_ERROR;
+                                result.Msg = "优惠卷不存在";
+                                result.Resource = null;
+                                isPay = false;
+                            }
+                            else if (n == 2)
+                            {
+                                result.Status = Result.SYSTEM_ERROR;
+                                result.Msg = "优惠卷已经被使用";
+                                result.Resource = null;
+                                isPay = false;
+                            }
+                        }
+                        if (isPay)
+                        {
+                            using (var scope = new TransactionScope())//创建事务
+                            {
 
-                                    WxOrder wxorder = new WxOrder();
-                                    wxorder.order = order;
-                                    wxorder.wxJsApiParam = wxprepay.wxJsApiParam;
-                                    result.Resource = wxorder;
-                                    result.Status = Result.SUCCEED;
+                                IUserStoreService _userStoreservice = new UserStoreService();
+                                var store = _stoeservice.GetStore(param.storeId);
+                                var couponser = _couponService.GetCouponByCode(param.couponCode);
+                                var userStoreser = _userStoreservice.GetUserStorebyUserCodestoreCode(param.userCode, param.storeId);
+                                if (userStoreser != null)
+                                {
+                                    //生成微信预支付订单
+                                    var wxprepay = Common.wxPayOrderSomething(userStoreser.OpenID, param.money.ToString(), couponser.CouponTypeName, store.StoreName);
+                                    if (wxprepay != null)
+                                    {
+                                        var order = _service.WxPayOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money, wxprepay.prepayid, param.couponCode);
+
+                                        WxOrder wxorder = new WxOrder();
+                                        wxorder.order = order;
+                                        wxorder.wxJsApiParam = wxprepay.wxJsApiParam;
+                                        result.Resource = wxorder;
+                                        result.Status = Result.SUCCEED;
+                                    }
+                                    else
+                                    {
+                                        result.Resource = "微信下单失败，重新提交订单";
+                                        result.Status = Result.SYSTEM_ERROR;
+                                    }
                                 }
                                 else
                                 {
-                                    result.Resource = "微信下单失败，重新提交订单";
+                                    result.Resource = "";
                                     result.Status = Result.SYSTEM_ERROR;
                                 }
+                                scope.Complete();//这是最后提交事务
                             }
-                            else
-                            {
-                                result.Resource = "";
-                                result.Status = Result.SYSTEM_ERROR;
-                            }
-                            scope.Complete();//这是最后提交事务
                         }
 
                     }
@@ -459,13 +481,13 @@ namespace Ar.API.Controllers
     {
         public string orderCode { get; set; }
         public int paytype { get; set; }
-       public  string productCode { get; set; }
+        public string productCode { get; set; }
         public string userCode { get; set; }
         public string peopleCount { get; set; }
         public DateTime dateTime { get; set; }
         public string couponCode { get; set; }
         public decimal money { get; set; }
-        public string storeId  { get; set; }
+        public string storeId { get; set; }
     }
 
 }
