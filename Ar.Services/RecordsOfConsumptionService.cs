@@ -88,7 +88,7 @@ namespace Ar.Services
             var p = _productInfoService.GetProductInfo(productCode);
             //var userSotre=_userStoreService.GetUserStorebyUserCode(userCode);
             Order order = new Order();
-            order.Money = p.ExperiencePrice;
+            order.Money = money;
             order.Number = 1;
             order.PayTime = now;
             order.StoreCode = storeId;

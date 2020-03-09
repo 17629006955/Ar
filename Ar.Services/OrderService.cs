@@ -38,7 +38,7 @@ namespace Ar.Services
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@userCode", userCode, System.Data.DbType.String);
             IList<Order> list = DapperSqlHelper.FindToList<Order>(@"select a.*,b.ProductCode,b.ProductName,b.Imageurl,b.videourl,
-               1 OrderState 
+               2 OrderState 
                 from [dbo].[Order] a,[dbo].[ProductInfo] b  where a.UserCode=@userCode 
              and b.ProductCode = a.ProductCode and isnull(a.PayTime,'')!='' ", paras, false);
             return list;
