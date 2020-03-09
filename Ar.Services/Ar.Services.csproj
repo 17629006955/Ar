@@ -72,6 +72,10 @@
     <Compile Include="WriteOffService.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Ar.Common\Ar.Common.csproj">
+      <Project>{F060918F-4B4A-4D25-9E61-004F292B0FB6}</Project>
+      <Name>Ar.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Ar.IServices\Ar.IServices.csproj">
       <Project>{d7b576ac-1b95-472b-8743-29b5884b868c}</Project>
       <Name>Ar.IServices</Name>

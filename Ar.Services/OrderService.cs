@@ -5,6 +5,7 @@ using Ar.Repository;
 
 using AR.Model;
 using Dapper;
+using WxPayAPI;
 
 namespace Ar.Services
 {
@@ -85,7 +86,7 @@ namespace Ar.Services
             DynamicParameters paras = new DynamicParameters();
             if (string.IsNullOrEmpty(order.OrderCode))
             {
-                order.OrderCode = Guid.NewGuid().ToString();
+                order.OrderCode = WxPayApi.GenerateOutTradeNo().ToString();
             }
             paras.Add("@OrderCode", order.OrderCode, System.Data.DbType.String);
             paras.Add("@UserCode", order.UserCode, System.Data.DbType.String);
