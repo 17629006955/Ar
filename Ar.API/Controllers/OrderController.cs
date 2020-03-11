@@ -36,7 +36,7 @@ namespace Ar.API.Controllers
                     var list = _service.GetOrderList(userCode);
                     foreach (var item in list)
                     {
-                        if (!string.IsNullOrEmpty(item.WxPrepayId))
+                        if (!string.IsNullOrEmpty(item.WxPrepayId) && item.PayTime==null)
                         {
                             var PayTime = Common.wxPayOrderQuery(item.WxPrepayId);
                             if (!string.IsNullOrEmpty(PayTime))

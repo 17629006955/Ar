@@ -233,6 +233,7 @@ namespace Ar.API.Controllers
                                         WxOrder wxorder = new WxOrder();
                                         wxorder.order = order;
                                         wxorder.wxJsApiParam = wxprepay.wxJsApiParam;
+                                        wxorder.prepayid = wxprepay.prepayid;
                                         result.Resource = wxorder;
                                         result.Status = Result.SUCCEED;
                                     }
@@ -278,7 +279,7 @@ namespace Ar.API.Controllers
         /// <returns></returns>
         ////http://localhost:10010//api/RecordsOfConsumption/PayOrder?productCode=1&userCode=1&peopleCount=1&dateTime=2019-12-07&money=9&couponCode=1ac31b4d-e383-447a-9417-9c66ca9e6004 
         [HttpGet]
-        public IHttpActionResult WxPayOrder(string userCode, string orderCode, string couponCode = "")
+        public IHttpActionResult WxPayOrder(string userCode, string orderCode, string prepayid, string couponCode = "")
         {
             SimpleResult result = new SimpleResult();
             IRecordsOfConsumptionService _service = new RecordsOfConsumptionService();
@@ -291,14 +292,23 @@ namespace Ar.API.Controllers
 
                     using (var scope = new TransactionScope())//创建事务
                     {
-                        IOrderService _orderService = new OrderService();
-                        ICouponService _couponService = new CouponService();
-                        var order = _orderService.GetOrderByCode(orderCode);
-                        order.PayTime = DateTime.Now;
-                        _orderService.UpdateOrder(order);
-                        _couponService.UsedUpdate(couponCode, userCode);
-                        result.Status = Result.SUCCEED;
-                        scope.Complete();//这是最后提交事务
+                        if (!string.IsNullOrEmpty(prepayid) )
+                        {
+                            var PayTime = Common.wxPayOrderQuery(prepayid);
+                            if (!string.IsNullOrEmpty(PayTime))
+                            {
+                                IOrderService _orderService = new OrderService();
+                                ICouponService _couponService = new CouponService();
+                                var order = _orderService.GetOrderByCode(orderCode);
+                                order.PayTime = DateTime.Now;
+                                _orderService.UpdateOrder(order);
+                                _couponService.UsedUpdate(couponCode, userCode);
+                                result.Status = Result.SUCCEED;
+                                scope.Complete();//这是最后提交事务
+                            }
+
+                        }
+                       
                     }
 
                 }
