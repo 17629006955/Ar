@@ -34,7 +34,7 @@ namespace Ar.IServices
         /// <param name="typeCode">类型</param>
         /// <param name="userCode">用户</param>
         /// <returns></returns>
-        bool Recharge(string typeCode, string userCode);
+        bool Recharge(string typeCode, string userCode, decimal? money = 0);
         bool InsertRechargeRecord(RechargeRecord record);
     }
 }
