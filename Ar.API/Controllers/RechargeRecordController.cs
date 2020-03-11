@@ -157,9 +157,9 @@ namespace Ar.API.Controllers
                         var wxprepay = Common.wxPayOrderSomething(userStoreser.OpenID, money.ToString(), type.RechargeTypeName, store);
                         if (wxprepay != null)
                         {
-                           //更新充值预订单
-
-                            WxOrder wxorder = new WxOrder();
+                            //更新充值预订单
+                            //给TopupOrder写数据
+                             WxOrder wxorder = new WxOrder();
                             wxorder.order =null;
                             wxorder.wxJsApiParam = wxprepay.wxJsApiParam;
                             result.Resource = wxorder;
@@ -192,10 +192,10 @@ namespace Ar.API.Controllers
         /// </summary>
         /// <param name="record"></param>
         /// <returns></returns>
-        ////http://localhost:10010//api/RechargeRecord/Recharge?typeCode=1&userCode=1
+        ////http://localhost:10010//api/RechargeRecord/Recharge?typeCode=1&userCode=1&money=99
         [HttpGet]
         [HttpPost]
-        public IHttpActionResult Recharge(string typeCode, string userCode)
+        public IHttpActionResult Recharge(string typeCode, string userCode,decimal money=0,string prepayid="")
         {
             SimpleResult result = new SimpleResult();
             IRechargeRecordService _service = new RechargeRecordService();
@@ -203,6 +203,18 @@ namespace Ar.API.Controllers
             {
                 if (UserAuthorization)
                 {
+                    if (!string.IsNullOrEmpty(prepayid))
+                    {
+                        if (!string.IsNullOrEmpty(prepayid))
+                        {
+                            var PayTime = Common.wxPayOrderQuery(prepayid);
+                            if (!string.IsNullOrEmpty(PayTime))
+                            {
+                                var payTime = Convert.ToDateTime(PayTime);
+                                //更新TopupOrder 的支付时间
+                            }
+                        }
+                    }
                     var list = _service.Recharge(typeCode, userCode);
                     result.Resource = list;
                     result.Status = Result.SUCCEED;

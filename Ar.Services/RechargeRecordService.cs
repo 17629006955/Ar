@@ -29,33 +29,35 @@ namespace Ar.Services
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@userCode", userCode, System.Data.DbType.String);
-            IList<RechargeTypeshow> list = DapperSqlHelper.FindToList<RechargeTypeshow>(@"select b.RechargeTypeCode,b.RechargeTypeName,b.Status,b.Money,b.DonationAmount,a.CreateTime from [dbo].[RecordsOfConsumption] a  ,[dbo].[RechargeType] b
-              WHERE a.RechargeTypeCode=b.RechargeTypeCode
-              AND b.Status=1 and a.UserCode=@userCode", paras, false);
+            IList<RechargeTypeshow> list = DapperSqlHelper.FindToList<RechargeTypeshow>(@"SELECT  b.RechargeTypeCode,CASE WHEN a.RechargeTypeCode='0' THEN '充值' ELSE  b.RechargeTypeName END RechargeTypeName,b.Status,b.Money,b.DonationAmount,a.CreateTime
+            from [dbo].[RecordsOfConsumption] a  LEFT JOIN [dbo].[RechargeType] b ON a.RechargeTypeCode=b.RechargeTypeCode
+            WHERE  b.Status=1 AND a.IsRecharging=1
+            AND a.UserCode=@userCode", paras, false);
             return list;
         }
 
-   
-
-        public bool Recharge(string typeCode,string userCode)
+        public bool Recharge(string typeCode,string userCode, decimal? money = 0)
         {
             IRechargeTypeService s = new RechargeTypeService();
             IRecordsOfConsumptionService cs = new RecordsOfConsumptionService();
             IUseWalletService us = new UseWalletService();
             var type=s.GetRechargeTypeByCode(typeCode);
-           var donationAmount=type.DonationAmount;
-            var money = type.Money;
-            var ratio = donationAmount / (money+ donationAmount);
-            var explain = "充值类型" + type.RechargeTypeName + ",本金：" + money + ".赠送：+" + donationAmount;
-            //RechargeRecord record = new RechargeRecord()
-            //{
-            //    RechargeRecordCode = GetMaxCode(),
-            //    UserCode = userCode,
-            //    RechargeAmount = money,
-            //    CreateTime = DateTime.Now,
-            //    Explain = explain
-            //};
-            //IList<UseWallet> useWallet = us.GetUseWallet(userCode);
+            var explain = "";
+            decimal? donationAmount = 0;
+            decimal? ratio = 0;
+            if (money > 0)
+            {
+                typeCode = "0";
+                ratio = 0;
+                explain = "充值类型:任意金额,本金：" + money;
+            }
+            else
+            {
+                donationAmount = type.DonationAmount;
+                money = type.Money;
+                ratio = donationAmount / (money + donationAmount);
+                explain = "充值类型" + type.RechargeTypeName + ",本金：" + money + ",赠送：+" + donationAmount;
+            }
             UseWallet wallet = new UseWallet()
             {
                 WalletCode = Guid.NewGuid().ToString(),
