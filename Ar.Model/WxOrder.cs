@@ -12,5 +12,6 @@ namespace Ar.Model
     {
         public Order order;
         public string wxJsApiParam;
+        public string prepayid;
     }
 }
