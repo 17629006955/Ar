@@ -134,7 +134,7 @@ namespace Ar.API.Controllers
         ////http://localhost:10010//api/RechargeRecord/Recharge?typeCode=1&userCode=1
         [HttpGet]
         [HttpPost]
-        public IHttpActionResult RechargePrePay(string typeCode, string userCode, string storecode )
+        public IHttpActionResult RechargePrePay(string typeCode, string userCode, string storecode, decimal? money = 0)
         {
             ICouponService _couponService = new CouponService();
             IUseWalletService _useWalletService = new UseWalletService();
@@ -147,19 +147,34 @@ namespace Ar.API.Controllers
                 {
                     IUserStoreService _userStoreservice = new UserStoreService();
                     IRechargeTypeService s = new RechargeTypeService();
+                    ITopupOrderServrce tos = new TopupOrderServrce();
                     var store = _stoeservice.GetStore(storecode);
                     var userStoreser = _userStoreservice.GetUserStorebyUserCodestoreCode(userCode, storecode);
                     if (userStoreser != null)
                     {//生成微信预支付订单
-                        var type = s.GetRechargeTypeByCode(typeCode);
-                        var donationAmount = type.DonationAmount;
-                        var money = type.Money;
-                        var wxprepay = Common.wxPayOrderSomething(userStoreser.OpenID, money.ToString(), type.RechargeTypeName, store);
+                        
+                        string rechargeTypeName = "充值";
+                        decimal? donationAmount = 0;
+                        if (money >= 0)
+                        {
+                            typeCode = "0";
+                            donationAmount = 0;
+                        }
+                        else
+                        {
+                            var type = s.GetRechargeTypeByCode(typeCode);
+                            rechargeTypeName = type.RechargeTypeName;
+                            donationAmount = type?.DonationAmount;
+                            money = type?.Money;
+                        }
+                        var wxprepay = Common.wxPayOrderSomething(userStoreser.OpenID, money.ToString(), rechargeTypeName, store);
                         if (wxprepay != null)
                         {
                             //更新充值预订单
                             //给TopupOrder写数据
-                             WxOrder wxorder = new WxOrder();
+                            tos.InsertTopupOrder(userCode, wxprepay.prepayid);
+
+                            WxOrder wxorder = new WxOrder();
                             wxorder.order =null;
                             wxorder.wxJsApiParam = wxprepay.wxJsApiParam;
                             result.Resource = wxorder;
@@ -195,10 +210,11 @@ namespace Ar.API.Controllers
         ////http://localhost:10010//api/RechargeRecord/Recharge?typeCode=1&userCode=1&money=99
         [HttpGet]
         [HttpPost]
-        public IHttpActionResult Recharge(string typeCode, string userCode,decimal money=0,string prepayid="")
+        public IHttpActionResult Recharge(string typeCode, string userCode,decimal? money=0,string prepayid="")
         {
             SimpleResult result = new SimpleResult();
             IRechargeRecordService _service = new RechargeRecordService();
+            ITopupOrderServrce tos = new TopupOrderServrce();
             try
             {
                 if (UserAuthorization)
@@ -212,10 +228,11 @@ namespace Ar.API.Controllers
                             {
                                 var payTime = Convert.ToDateTime(PayTime);
                                 //更新TopupOrder 的支付时间
+                                tos.UpdateTopupOrder(prepayid,payTime);
                             }
                         }
                     }
-                    var list = _service.Recharge(typeCode, userCode);
+                    var list = _service.Recharge(typeCode, userCode,money);
                     result.Resource = list;
                     result.Status = Result.SUCCEED;
                 }
