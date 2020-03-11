@@ -14,7 +14,7 @@ namespace Ar.IServices
         User GetUserByphone(string phone);
         User GetUserByCode(string code);
         int CreateUser(User user);
-        int UpdateByPhone(string userCode, string phone,DateTime birthday);
+        int UpdateByPhone(string userCode, string phone,DateTime birthday,string recommendedPhone = null);
 
     }
 }

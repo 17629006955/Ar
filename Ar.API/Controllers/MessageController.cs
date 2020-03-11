@@ -54,17 +54,39 @@ namespace Ar.API.Controllers
 
         }
         /// <summary>
+        /// 生成随机字母与数字
+        /// </summary>
+        /// <param name="Length">生成长度</param>
+        /// <param name="Sleep">是否要在生成前将当前线程阻止以避免重复</param>
+        public string Str(int Length, bool Sleep)
+        {
+            if (Sleep) System.Threading.Thread.Sleep(3);
+            char[] Pattern = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+            string result = "";
+            int n = Pattern.Length;
+            System.Random random = new Random(~unchecked((int)DateTime.Now.Ticks));
+            for (int i = 0; i < Length; i++)
+            {
+                int rnd = random.Next(0, n);
+                result += Pattern[rnd];
+            }
+            return result;
+        }
+        /// <summary>
         /// 绑定手机号
         /// </summary>
         /// <param name="phone"></param>
         /// <param name="verificationCode"></param>
         /// <param name="userCode"></param>
         /// <returns></returns>
-      
+
         [HttpPost]
         //http://localhost:10010//api/Message/BangMessageCode?phone=18235139350&verificationCode=232232&userCode=121ewe&birthday='yyyy-mm-dd'
-        public IHttpActionResult BangMessageCode(string phone,string verificationCode, string userCode,string birthday)
+        public IHttpActionResult BangMessageCode(string phone,string verificationCode, string userCode,string birthday,string recommendedPhone=null)
         {
+            ICouponService _service = new CouponService();
+            IUserInfo _userservice = new UserInfo();
+            ICouponTypeService _couponTypeservice = new CouponTypeService();
             SimpleResult result = new SimpleResult();
             if (UserAuthorization)
             {
@@ -76,10 +98,75 @@ namespace Ar.API.Controllers
                         var use = userInfo.GetUserByCode(userCode);
                         if (use != null)
                         {
+                          
                             //写入到手机号和和数据库
-                            var count = userInfo.UpdateByPhone(userCode, phone, birthdaydate);
+                            var count = userInfo.UpdateByPhone(userCode, phone, birthdaydate, recommendedPhone);
                             if (count > 0)
                             {
+                                if (!string.IsNullOrEmpty(recommendedPhone))
+                                {
+                                    var recouser = _userservice.GetUserByphone(recommendedPhone);
+                                    //判断是不是已经领够了2次
+                                    if (recouser != null && recouser.IsMember)
+                                    {
+                                        if (_service.checkCoupon(recouser.Code))
+                                        {
+                                            var couponType = _couponTypeservice.GetCouponTypeByIsGivedType();
+                                            if (couponType != null)
+                                            {
+                                                Coupon coupon = new Coupon();
+                                                coupon.CouponCode = Guid.NewGuid().ToString();
+                                                coupon.UserCode = recouser.Code;
+                                                coupon.CouponTypeCode = couponType.CouponTypeCode;
+                                                coupon.StratTime = DateTime.Now;
+                                                coupon.VersionEndTime = DateTime.MaxValue;
+                                                coupon.IsGiveed = true;
+                                                coupon.CouponUseCode = Str(10, true);
+                                                //没有添加任务优惠券
+                                                var re = _service.Insert(coupon);
+                                                result.Resource = re;
+                                                result.Status = Result.SUCCEED;
+                                            }
+                                            else
+                                            {
+                                                result.Resource = "好友赠送任务已经结束";
+                                                result.Status = Result.SYSTEM_ERROR;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            result.Resource = "好友已经达到任务奖励上限";
+
+                                            result.Status = Result.SYSTEM_ERROR;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        result.Resource = "您还没有注册会员";
+                                        result.Status = Result.SYSTEM_ERROR;
+                                    }
+                                }
+                                //添加赠送本人
+                                if (_service.checkCoupon(userCode))
+                                {
+                                    var couponType = _couponTypeservice.GetCouponTypeByIsGivedType();
+                                    if (couponType != null)
+                                    {
+                                        Coupon coupon = new Coupon();
+                                        coupon.CouponCode = Guid.NewGuid().ToString();
+                                        coupon.UserCode = userCode;
+                                        coupon.CouponTypeCode = couponType.CouponTypeCode;
+                                        coupon.StratTime = DateTime.Now;
+                                        coupon.VersionEndTime = DateTime.MaxValue;
+                                        coupon.IsGiveed = true;
+                                        coupon.CouponUseCode = Str(10, true);
+                                        //没有添加任务优惠券
+                                        var re = _service.Insert(coupon);
+                                        result.Resource = re;
+                                        result.Status = Result.SUCCEED;
+                                    }
+
+                                }
                                 result.Resource = count;
                                 result.Status = Result.SUCCEED;
                             }
