@@ -20,14 +20,6 @@ namespace Ar.Services
 
             return userone;
         }
-        public TopupOrder GetTopupOrderbyWallePrCode(string WallePrCode)
-        {
-
-            DynamicParameters paras = new DynamicParameters();
-            paras.Add("@WallePrCode", WallePrCode, System.Data.DbType.String);
-            TopupOrder userone = DapperSqlHelper.FindOne<TopupOrder>("select * from [dbo].[TopupOrder] where   WallePrCode=@WallePrCode", paras, false);
-
-            return userone;
-        }
+      
     }
 }

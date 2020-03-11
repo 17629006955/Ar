@@ -51,6 +51,7 @@
     <Compile Include="CouponService.cs" />
     <Compile Include="ExperienceVoucherService.cs" />
     <Compile Include="IntegralRecordService.cs" />
+    <Compile Include="TopupOrderServrce.cs" />
     <Compile Include="WeixinPayService.cs" />
     <Compile Include="UserTaskService.cs" />
     <Compile Include="UseWalletService.cs" />

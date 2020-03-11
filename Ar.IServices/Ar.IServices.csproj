@@ -46,6 +46,7 @@
     <Compile Include="ICouponService.cs" />
     <Compile Include="IExperienceVoucherService.cs" />
     <Compile Include="IIntegralRecordService.cs" />
+    <Compile Include="ITopupOrderServrce.cs" />
     <Compile Include="IUserTaskService.cs" />
     <Compile Include="IUseWalletService.cs" />
     <Compile Include="ICustomerService.cs" />
