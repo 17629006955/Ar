@@ -123,6 +123,7 @@ namespace Ar.API.Controllers
         }
         public static Wxticket wxticket(string access_token)
         {
+            LogHelper.WriteLog("wxticket.accessToken:" + access_token);
             var url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token="+ access_token + "&type=jsapi";
             HttpWebResponse response = HttpWebResponseUtility.CreateGetHttpResponse(url, 60000, null, null);
             Stream responseStream = response.GetResponseStream();
@@ -136,6 +137,7 @@ namespace Ar.API.Controllers
         public static WxConfig GetWxConfig(Store store ,string url)
         {
             WxConfig wxConfig = new WxConfig();
+            LogHelper.WriteLog("store.appid:" + store.appid.Trim());
             LogHelper.WriteLog("store.accessToken:" + store.accessToken);
             LogHelper.WriteLog("store.jsapi_ticket:" + store.jsapi_ticket);
             LogHelper.WriteLog("store.accessTokenCreateTime:" + store.accessTokenCreateTime);
@@ -210,36 +212,31 @@ namespace Ar.API.Controllers
         }
         public static string signature(string jsapi_ticket, string noncestr, string timestamp, string url)
         {
-            var string1= "jsapi_ticket ="+ jsapi_ticket + "&noncestr="+ noncestr + "&timestamp"+ timestamp + "&url=" + url;
-            return SHA1(string1, Encoding.UTF8);
+            var string1= "jsapi_ticket="+ jsapi_ticket + "&noncestr="+ noncestr + "&timestamp="+ timestamp + "&url=" + url;
+            return Sha1(string1);
         }
-        
+
         /// <summary>
         /// SHA1 加密，返回大写字符串
         /// </summary>
         /// <param name="content">需要加密字符串</param>
         /// <param name="encode">指定加密编码</param>
         /// <returns>返回40位大写字符串</returns>
-        public static string SHA1(string content, Encoding encode)
+        public static string Sha1(this string str)
         {
-            try
+            var buffer = Encoding.UTF8.GetBytes(str);
+            var data = SHA1.Create().ComputeHash(buffer);
+
+            var sb = new StringBuilder();
+            foreach (var t in data)
             {
-                SHA1 sha1 = new SHA1CryptoServiceProvider();
-                byte[] bytes_in = encode.GetBytes(content);
-                byte[] bytes_out = sha1.ComputeHash(bytes_in);
-                sha1.Dispose();
-                string result = BitConverter.ToString(bytes_out);
-                result = result.Replace("-", "");
-                return result;
+                sb.Append(t.ToString("X2"));
             }
-            catch (Exception ex)
-            {
-                throw new Exception("SHA1加密出错：" + ex.Message);
-            }
+            
+            return sb.ToString().ToLower();
         }
 
-
-        public static string wxJsApiParam { get; set; } //H5调起JS API参数
+public static string wxJsApiParam { get; set; } //H5调起JS API参数
         public static Wxprepay wxPayOrderSomething(string openid,string total_fee,string couponType, Store store)
         {
 
