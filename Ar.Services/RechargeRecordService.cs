@@ -30,7 +30,7 @@ namespace Ar.Services
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@userCode", userCode, System.Data.DbType.String);
             IList<RechargeTypeshow> list = DapperSqlHelper.FindToList<RechargeTypeshow>(@"  SELECT   
-                       CASE WHEN a.RechargeTypeCode='0' THEN 0 ELSE b.RechargeTypeCode END RechargeTypeCode,
+                       CASE WHEN a.RechargeTypeCode='0' THEN '0' ELSE b.RechargeTypeCode END RechargeTypeCode,
                       CASE WHEN a.RechargeTypeCode='0' THEN '充值' ELSE  b.RechargeTypeName END RechargeTypeName,
                       CASE WHEN a.RechargeTypeCode='0' THEN a.RecordsMoney ELSE b.Money END Money,
                        CASE WHEN a.RechargeTypeCode='0' THEN 0 ELSE b.DonationAmount END DonationAmount
