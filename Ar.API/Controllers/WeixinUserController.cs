@@ -30,7 +30,7 @@ namespace Ar.API.Controllers
         IUserInfo userInfo = new UserInfo();
         IStoreService storeService = new StoreService();
         //http://localhost:10010//api/WeixinUser/access_token
-        
+      
         ///http://localhost:10010//api/WeixinUser/reAccessToken?reAccessToken=18235139350
         [HttpGet]
         public IHttpActionResult reAccessToken(string reAccessToken)

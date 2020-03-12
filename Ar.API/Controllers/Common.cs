@@ -82,7 +82,7 @@ namespace Ar.API.Controllers
 
         public static WxCertification wxCertification(string authorizationCode ,Store store)
         {
-            var url = ConfigurationManager.AppSettings["access_token"].ToString() + "?" + "appid=" + store.appid + "&secret=" + store.secret + "&code=" + authorizationCode+ "&grant_type=authorization_code";
+            var url = ConfigurationManager.AppSettings["access_token"].ToString() + "?" + "appid=" + store.appid.Trim() + "&secret=" + store.secret + "&code=" + authorizationCode+ "&grant_type=authorization_code";
             LogHelper.WriteLog("微信认证url:" + url);
             HttpWebResponse response = HttpWebResponseUtility.CreateGetHttpResponse(url, 60000, null, null);
             Stream responseStream = response.GetResponseStream();
@@ -143,7 +143,7 @@ namespace Ar.API.Controllers
             {
                 url = url.Split('#')[0];
                 var jsapi_ticket = store.jsapi_ticket;
-                wxConfig.appId = store.appid;
+                wxConfig.appId = store.appid.Trim();
                 wxConfig.debug = true;
                 wxConfig.nonceStr = WxPayApi.GenerateNonceStr();
                 wxConfig.timestamp = WxPayApi.GenerateTimeStamp();
@@ -152,7 +152,7 @@ namespace Ar.API.Controllers
             }
             else
             { 
-            var accessToken = wxAccessToken(store.appid, store.secret);
+            var accessToken = wxAccessToken(store.appid.Trim(), store.secret.Trim());
                 if (accessToken != null)
                 {
                     if (!string.IsNullOrEmpty(accessToken.access_token))
@@ -172,7 +172,7 @@ namespace Ar.API.Controllers
                                 _stoeservice.UpdateStoreaccessToken(store);
                                 url = url.Split('#')[0];
                                 var jsapi_ticket = wt?.ticket;
-                                wxConfig.appId = store.appid;
+                                wxConfig.appId = store.appid.Trim();
                                 wxConfig.debug = true;
                                 wxConfig.nonceStr = WxPayApi.GenerateNonceStr();
                                 wxConfig.timestamp = WxPayApi.GenerateTimeStamp();
