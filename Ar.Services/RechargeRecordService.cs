@@ -29,9 +29,15 @@ namespace Ar.Services
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@userCode", userCode, System.Data.DbType.String);
-            IList<RechargeTypeshow> list = DapperSqlHelper.FindToList<RechargeTypeshow>(@"SELECT  b.RechargeTypeCode,CASE WHEN a.RechargeTypeCode='0' THEN '充值' ELSE  b.RechargeTypeName END RechargeTypeName,b.Status,b.Money,b.DonationAmount,a.CreateTime
-            from [dbo].[RecordsOfConsumption] a  LEFT JOIN [dbo].[RechargeType] b ON a.RechargeTypeCode=b.RechargeTypeCode
-            WHERE  b.Status=1 AND a.IsRecharging=1
+            IList<RechargeTypeshow> list = DapperSqlHelper.FindToList<RechargeTypeshow>(@"  SELECT   
+                       CASE WHEN a.RechargeTypeCode='0' THEN 0 ELSE b.RechargeTypeCode END RechargeTypeCode,
+                      CASE WHEN a.RechargeTypeCode='0' THEN '充值' ELSE  b.RechargeTypeName END RechargeTypeName,
+                      CASE WHEN a.RechargeTypeCode='0' THEN a.RecordsMoney ELSE b.Money END Money,
+                       CASE WHEN a.RechargeTypeCode='0' THEN 0 ELSE b.DonationAmount END DonationAmount
+                        ,a.CreateTime
+                                from [dbo].[RecordsOfConsumption] a  LEFT JOIN [dbo].[RechargeType] b 
+			                    ON a.RechargeTypeCode=b.RechargeTypeCode
+                                AND  b.Status=1 WHERE  a.IsRecharging=1
             AND a.UserCode=@userCode", paras, false);
             return list;
         }
