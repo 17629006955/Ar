@@ -147,8 +147,14 @@ namespace Ar.API.Controllers
                 if (UserAuthorization)
                 {
                     LogHelper.WriteLog("PayOrder接口");
+                    LogHelper.WriteLog("productCode " + param.paytype);
+                    LogHelper.WriteLog("productCode " + param.money);
+                    LogHelper.WriteLog("productCode " + param.orderCode);
+                    LogHelper.WriteLog("productCode " + param.peopleCount);
                     LogHelper.WriteLog("productCode " + param.productCode);
-                 
+                    LogHelper.WriteLog("productCode " + param.storeId);
+                    LogHelper.WriteLog("productCode " + param.userCode);
+                  
                     var isExistProduct = _productInfoService.IsExistProduct(param.productCode);
                     if (!isExistProduct)
                     {
@@ -221,14 +227,14 @@ namespace Ar.API.Controllers
                         {
                             using (var scope = new TransactionScope())//创建事务
                             {
-
+                                LogHelper.WriteLog("微信支付 " + param.userCode);
                                 IUserStoreService _userStoreservice = new UserStoreService();
                                 var store = _stoeservice.GetStore(param.storeId);
                                 var couponser = _couponService.GetCouponByCode(param.couponCode);
                                 var userStoreser = _userStoreservice.GetUserStorebyUserCodestoreCode(param.userCode, param.storeId);
                                 if (userStoreser != null )
                                 {
-                                    if (param.money==0)
+                                    if (param.money!=0)
                                     {
                                         //生成微信预支付订单
                                         var wxprepay = Common.wxPayOrderSomething(userStoreser.OpenID, param.money.ToString(), couponser?.CouponTypeName, store);

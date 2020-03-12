@@ -87,6 +87,7 @@ namespace Ar.API.Controllers
             ICouponService _service = new CouponService();
             IUserInfo _userservice = new UserInfo();
             ICouponTypeService _couponTypeservice = new CouponTypeService();
+            IUserTaskService _userTaskservice = new UserTaskService();
             SimpleResult result = new SimpleResult();
             if (UserAuthorization)
             {
@@ -124,8 +125,14 @@ namespace Ar.API.Controllers
                                                 coupon.CouponUseCode = Str(10, true);
                                                 //没有添加任务优惠券
                                                 var re = _service.Insert(coupon);
+                                                //更改任务状态
+                                                var userTask = _userTaskservice.GetUserTaskList(recouser.Code);
+                                                var ut=userTask.Where(u=>u.TaskCode=="2").FirstOrDefault();
+                                                ut.IsComplete = true;
+                                                _userTaskservice.UpdateUserTask(ut.UserTaskCode, 1);
                                                 result.Resource = re;
                                                 result.Status = Result.SUCCEED;
+
                                             }
                                             else
                                             {
@@ -165,6 +172,12 @@ namespace Ar.API.Controllers
                                             coupon.CouponUseCode = Str(10, true);
                                             //没有添加任务优惠券
                                             var re = _service.Insert(coupon);
+                                            //更改任务状态
+                                            //更改任务状态
+                                            var userTask = _userTaskservice.GetUserTaskList(userCode);
+                                            var ut = userTask.Where(u => u.TaskCode == "1").FirstOrDefault();
+                                            ut.IsComplete = true;
+                                            _userTaskservice.UpdateUserTask(ut.UserTaskCode, 1);
                                             result.Resource = re;
                                             result.Status = Result.SUCCEED;
                                         }

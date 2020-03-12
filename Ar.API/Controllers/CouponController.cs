@@ -189,6 +189,7 @@ namespace Ar.API.Controllers
             ICouponService _service = new CouponService();
             IUserInfo _userservice = new UserInfo();
             ICouponTypeService _couponTypeservice = new CouponTypeService();
+          
             try
             {
                 if (UserAuthorization)
