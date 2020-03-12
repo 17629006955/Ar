@@ -10,7 +10,8 @@ namespace Ar.IServices
     public interface ITopupOrderServrce
     {
         TopupOrder GetTopupOrderbyWallePrCode(string WallePrCode);
-        void InsertTopupOrder(string userCode,string prepayid);
-        void UpdateTopupOrder(string prepayid, DateTime payDatetime);
+        int InsertTopupOrder(string userCode,string prepayid, string typeCode, decimal? money = 0);
+        int UpdateTopupOrder(string prepayid, DateTime? payDatetime);
+        IList<TopupOrder> GetTopupOrderbyuserCode(string userCode);
     }
 }

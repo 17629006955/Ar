@@ -10,7 +10,7 @@ namespace Ar.IServices
         IList<Order> GetPayOrderList(string userCode);
         IList<Order> GetNOPayOrderList(string userCode);
 
-        void UpdateOrder(Order order);
+        int UpdateOrder(Order order);
         string InsertOrder(Order order);
 
     }

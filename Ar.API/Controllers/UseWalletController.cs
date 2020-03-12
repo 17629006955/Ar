@@ -64,10 +64,29 @@ namespace Ar.API.Controllers
         {
             SimpleResult result = new SimpleResult();
             IUseWalletService _service = new UseWalletService();
+            ITopupOrderServrce tos = new TopupOrderServrce();
+            IRechargeRecordService _RechargeRecordService = new RechargeRecordService();
             try
             {
                 if (UserAuthorization)
                 {
+                    //查看没有给微信支付核对的订单继续核对
+                    var topupOrder = tos.GetTopupOrderbyuserCode(userCode);
+                    foreach (var item in topupOrder)
+                    {
+                        if (!string.IsNullOrEmpty(item.WallePrCode) && item.PayDatetime == null)
+                        {
+                            var PayTime = Common.wxPayOrderQuery(item.WallePrCode);
+                            if (!string.IsNullOrEmpty(PayTime))
+                            {
+                                item.PayDatetime = Convert.ToDateTime(PayTime);
+                                tos.UpdateTopupOrder(item.WallePrCode, item.PayDatetime);
+                                _RechargeRecordService.Recharge(item.RechargeTypeCode, item.UserCode, item.RecordsMoney);
+                            }
+
+                        }
+
+                    }
                     var list = _service.GetUseWalletInfoByUserCode(userCode);
                     result.Resource = list;
                     result.Status = Result.SUCCEED;

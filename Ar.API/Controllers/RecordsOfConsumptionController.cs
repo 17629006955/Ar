@@ -15,6 +15,7 @@ using Ar.IServices;
 using Ar.Services;
 using System.Transactions;
 using AR.Model;
+using Ar.Common;
 
 namespace Ar.API.Controllers
 {
@@ -145,6 +146,9 @@ namespace Ar.API.Controllers
             {
                 if (UserAuthorization)
                 {
+                    LogHelper.WriteLog("PayOrder接口");
+                    LogHelper.WriteLog("productCode " + param.productCode);
+                 
                     var isExistProduct = _productInfoService.IsExistProduct(param.productCode);
                     if (!isExistProduct)
                     {
@@ -152,9 +156,10 @@ namespace Ar.API.Controllers
                         result.Msg = "商品已失效或不存在";
                         result.Resource = null;
                     }
-
                     if (param.paytype == 0)
                     {
+                        LogHelper.WriteLog("会员支付 " + param.paytype);
+                        
                         var isPay = true;
                         if (!string.IsNullOrEmpty(param.couponCode))
                         {
@@ -223,24 +228,33 @@ namespace Ar.API.Controllers
                                 var userStoreser = _userStoreservice.GetUserStorebyUserCodestoreCode(param.userCode, param.storeId);
                                 if (userStoreser != null )
                                 {
-
-                                    //生成微信预支付订单
-                                    var wxprepay = Common.wxPayOrderSomething(userStoreser.OpenID, param.money.ToString(), couponser?.CouponTypeName, store);
-                                    if (wxprepay != null)
+                                    if (param.money==0)
                                     {
-                                        var order = _service.WxPayOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money, wxprepay.prepayid, param.couponCode);
+                                        //生成微信预支付订单
+                                        var wxprepay = Common.wxPayOrderSomething(userStoreser.OpenID, param.money.ToString(), couponser?.CouponTypeName, store);
+                                        if (wxprepay != null)
+                                        {
+                                            var order = _service.WxPayOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money, wxprepay.prepayid, param.couponCode);
+
+                                            WxOrder wxorder = new WxOrder();
+                                            wxorder.order = order;
+                                            wxorder.wxJsApiParam = wxprepay.wxJsApiParam;
+                                            wxorder.prepayid = wxprepay.prepayid;
+                                            result.Resource = wxorder;
+                                            result.Status = Result.SUCCEED;
+                                        }
+                                        else
+                                        {
+                                            result.Msg = "微信下单失败，重新提交订单";
+                                            result.Status = Result.SYSTEM_ERROR;
+                                        }
+                                    } else
+                                    {
+                                        var order = _service.WxPayNoMoneyOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money, param.couponCode);
 
                                         WxOrder wxorder = new WxOrder();
                                         wxorder.order = order;
-                                        wxorder.wxJsApiParam = wxprepay.wxJsApiParam;
-                                        wxorder.prepayid = wxprepay.prepayid;
-                                        result.Resource = wxorder;
                                         result.Status = Result.SUCCEED;
-                                    }
-                                    else
-                                    {
-                                        result.Resource = "微信下单失败，重新提交订单";
-                                        result.Status = Result.SYSTEM_ERROR;
                                     }
                                 }
                                 else
@@ -281,6 +295,11 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult WxPayOrder(string userCode, string orderCode, string prepayid, string couponCode = "")
         {
+            LogHelper.WriteLog("WxPayOrder接口");
+            LogHelper.WriteLog("userCode " + userCode);
+            LogHelper.WriteLog("orderCode " + orderCode);
+            LogHelper.WriteLog("prepayid " + prepayid);
+            LogHelper.WriteLog("couponCode " + couponCode);
             SimpleResult result = new SimpleResult();
             IRecordsOfConsumptionService _service = new RecordsOfConsumptionService();
             IStoreService _stoeservice = new StoreService();
@@ -295,14 +314,17 @@ namespace Ar.API.Controllers
                         if (!string.IsNullOrEmpty(prepayid) )
                         {
                             var PayTime = Common.wxPayOrderQuery(prepayid);
+                            LogHelper.WriteLog("微信支付时间： " + PayTime);
                             if (!string.IsNullOrEmpty(PayTime))
                             {
                                 IOrderService _orderService = new OrderService();
                                 ICouponService _couponService = new CouponService();
                                 var order = _orderService.GetOrderByCode(orderCode);
+                                LogHelper.WriteLog("更新的订单： " + orderCode);
                                 order.PayTime = DateTime.Now;
                                 _orderService.UpdateOrder(order);
                                 _couponService.UsedUpdate(couponCode, userCode);
+                                LogHelper.WriteLog("更新的钱包和优惠券couponCode： " + couponCode);
                                 result.Status = Result.SUCCEED;
                                 scope.Complete();//这是最后提交事务
                             }
@@ -355,7 +377,7 @@ namespace Ar.API.Controllers
                     }
                     else
                     {
-                        result.Resource = "没有当前用户";
+                        result.Msg = "没有当前用户";
                         result.Status = Result.SYSTEM_ERROR;
                     }
                 }
@@ -373,57 +395,7 @@ namespace Ar.API.Controllers
             }
             return Json(result);
         }
-        /// <summary>
-        /// 获取核销码
-        /// </summary>
-        /// <param name="orderCode"></param>
-        /// <returns></returns>
-        [HttpGet]
-        [HttpPost]
-        //http://localhost:10010//api/RecordsOfConsumption/WriteOff?orderCode=1 
-        public IHttpActionResult WriteOff(string orderCode)
-        {
-            SimpleResult result = new SimpleResult();
-            IOrderService _orderservice = new OrderService();
-            IWriteOffService _writeOffServicee = new WriteOffService();
-            try
-            {
-
-                if (UserAuthorization)
-                {
-                    var order = _orderservice.GetOrderByCode(orderCode);
-                    if (order != null && !order.IsWriteOff)
-                    {
-                        _writeOffServicee.Delete(orderCode);
-                        WriteOff writeOff = new WriteOff();
-                        writeOff.WriteOffCode = Guid.NewGuid().ToString();
-                        writeOff.OrderCode = orderCode;
-                        writeOff.CreateTime = DateTime.Now;
-                        _writeOffServicee.CreateWriteOff(writeOff);
-                        result.Resource = writeOff.WriteOffCode;
-                        result.Status = Result.SUCCEED;
-
-                    }
-                    else
-                    {
-                        result.Resource = "订单已经被核销";
-                        result.Status = Result.SYSTEM_ERROR;
-                    }
-                }
-                else
-                {
-                    result.Status = Result.FAILURE;
-                    result.Resource = ReAccessToken;
-                    result.Msg = TokenMessage;
-                }
-            }
-            catch (Exception ex)
-            {
-                result.Status = Result.FAILURE;
-                result.Msg = ex.Message;
-            }
-            return Json(result);
-        }
+       
         /// <summary>
         ///订单核销
         /// </summary>
@@ -432,11 +404,12 @@ namespace Ar.API.Controllers
             ////http://localhost:10010//api/RecordsOfConsumption/WriteOff?userCode=68add88&phone=18235139350&orderCode=1&writeOffCode=hjhhjh
         [HttpGet]
         [HttpPost]
-        public IHttpActionResult WriteOff(string userCode, string orderCode, string writeOffCode)
+        public IHttpActionResult WriteOff(string userCode, string orderCode)
         {
             SimpleResult result = new SimpleResult();
             IRecordsOfConsumptionService _service = new RecordsOfConsumptionService();
             IWriteOffService _writeOffServicee = new WriteOffService();
+            IOrderService _orderservice = new OrderService();
             try
             {
                 if (UserAuthorization)
@@ -444,30 +417,39 @@ namespace Ar.API.Controllers
                     var use = userInfo.GetUserByCode(userCode);
                     if (use != null)
                     {
-                        if (!string.IsNullOrEmpty(use.Phone))
+                         if (_service.IsWriteOffUser(use.Phone))
                         {
-
-                            if (_writeOffServicee.CheckWriteOff(orderCode, writeOffCode))
+                            var order = _orderservice.GetOrderByCode(orderCode);
+                            if (order != null && !order.IsWriteOff)
                             {
-                                var re = _service.WriteOff(use.Phone, orderCode);
-                                result.Resource = re;
-                                result.Status = Result.SUCCEED;
+                                order.IsWriteOff = true;
+                                if (_orderservice.UpdateOrder(order) > 0)
+                                {
+                                    result.Status = Result.SUCCEED;
+                                }
+                                else
+                                {
+                                    result.Msg = "订单已经被核销";
+                                    result.Status = Result.SYSTEM_ERROR;
+                                }
+
                             }
                             else
                             {
-                                result.Resource = "核销二维码已经失效请用户重新打开二维码";
+                                result.Msg = "订单已经被核销";
                                 result.Status = Result.SYSTEM_ERROR;
                             }
+                            
                         }
                         else
                         {
-                            result.Resource = "请您绑定手机号再核销";
+                            result.Msg = "您不是核销人员。";
                             result.Status = Result.SYSTEM_ERROR;
                         }
                     }
                     else
                     {
-                        result.Resource = "没有当前用户";
+                        result.Msg = "没有当前用户";
                         result.Status = Result.SYSTEM_ERROR;
                     }
                 }

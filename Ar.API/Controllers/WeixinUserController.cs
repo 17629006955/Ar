@@ -30,21 +30,7 @@ namespace Ar.API.Controllers
         IUserInfo userInfo = new UserInfo();
         IStoreService storeService = new StoreService();
         //http://localhost:10010//api/WeixinUser/access_token
-        [HttpGet]
-        public IHttpActionResult access_token()
-        {
-
-           var wxAccessToken= Common.wxAccessToken();
-           SimpleResult result = new SimpleResult();
-            if(wxAccessToken!=null)
-            {
-                result.Resource = wxAccessToken;
-                result.Status = Result.SUCCEED;
-            }
-           
-            return Json(result);
-           
-        }
+        
         ///http://localhost:10010//api/WeixinUser/reAccessToken?reAccessToken=18235139350
         [HttpGet]
         public IHttpActionResult reAccessToken(string reAccessToken)
@@ -164,35 +150,48 @@ namespace Ar.API.Controllers
         public IHttpActionResult Wxconfig(string storeCode,string url)
         {
             SimpleResult result = new SimpleResult();
-            var store = storeService.GetStore(storeCode);
-            if (store != null)
+            try
             {
-                Common.Appid = store.appid?.Trim();
-                LogHelper.WriteLog("store.appid " + store.appid);
-                Common.Secret = store.secret?.Trim();
-                LogHelper.WriteLog("store.secret " + store.secret);
-                Common.Mchid = store.mchid?.Trim();
-                LogHelper.WriteLog("store.mchid " + store.mchid);
-                LogHelper.WriteLog("微信进来");
-                if (Common.GetWxConfig(url) != null)
+                var store = storeService.GetStore(storeCode);
+                if (store != null)
                 {
-                    result.Status = Result.SUCCEED;
-                    result.Resource = Common.GetWxConfig(url);
+                    Common.Appid = store.appid?.Trim();
+                    LogHelper.WriteLog("store.appid " + store.appid);
+                    Common.Secret = store.secret?.Trim();
+                    LogHelper.WriteLog("store.secret " + store.secret);
+                    Common.Mchid = store.mchid?.Trim();
+                    LogHelper.WriteLog("store.mchid " + store.mchid);
+                    LogHelper.WriteLog("微信进来");
+                    var wxc = Common.GetWxConfig(store, url);
+                    if (wxc != null)
+                    {
+                        result.Status = Result.SUCCEED;
+                        result.Resource = wxc;
+                    }
+                    else
+                    {
+                        result.Status = Result.USER_AUTH_ERROR;
+                        result.Resource = "获取配置失败重新获取";
+                    }
+
                 }
                 else
                 {
-                    result.Status = Result.USER_AUTH_ERROR;
-                    result.Resource = "获取配置失败重新获取";
+                    result.Status = Result.SYSTEM_ERROR;
+                    result.Resource = "店铺没有配置";
                 }
 
+
+                
             }
-            else
+            catch (Exception ex)
             {
-                result.Status = Result.SYSTEM_ERROR;
-                result.Resource = "店铺没有配置";
+                
+                    result.Status = Result.FAILURE;
+                    result.Msg = ex.Message;
+              
+
             }
-
-
             return Json(result);
 
         }
@@ -211,43 +210,46 @@ namespace Ar.API.Controllers
             SimpleResult result = new SimpleResult();
             try
             {
-                LogHelper.WriteLog("微信authorizationCode:" + authorizationCode+ "membershipCardStore:"+ membershipCardStore);
-                var wxAccessToken = Common.wxCertification(authorizationCode);
-                if (wxAccessToken != null && wxAccessToken.access_token!=null)
+                var store = storeService.GetStore(membershipCardStore);
+                if (store != null)
                 {
-                    Certification certification = new Certification();
-                    //①请求判断是否用户已经存在认证②存在了更新
-                    LogHelper.WriteLog("微信openid:" + wxAccessToken.openid + "membershipCardStore:" + membershipCardStore);
-                    if (certificationService.CheckCertification(wxAccessToken.openid))
+                    LogHelper.WriteLog("微信authorizationCode:" + authorizationCode+ "membershipCardStore:"+ membershipCardStore);
+                    var wxAccessToken = Common.wxCertification(authorizationCode, store);
+                    if (wxAccessToken != null && wxAccessToken.access_token != null)
                     {
-                        certification.CertificationCode = Guid.NewGuid().ToString();
-                        certification.OpenID = wxAccessToken.openid;
-                        certification.AccessToken = Guid.NewGuid().ToString();
-                        certification.CreateTime = DateTime.Now;
-                        certification.ReAccessToken= Guid.NewGuid().ToString();
-                        certificationService.UpdateUserCertification(certification);
-                    }
-                    else
-                    {
-                        //③不存在 微信authorizationCode转化自己的authorizationCode
-                        certification.CertificationCode = Guid.NewGuid().ToString();
-                        certification.OpenID = wxAccessToken.openid;
-                        certification.CreateTime = DateTime.Now;
-                        certification.AccessToken = Guid.NewGuid().ToString();
-                        certification.ReAccessToken = Guid.NewGuid().ToString();
-                        //3.1 创建认证信息
-                        certificationService.CreateUserCertification(certification);
-                    }
-                    IUserTaskService _userTaskService = new UserTaskService();
-                    //3.2用OpenID检查用户 没有的话创建用户信息待写
-                    //using (var scope = new TransactionScope())//创建事务
-                    //{
+                        Certification certification = new Certification();
+                        //①请求判断是否用户已经存在认证②存在了更新
+                        LogHelper.WriteLog("微信openid:" + wxAccessToken.openid + "membershipCardStore:" + membershipCardStore);
+                        if (certificationService.CheckCertification(wxAccessToken.openid))
+                        {
+                            certification.CertificationCode = Guid.NewGuid().ToString();
+                            certification.OpenID = wxAccessToken.openid;
+                            certification.AccessToken = Guid.NewGuid().ToString();
+                            certification.CreateTime = DateTime.Now;
+                            certification.ReAccessToken = Guid.NewGuid().ToString();
+                            certificationService.UpdateUserCertification(certification);
+                        }
+                        else
+                        {
+                            //③不存在 微信authorizationCode转化自己的authorizationCode
+                            certification.CertificationCode = Guid.NewGuid().ToString();
+                            certification.OpenID = wxAccessToken.openid;
+                            certification.CreateTime = DateTime.Now;
+                            certification.AccessToken = Guid.NewGuid().ToString();
+                            certification.ReAccessToken = Guid.NewGuid().ToString();
+                            //3.1 创建认证信息
+                            certificationService.CreateUserCertification(certification);
+                        }
+                        IUserTaskService _userTaskService = new UserTaskService();
+                        //3.2用OpenID检查用户 没有的话创建用户信息待写
+                        //using (var scope = new TransactionScope())//创建事务
+                        //{
                         User user = new User();
                         var userStore = userStoreService.GetUserStoreby(wxAccessToken.openid);
                         if (userStore != null)
                         {
                             user = userInfo.GetUserByCode(userStore.UserCode);
-                            if (_userTaskService.GetUserTaskList(user.Code).Count()!=2)
+                            if (_userTaskService.GetUserTaskList(user.Code).Count() != 2)
                             {
                                 _userTaskService.InsertUserTask(user.Code, "1");
                                 _userTaskService.InsertUserTask(user.Code, "2");
@@ -282,7 +284,7 @@ namespace Ar.API.Controllers
                                 userStorew.UserCode = user.Code;
                                 userStorew.MembershipCardStore = membershipCardStore;
                                 userStoreService.CreateUserStore(userStorew);
-                                
+
                                 _userTaskService.InsertUserTask(user.Code, "1");
                                 _userTaskService.InsertUserTask(user.Code, "2");
                             }
@@ -291,20 +293,25 @@ namespace Ar.API.Controllers
                                 result.Msg = "请使用微信获取用户信息失败";
                             }
                         }
-                     
-                    result.Status =  Result.SUCCEED;
-                    FristModel fristModel = new FristModel();
-                    fristModel.certification = certification;
-                    fristModel.userInfo = user;
-                    result.Resource = fristModel;
-                    result.Msg = "请使用AccessToken请求认证";
-                    //    scope.Complete();//这是最后提交事务
-                    //}
+
+                        result.Status = Result.SUCCEED;
+                        FristModel fristModel = new FristModel();
+                        fristModel.certification = certification;
+                        fristModel.userInfo = user;
+                        result.Resource = fristModel;
+                        result.Msg = "请使用AccessToken请求认证";
+                        //    scope.Complete();//这是最后提交事务
+                        //}
+                    }
+                    else
+                    {
+                        result.Msg = "认证失败";
+                        result.Msg = "请求微信认证失败重新获取Code";
+                    }
                 }
                 else
                 {
-                    result.Msg = "认证失败";
-                    result.Msg = "请求微信认证失败重新获取Code";
+                    result.Msg = "店铺没有配置";
                 }
             }
             catch (Exception e)

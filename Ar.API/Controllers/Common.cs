@@ -4,7 +4,9 @@ using Aliyun.Acs.Core.Http;
 using Aliyun.Acs.Core.Profile;
 using Ar.Common;
 using Ar.Common.tool;
+using Ar.IServices;
 using Ar.Model;
+using Ar.Services;
 using AR.Model;
 using log4net;
 using Newtonsoft.Json;
@@ -28,6 +30,7 @@ namespace Ar.API.Controllers
         public static string Appid { get; set; }
         public static string Secret { get; set; }
         public static string Mchid { get; set; }
+
 
         public static MessageReturn SendMessageCode(string pheone)
         {
@@ -77,9 +80,9 @@ namespace Ar.API.Controllers
             return messageReturn;
         }
 
-        public static WxCertification wxCertification(string authorizationCode)
+        public static WxCertification wxCertification(string authorizationCode ,Store store)
         {
-            var url = ConfigurationManager.AppSettings["access_token"].ToString() + "?" + "appid=" + Appid + "&secret=" + Secret + "&code=" + authorizationCode+ "&grant_type=authorization_code";
+            var url = ConfigurationManager.AppSettings["access_token"].ToString() + "?" + "appid=" + store.appid + "&secret=" + store.secret + "&code=" + authorizationCode+ "&grant_type=authorization_code";
             LogHelper.WriteLog("微信认证url:" + url);
             HttpWebResponse response = HttpWebResponseUtility.CreateGetHttpResponse(url, 60000, null, null);
             Stream responseStream = response.GetResponseStream();
@@ -104,8 +107,10 @@ namespace Ar.API.Controllers
             var wxuserInfo = jsonSerialize.Deserialize<WxUserInfo>(content);
             return wxuserInfo;
         }
-        public static WxAccessToken wxAccessToken()
+        public static WxAccessToken wxAccessToken(string Appid,string Secret)
         {
+            LogHelper.WriteLog("Appid"+ Appid);
+            LogHelper.WriteLog("Secret" + Secret);
             var url = ConfigurationManager.AppSettings["wxurl"].ToString() + "?" + "grant_type=client_credential&appid=" + Appid + "&secret=" + Secret;
             HttpWebResponse response = HttpWebResponseUtility.CreateGetHttpResponse(url, 60000, null, null);
             Stream responseStream = response.GetResponseStream();
@@ -128,35 +133,70 @@ namespace Ar.API.Controllers
             var Wxticket = jsonSerialize.Deserialize<Wxticket>(content);
             return Wxticket;
         }
-        public static WxConfig GetWxConfig(string url)
+        public static WxConfig GetWxConfig(Store store ,string url)
         {
             WxConfig wxConfig = new WxConfig();
-            var accessToken = wxAccessToken();
-            if (accessToken != null)
+            LogHelper.WriteLog("store.accessToken:" + store.accessToken);
+            LogHelper.WriteLog("store.jsapi_ticket:" + store.jsapi_ticket);
+            LogHelper.WriteLog("store.accessTokenCreateTime:" + store.accessTokenCreateTime);
+            if (store.accessToken!=null && store.jsapi_ticket != null  && store.accessTokenCreateTime>DateTime.Now.AddHours(-1))
             {
-                if (!string.IsNullOrEmpty(accessToken.access_token))
+                url = url.Split('#')[0];
+                var jsapi_ticket = store.jsapi_ticket;
+                wxConfig.appId = store.appid;
+                wxConfig.debug = true;
+                wxConfig.nonceStr = WxPayApi.GenerateNonceStr();
+                wxConfig.timestamp = WxPayApi.GenerateTimeStamp();
+                wxConfig.jsApiList = new List<string>();
+                wxConfig.signature = signature(jsapi_ticket, wxConfig.nonceStr, wxConfig.timestamp, url);
+            }
+            else
+            { 
+            var accessToken = wxAccessToken(store.appid, store.secret);
+                if (accessToken != null)
                 {
-                    var wt = wxticket(accessToken.access_token);
-                    if (!string.IsNullOrEmpty(wt?.ticket))
+                    if (!string.IsNullOrEmpty(accessToken.access_token))
                     {
-                        url = url.Split('#')[0];
-                        var jsapi_ticket = wt?.ticket;
-                        wxConfig.appId = Appid;
-                        wxConfig.debug = true;
-                        wxConfig.nonceStr = WxPayApi.GenerateNonceStr();
-                        wxConfig.timestamp = WxPayApi.GenerateTimeStamp();
-                        wxConfig.jsApiList = new List<string>();
-                        if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["jsApiList"].ToString()))
+                        var wt = wxticket(accessToken.access_token);
+                        if (wt != null)
                         {
-                            var st = ConfigurationManager.AppSettings["jsApiList"].ToString().Split(',');
-                            foreach (var item in st)
+                            if (!string.IsNullOrEmpty(wt?.ticket))
                             {
-                                wxConfig.jsApiList.Add(item);
+                                IStoreService _stoeservice = new StoreService();
+                                store.accessToken = accessToken.access_token;
+                                store.jsapi_ticket = wt?.ticket;
+                                store.accessTokenCreateTime = DateTime.Now;
+                                LogHelper.WriteLog("store.accessToken:" + store.accessToken);
+                                LogHelper.WriteLog("store.jsapi_ticket:" + store.jsapi_ticket);
+                                LogHelper.WriteLog("store.accessTokenCreateTime:" + store.accessTokenCreateTime);
+                                _stoeservice.UpdateStoreaccessToken(store);
+                                url = url.Split('#')[0];
+                                var jsapi_ticket = wt?.ticket;
+                                wxConfig.appId = store.appid;
+                                wxConfig.debug = true;
+                                wxConfig.nonceStr = WxPayApi.GenerateNonceStr();
+                                wxConfig.timestamp = WxPayApi.GenerateTimeStamp();
+                                wxConfig.jsApiList = new List<string>();
+
+
+                                wxConfig.signature = signature(jsapi_ticket, wxConfig.nonceStr, wxConfig.timestamp, url);
                             }
+                            else
 
+                            {
+                                return null;
+                            }
                         }
+                        else
 
-                        wxConfig.signature = signature(jsapi_ticket, wxConfig.nonceStr, wxConfig.timestamp, url);
+                        {
+                            return null;
+                        }
+                    }
+                    else
+
+                    {
+                        return null;
                     }
                 }
                 else

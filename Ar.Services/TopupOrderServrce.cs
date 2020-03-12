@@ -22,8 +22,17 @@ namespace Ar.Services
 
             return userone;
         }
-      
-        public void InsertTopupOrder(string userCode, string prepayid)
+        public IList<TopupOrder> GetTopupOrderbyuserCode(string userCode)
+        {
+
+            DynamicParameters paras = new DynamicParameters();
+            paras.Add("@userCode", userCode, System.Data.DbType.String);
+            IList<TopupOrder> userone = DapperSqlHelper.FindToList<TopupOrder>("select * from [dbo].[TopupOrder] where   userCode=@userCode", paras, false);
+
+            return userone;
+        }
+
+        public int InsertTopupOrder(string userCode, string prepayid, string typeCode, decimal? money = 0)
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@TopupOrderCode", Guid.NewGuid().ToString(), System.Data.DbType.String);
@@ -32,21 +41,24 @@ namespace Ar.Services
             paras.Add("@WallePrCode", prepayid, System.Data.DbType.String);
             paras.Add("@OutTradeNo", WxPayApi.GenerateOutTradeNo().ToString(), System.Data.DbType.String);
             paras.Add("@PayDatetime", null, System.Data.DbType.DateTime);
+            paras.Add("@RechargeTypeCode", typeCode, System.Data.DbType.String);
+            paras.Add("@RecordsMoney", money, System.Data.DbType.String);
+            paras.Add("@CreateTime", null, System.Data.DbType.DateTime);
             string sql= @"insert into [dbo].[TopupOrder](TopupOrderCode,UserCode,RecordsOfConsumptionCode,
-                    WallePrCode,OutTradeNo,PayDatetime)
+                    WallePrCode,OutTradeNo,PayDatetime,RechargeTypeCode,RecordsMoney,CreateTime)
                     values(@TopupOrderCode,@UserCode,@RecordsOfConsumptionCode,@WallePrCode,
-                    @OutTradeNo,@PayDatetime)";
-            DapperSqlHelper.ExcuteNonQuery<Order>(sql, paras, false);
+                    @OutTradeNo,@PayDatetime,@RechargeTypeCode,@RecordsMoney,@CreateTime)";
+           return  DapperSqlHelper.ExcuteNonQuery<Order>(sql, paras, false);
         }
 
-        public void UpdateTopupOrder(string prepayid,DateTime payDatetime)
+        public int UpdateTopupOrder(string prepayid,DateTime payDatetime)
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@PayDatetime", payDatetime, System.Data.DbType.String);
             paras.Add("@WallePrCode", prepayid, System.Data.DbType.DateTime);
             string sql = @"update [dbo].[TopupOrder] set PayDatetime=@PayDatetime
             where  WallePrCode=@WallePrCode";
-            DapperSqlHelper.ExcuteNonQuery<Order>(sql, paras, false);
+           return  DapperSqlHelper.ExcuteNonQuery<Order>(sql, paras, false);
         }
     }
 }

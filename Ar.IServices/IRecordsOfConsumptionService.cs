@@ -19,7 +19,7 @@ namespace Ar.IServices
 
         string PayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string storeId, string orderCode = "" ,string couponCode = "");
         Order WxPayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string wxPrepayId, string orderCode = "", string couponCode = "");
-
+        Order WxPayNoMoneyOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string orderCode = "", string couponCode = "");
         /// <summary>
         /// 核销
         /// </summary>

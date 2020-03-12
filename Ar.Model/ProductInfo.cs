@@ -44,6 +44,9 @@ namespace AR.Model
         private string _listTypeCode;
         private string _listTypeName;
         private string _store;
+        private decimal? _costPrice;
+        private string _rate;
+        private string _type;
 
         private List<DateTime> _selectDate;
         private int _peopleCount;
@@ -177,6 +180,32 @@ namespace AR.Model
         {
             set { _peopleCount = value; }
             get { return _peopleCount; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal? CostPrice
+        {
+            set { _costPrice = value; }
+            get { return _costPrice; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Rate
+        {
+            set { _rate = value; }
+            get { return _rate; }
+        }
+    
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Type
+        {
+            set { _type = value; }
+            get { return _type; }
         }
         #endregion Model
 

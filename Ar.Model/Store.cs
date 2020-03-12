@@ -34,7 +34,10 @@ namespace AR.Model
         private string _appid;
         private string _secret;
         private string _mchid;
-        
+        private string _accessToken;
+        private string _jsapi_ticket;
+        private DateTime? _accessTokenCreateTime;
+
         /// <summary>
         /// 
         /// </summary>
@@ -90,6 +93,25 @@ namespace AR.Model
             set { _secret = value; }
             get { return _secret; }
         }
+
+        public string accessToken
+        {
+            set { _accessToken = value; }
+            get { return _accessToken; }
+        }
+        public string jsapi_ticket
+        {
+            set { _jsapi_ticket = value; }
+            get { return _jsapi_ticket; }
+        }
+        public DateTime? accessTokenCreateTime
+        {
+            set { _accessTokenCreateTime = value; }
+            get { return _accessTokenCreateTime; }
+        }
+
+
+        
         #endregion Model
     }
 }

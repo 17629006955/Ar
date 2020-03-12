@@ -32,10 +32,15 @@ namespace AR.Model
 		private string _walleprcode;
 		private string _outtradeno;
 		private DateTime? _paydatetime;
-		/// <summary>
-		/// 
-		/// </summary>
-		public string TopupOrderCode
+        private string _rechargetypecode;
+    
+        private decimal? _recordsmoney;
+
+        private DateTime? _createtime;
+        /// <summary>
+        /// 
+        /// </summary>
+        public string TopupOrderCode
 		{
 			set{ _topupordercode=value;}
 			get{return _topupordercode;}
@@ -80,8 +85,32 @@ namespace AR.Model
 			set{ _paydatetime=value;}
 			get{return _paydatetime;}
 		}
-		#endregion Model
+        /// <summary>
+		/// 
+		/// </summary>
+		public string RechargeTypeCode
+        {
+            set { _rechargetypecode = value; }
+            get { return _rechargetypecode; }
+        }
+        /// <summary>
+		/// 
+		/// </summary>
+		public DateTime? CreateTime
+        {
+            set { _createtime = value; }
+            get { return _createtime; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal? RecordsMoney
+        {
+            set { _recordsmoney = value; }
+            get { return _recordsmoney; }
+        }
+        #endregion Model
 
-	}
+    }
 }
 

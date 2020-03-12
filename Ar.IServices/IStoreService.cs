@@ -25,5 +25,6 @@ namespace Ar.IServices
         /// <param name="code"></param>
         /// <returns></returns>
         Store GetStore(string code);
+        int UpdateStoreaccessToken(Store store);
     }
 }

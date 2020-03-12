@@ -7,6 +7,8 @@ using Dapper;
 using System.Transactions;
 using System.Configuration;
 using System.Net;
+using WxPayAPI;
+using Ar.Common;
 
 namespace Ar.Services
 {
@@ -119,9 +121,20 @@ namespace Ar.Services
                 {
                     msg=_orderService.InsertOrder(order);
                 }
-                
-                _couponService.UsedUpdate(couponCode, userCode);
-                _useWalletService.UpdateData(userCode, money);
+                if (money==0)
+                {
+                    LogHelper.WriteLog("会员支付0元 " + money);
+                    LogHelper.WriteLog("couponCode " + couponCode);
+                    _couponService.UsedUpdate(couponCode, userCode);
+                }else
+                {
+                    LogHelper.WriteLog("couponCode " + couponCode);
+                    _couponService.UsedUpdate(couponCode, userCode);
+                    LogHelper.WriteLog("会员支付金额 " + money);
+                    _useWalletService.UpdateData(userCode, money);
+                }
+
+               
                 scope.Complete();//这是最后提交事务
             }
             return msg;
@@ -135,20 +148,26 @@ namespace Ar.Services
             IOrderService _orderService = new OrderService();
             IUserStoreService _userStoreService = new UserStoreService();
 
-            var p = _productInfoService.GetProductInfo(productCode);
+          
             var userSotre = _userStoreService.GetUserStorebyUserCode(userCode);
             var tempOrder = _orderService.GetOrderByCode(orderCode);
             Order order = new Order();
             if (tempOrder != null && tempOrder.UserCode == userCode)
             {
-                order.OrderCode = tempOrder.OrderCode;
+              
                 order.CreateTime = tempOrder.CreateTime;
+                order.OrderCode = tempOrder.OrderCode;
+                order.OrderNO = tempOrder.OrderNO;
+
             }
             else
             {
                 order.CreateTime = now;
+                order.OrderCode = Guid.NewGuid().ToString();
+                order.OrderNO = WxPayApi.GenerateOutTradeNo().ToString();
+                order.CreateTime = now;
             }
-            order.Money = p.ExperiencePrice;
+            order.Money = money;
             order.Number = 1;
             order.PayTime = null;
             order.StoreCode = userSotre.UserStoreCode;
@@ -157,10 +176,49 @@ namespace Ar.Services
             order.ExperienceVoucherCode = couponCode;
             order.AppointmentTime = dateTime;
             order.WxPrepayId = wxPrepayId;
+            LogHelper.WriteLog("订单编码OrderCode " + order.OrderCode);
+            LogHelper.WriteLog("订单号OrderNO " + order.OrderNO);
             _orderService.InsertOrder(order);
             return order;
         }
-      
+        public Order WxPayNoMoneyOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money,string orderCode = "", string couponCode = "")
+        {
+            IProductInfoService _productInfoService = new ProductInfoService();
+            DateTime now = DateTime.Now;
+
+            IOrderService _orderService = new OrderService();
+            IUserStoreService _userStoreService = new UserStoreService();
+
+            
+            var userSotre = _userStoreService.GetUserStorebyUserCode(userCode);
+            var tempOrder = _orderService.GetOrderByCode(orderCode);
+            Order order = new Order();
+            if (tempOrder != null && tempOrder.UserCode == userCode)
+            {
+              
+                order.CreateTime = tempOrder.CreateTime;
+                order.OrderCode = tempOrder.OrderCode;
+                order.OrderNO = tempOrder.OrderNO;
+            }
+            else
+            {
+                order.OrderCode = Guid.NewGuid().ToString();
+                order.OrderNO = WxPayApi.GenerateOutTradeNo().ToString();
+                order.CreateTime = now;
+            }
+            order.Money = money;
+            order.Number = 1;
+            order.PayTime = DateTime.Now;
+            order.StoreCode = userSotre.UserStoreCode;
+            order.UserCode = userCode;
+            order.ProductCode = productCode;
+            order.ExperienceVoucherCode = couponCode;
+            order.AppointmentTime = dateTime;
+            LogHelper.WriteLog("订单编码OrderCode " + order.OrderCode);
+            LogHelper.WriteLog("订单号OrderNO " + order.OrderNO);
+            _orderService.InsertOrder(order);
+            return order;
+        }
         public bool IsWriteOffUser(string phone)
         {
             DynamicParameters paras = new DynamicParameters();

@@ -63,7 +63,7 @@ namespace Ar.Services
             return list;
         }
 
-        public void UpdateOrder(Order order)
+        public int UpdateOrder(Order order)
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@OrderCode", order.OrderCode, System.Data.DbType.String);
@@ -75,10 +75,11 @@ namespace Ar.Services
             paras.Add("@PayTime", order.PayTime, System.Data.DbType.DateTime);
             paras.Add("@AppointmentTime", order.AppointmentTime, System.Data.DbType.DateTime);
             paras.Add("@ExperienceVoucherCode", order.ExperienceVoucherCode, System.Data.DbType.String);
-            string sql = @"update [dbo].[Order] set where UserCode=@UserCode,ProductCode=@ProductCode,Number=@Number,
-                        Money=@Money,StoreCode=@StoreCode,PayTime=@PayTime,AppointmentTime=@AppointmentTime,ExperienceVoucherCode=@ExperienceVoucherCode,
+            paras.Add("@IsWriteOff", order.IsWriteOff, System.Data.DbType.Boolean);
+            string sql = @"update [dbo].[Order] set  UserCode=@UserCode,ProductCode=@ProductCode,Number=@Number,
+                        Money=@Money,StoreCode=@StoreCode,PayTime=@PayTime,AppointmentTime=@AppointmentTime,ExperienceVoucherCode=@ExperienceVoucherCode,IsWriteOff=@IsWriteOff
                         where OrderCode=@OrderCode";
-            DapperSqlHelper.ExcuteNonQuery<Order>(sql, paras, false);
+            return DapperSqlHelper.ExcuteNonQuery<Order>(sql, paras, false);
         }
 
         public string InsertOrder(Order order)
