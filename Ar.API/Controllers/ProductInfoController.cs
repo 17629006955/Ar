@@ -103,7 +103,7 @@ namespace Ar.API.Controllers
             string msg = "";
             try
             {
-                if (1==1)
+                if (UserAuthorization)
                 {
                     var orderInfo = _orderService.GetOrderInfo(orderCode);
                     if (orderInfo == null)
