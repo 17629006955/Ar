@@ -18,7 +18,7 @@ namespace Ar.IServices
         bool InsertRecore(string typeCode, string userCode, decimal? recordsMoney, string explain, decimal? recordsdonationAmount, decimal? recordsaccountPrincipal, bool IsRecharging = true );
 
         string PayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string storeId, string orderCode = "" ,string couponCode = "");
-        Order WxPayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string wxPrepayId, string orderCode = "", string couponCode = "");
+        Order WxPayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string wxPrepayId, string storeId, string orderCode = "", string couponCode = "");
         Order WxPayNoMoneyOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string orderCode = "", string couponCode = "");
         /// <summary>
         /// 核销
