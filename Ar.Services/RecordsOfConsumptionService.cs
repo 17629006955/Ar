@@ -99,7 +99,7 @@ namespace Ar.Services
             order.CreateTime = now;
             order.ExperienceVoucherCode = couponCode;
             order.AppointmentTime = dateTime;
-
+            order.WxPrepayId = string.Empty;
             using (var scope = new TransactionScope())//创建事务
             {
                 if (!string.IsNullOrEmpty(orderCode))
@@ -109,6 +109,7 @@ namespace Ar.Services
                     {
                         order.OrderCode = temporder.OrderCode;
                         order.CreateTime = temporder.CreateTime;
+                        order.OrderNO = temporder.OrderNO;
                         _orderService.UpdateOrder(order);
                         msg = temporder.OrderCode;
                     }

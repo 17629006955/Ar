@@ -76,8 +76,10 @@ namespace Ar.Services
             paras.Add("@AppointmentTime", order.AppointmentTime, System.Data.DbType.DateTime);
             paras.Add("@ExperienceVoucherCode", order.ExperienceVoucherCode, System.Data.DbType.String);
             paras.Add("@IsWriteOff", order.IsWriteOff, System.Data.DbType.Boolean);
+            paras.Add("@WxPrepayId", order.WxPrepayId, System.Data.DbType.String);
+            paras.Add("@OrderNO", order.OrderNO, System.Data.DbType.String);
             string sql = @"update [dbo].[Order] set  UserCode=@UserCode,ProductCode=@ProductCode,Number=@Number,
-                        Money=@Money,StoreCode=@StoreCode,PayTime=@PayTime,AppointmentTime=@AppointmentTime,ExperienceVoucherCode=@ExperienceVoucherCode,IsWriteOff=@IsWriteOff
+                        Money=@Money,StoreCode=@StoreCode,PayTime=@PayTime,AppointmentTime=@AppointmentTime,ExperienceVoucherCode=@ExperienceVoucherCode,IsWriteOff=@IsWriteOff,WxPrepayId=@WxPrepayId,OrderNO=@OrderNO
                         where OrderCode=@OrderCode";
             return DapperSqlHelper.ExcuteNonQuery<Order>(sql, paras, false);
         }
