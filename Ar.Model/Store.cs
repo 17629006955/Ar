@@ -36,6 +36,8 @@ namespace AR.Model
         private string _mchid;
         private string _accessToken;
         private string _jsapi_ticket;
+        private string _api_ticket;
+        
         private DateTime? _accessTokenCreateTime;
 
         /// <summary>
@@ -104,6 +106,12 @@ namespace AR.Model
             set { _jsapi_ticket = value; }
             get { return _jsapi_ticket; }
         }
+        public string api_ticket
+        {
+            set { _api_ticket = value; }
+            get { return _api_ticket; }
+        }
+        
         public DateTime? accessTokenCreateTime
         {
             set { _accessTokenCreateTime = value; }

@@ -26,9 +26,10 @@ namespace Ar.Services
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@accessToken", store.accessToken, System.Data.DbType.String);
             paras.Add("@jsapi_ticket", store.jsapi_ticket, System.Data.DbType.String);
+            paras.Add("@api_ticket", store.api_ticket, System.Data.DbType.String);
             paras.Add("@accessTokenCreateTime", store.accessTokenCreateTime, System.Data.DbType.DateTime);
             paras.Add("@StoreCode", store.StoreCode, System.Data.DbType.String);
-            string sql = @"update [dbo].[Store] set  accessToken=@accessToken,jsapi_ticket=@jsapi_ticket,accessTokenCreateTime=@accessTokenCreateTime
+            string sql = @"update [dbo].[Store] set  accessToken=@accessToken,jsapi_ticket=@jsapi_ticket,accessTokenCreateTime=@accessTokenCreateTime,api_ticket= @api_ticket
                         where StoreCode=@StoreCode";
             return DapperSqlHelper.ExcuteNonQuery<Store>(sql, paras, false);
         }

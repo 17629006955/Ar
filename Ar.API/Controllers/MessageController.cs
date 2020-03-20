@@ -99,7 +99,6 @@ namespace Ar.API.Controllers
                         var use = userInfo.GetUserByCode(userCode);
                         if (use != null)
                         {
-                          
                             //写入到手机号和和数据库
                             var count = userInfo.UpdateByPhone(userCode, phone, birthdaydate, recommendedPhone);
                             if (count > 0)
@@ -153,9 +152,9 @@ namespace Ar.API.Controllers
                                         result.Status = Result.SYSTEM_ERROR;
                                     }
                                 }
-                                //用户第一次绑定给赠送
                                 if (string.IsNullOrEmpty(use.Phone))
                                 {
+                                    //
                                     //添加赠送本人
                                     if (_service.checkCoupon(userCode))
                                     {
@@ -184,6 +183,7 @@ namespace Ar.API.Controllers
 
                                     }
                                 }
+
                                 result.Resource = count;
                                 result.Status = Result.SUCCEED;
                             }

@@ -74,5 +74,13 @@ namespace Ar.Services
 
 
         }
+        public int UpdateReferenceNumber(string userCode, string ReferenceNumber)
+        {
+            DynamicParameters paras = new DynamicParameters();
+            paras.Add("@ReferenceNumber", ReferenceNumber, System.Data.DbType.String);
+            paras.Add("@Code", userCode, System.Data.DbType.String);
+           return DapperSqlHelper.ExcuteNonQuery<User>(@"Update  [dbo].[User] set ReferenceNumber=@ReferenceNumber where Code=@Code", paras, false);
+
+        }
     }
 }

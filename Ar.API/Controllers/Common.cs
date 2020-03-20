@@ -134,6 +134,19 @@ namespace Ar.API.Controllers
             var Wxticket = jsonSerialize.Deserialize<Wxticket>(content);
             return Wxticket;
         }
+        public static Wxticket apiticket(string access_token)
+        {
+            LogHelper.WriteLog("wxticket.accessToken:" + access_token);
+            var url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=" + access_token + "&type=wx_card";
+            HttpWebResponse response = HttpWebResponseUtility.CreateGetHttpResponse(url, 60000, null, null);
+            Stream responseStream = response.GetResponseStream();
+            StreamReader reader = new StreamReader(responseStream);
+            var content = reader.ReadToEnd();
+            JavaScriptSerializer jsonSerialize = new JavaScriptSerializer();
+
+            var Wxticket = jsonSerialize.Deserialize<Wxticket>(content);
+            return Wxticket;
+        }
         public static WxConfig GetWxConfig(Store store ,string url)
         {
             WxConfig wxConfig = new WxConfig();
@@ -210,11 +223,118 @@ namespace Ar.API.Controllers
             }
             return wxConfig;
         }
+        public static addCard GetCardExt(Store store,string userCode)
+        {
+            IUserStoreService userStoreService = new UserStoreService();
+
+            var cardId = ConfigurationManager.AppSettings["cardId"].ToString();
+            addCard addCard = new addCard();
+            addCard.cardId = cardId;
+            CardExt cardExt = new CardExt();
+            LogHelper.WriteLog("store.appid:" + store.appid.Trim());
+            LogHelper.WriteLog("store.accessToken:" + store.accessToken);
+            LogHelper.WriteLog("store.api_ticket:" + store.api_ticket);
+            LogHelper.WriteLog("store.accessTokenCreateTime:" + store.accessTokenCreateTime);
+            var userStore = userStoreService.GetUserStorebyUserCodestoreCode(userCode,store.StoreCode);
+            if (!string.IsNullOrEmpty(store.accessToken ) && !string.IsNullOrEmpty(store.api_ticket) && store.accessTokenCreateTime > DateTime.Now.AddHours(-1))
+            {
+                
+                var api_ticket = store.api_ticket;
+                cardExt.code = WxPayApi.GenerateNonceStr();
+                cardExt.openid = userStore.OpenID;
+                cardExt.nonce_str = WxPayApi.GenerateNonceStr();
+                cardExt.timestamp = WxPayApi.GenerateTimeStamp();
+                cardExt.signature = GetSignature(api_ticket, cardExt.nonce_str, cardExt.timestamp, cardExt.code, cardExt.openid, cardId);
+                
+            }
+            else
+            {
+                var accessToken = wxAccessToken(store.appid.Trim(), store.secret.Trim());
+                if (accessToken != null)
+                {
+                    if (!string.IsNullOrEmpty(accessToken.access_token))
+                    {
+                        var wt = apiticket(accessToken.access_token);
+                        if (wt != null)
+                        {
+                            if (!string.IsNullOrEmpty(wt?.ticket))
+                            {
+                                IStoreService _stoeservice = new StoreService();
+                                store.accessToken = accessToken.access_token;
+                                store.api_ticket = wt?.ticket;
+                                store.accessTokenCreateTime = DateTime.Now;
+                                LogHelper.WriteLog("store.accessToken:" + store.accessToken);
+                                LogHelper.WriteLog("store.api_ticket:" + store.api_ticket);
+                                LogHelper.WriteLog("store.accessTokenCreateTime:" + store.accessTokenCreateTime);
+                                _stoeservice.UpdateStoreaccessToken(store);
+
+                                var api_ticket = store.api_ticket;
+                                cardExt.code = WxPayApi.GenerateNonceStr();
+                                cardExt.openid = userStore.OpenID;
+                                cardExt.nonce_str = WxPayApi.GenerateNonceStr();
+                                cardExt.timestamp = WxPayApi.GenerateTimeStamp();
+                                cardExt.signature = GetSignature(api_ticket, cardExt.nonce_str, cardExt.timestamp, cardExt.code, cardExt.openid, ConfigurationManager.AppSettings["Company"].ToString());
+                            }
+                            else
+
+                            {
+                                return null;
+                            }
+                        }
+                        else
+
+                        {
+                            return null;
+                        }
+                    }
+                    else
+
+                    {
+                        return null;
+                    }
+                }
+                else
+
+                {
+                    return null;
+                }
+
+            }
+            addCard.cardExt = cardExt;
+            return addCard;
+        }
+        public static string getcardExtcode(string phone)
+            {
+            return WxPayApi.GenerateNonceStr() + phone;
+            }
+
+
         public static string signature(string jsapi_ticket, string noncestr, string timestamp, string url)
         {
             var string1= "jsapi_ticket="+ jsapi_ticket + "&noncestr="+ noncestr + "&timestamp="+ timestamp + "&url=" + url;
             return Sha1(string1);
         }
+        public static string GetSignature(string api_ticket, string noncestr, string timestamp, string code, string openId, string cardId)
+        {
+            var string1Builder = new StringBuilder();
+
+            var paramList = new List<string>();
+            paramList.Add(api_ticket);
+            paramList.Add(cardId);
+            paramList.Add(code);
+            paramList.Add(noncestr);
+            paramList.Add(openId);
+            paramList.Add(timestamp.ToString());
+            paramList.Sort(string.CompareOrdinal);
+
+            var strParam = new StringBuilder();
+
+            foreach (var item in paramList)
+                strParam.Append(item);
+            return Sha1(strParam.ToString());
+               
+        }
+
 
         /// <summary>
         /// SHA1 加密，返回大写字符串

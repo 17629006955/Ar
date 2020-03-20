@@ -47,7 +47,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="addCard.cs" />
     <Compile Include="BaseResult\SimpleResult.cs" />
+    <Compile Include="CardExt.cs" />
     <Compile Include="Certification.cs" />
     <Compile Include="Coupon.cs" />
     <Compile Include="CouponType.cs" />
