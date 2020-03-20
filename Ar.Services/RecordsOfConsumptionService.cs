@@ -141,7 +141,7 @@ namespace Ar.Services
             return msg;
         }
 
-        public Order WxPayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string wxPrepayId, string orderCode = "", string couponCode = "")
+        public Order WxPayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string wxPrepayId, string storeId, string orderCode = "", string couponCode = "")
         {
             IProductInfoService _productInfoService = new ProductInfoService();
             DateTime now = DateTime.Now;
@@ -171,7 +171,7 @@ namespace Ar.Services
             order.Money = money;
             order.Number = 1;
             order.PayTime = null;
-            order.StoreCode = userSotre.UserStoreCode;
+            order.StoreCode = storeId;
             order.UserCode = userCode;
             order.ProductCode = productCode;
             order.ExperienceVoucherCode = couponCode;

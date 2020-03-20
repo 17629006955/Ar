@@ -81,6 +81,7 @@ namespace Ar.Services
         /// <returns></returns>
         public PayPage GetPayPage(string productCode)
         {
+
             List<DateTime> date = new List<DateTime>();
             date.Add(DateTime.Now);
             date.Add(DateTime.Now.AddDays(1));

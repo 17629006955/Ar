@@ -166,7 +166,7 @@ namespace Ar.Services
                 Coupon record = DapperSqlHelper.FindOne<Coupon>("select * from [dbo].[Coupon]  where IsUsed=1 and CouponUseCode=@CouponCode", paras, false);
                 if (record != null)
                 {
-                    return 1;//优惠卷被使用
+                    return 2;//优惠卷被使用
                 }
             }
             return 3;

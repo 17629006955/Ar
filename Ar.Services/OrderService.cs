@@ -11,6 +11,13 @@ namespace Ar.Services
 {
     public class OrderService : IOrderService
     {
+        public Order GetOrderInfo(string orderCode)
+        {
+            DynamicParameters paras = new DynamicParameters();
+            paras.Add("@OrderCode", orderCode, System.Data.DbType.String);
+            Order order = DapperSqlHelper.FindOne<Order>(@"select * from [dbo].[Order] where OrderCode=@OrderCode",paras,false);
+            return order;
+        }
         public Order GetOrderByCode(string code)
         {
             DynamicParameters paras = new DynamicParameters();

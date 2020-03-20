@@ -240,7 +240,7 @@ namespace Ar.API.Controllers
                                         var wxprepay = Common.wxPayOrderSomething(userStoreser.OpenID, param.money.ToString(), couponser?.CouponTypeName, store);
                                         if (wxprepay != null)
                                         {
-                                            var order = _service.WxPayOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money, wxprepay.prepayid, param.couponCode);
+                                            var order = _service.WxPayOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money, wxprepay.prepayid, param.storeId, param.couponCode);
 
                                             WxOrder wxorder = new WxOrder();
                                             wxorder.order = order;

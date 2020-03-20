@@ -5,6 +5,7 @@ namespace Ar.IServices
 {
     public interface IOrderService
     {
+        Order GetOrderInfo(string orderCode);
         Order GetOrderByCode(string code);
         IList<Order> GetOrderList(string userCode);
         IList<Order> GetPayOrderList(string userCode);

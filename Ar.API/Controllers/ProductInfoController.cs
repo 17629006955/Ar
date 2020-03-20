@@ -91,19 +91,48 @@ namespace Ar.API.Controllers
         /// </summary>
         /// <param name="listCode"></param>
         /// <returns></returns>
-        ////http://localhost:10010//api/ProductInfo/GetPayPage?productCode=1
+        ////http://localhost:10010//api/ProductInfo/GetPayPage?orderCode=1
         [HttpGet]
-        public IHttpActionResult GetPayPage(string productCode)
+        public IHttpActionResult GetPayPage(string orderCode)
         {
             SimpleResult result = new SimpleResult();
-            IProductInfoService _service = new ProductInfoService();
+            IOrderService _orderService = new OrderService();
+           IProductInfoService _service = new ProductInfoService();
+            ICouponService _couponService = new CouponService();
+
+            string msg = "";
             try
             {
                 if (UserAuthorization)
                 {
-                    var list = _service.GetPayPage(productCode);
-                result.Resource = list;
-                result.Status = Result.SUCCEED;
+                    var orderInfo = _orderService.GetOrderInfo(orderCode);
+                    if (orderInfo == null)
+                    {
+                        msg = "订单不存在！";
+                        result.Status = Result.SYSTEM_ERROR;
+                        result.Resource = null;
+                    }
+                    else if (orderInfo.PayTime != null)
+                    {
+                        msg = "该订单已付款！";
+                        result.Status = Result.SYSTEM_ERROR;
+                        result.Resource = null;
+                    }
+                    else
+                    {
+                        if (string.IsNullOrEmpty(orderInfo.ExperienceVoucherCode))
+                        {
+                            var isUseCoupon = _couponService.Exist(orderInfo.ExperienceVoucherCode);
+                            if (isUseCoupon != 3)
+                            {
+                                orderInfo.ExperienceVoucherCode = "";
+                            }
+                        }
+                        var productInfo = _service.GetProductInfo(orderInfo.ProductCode);
+                        result.Status = Result.SUCCEED;
+                        result.Resource = new  { orderInfo = orderInfo, productInfo =productInfo};
+                    }
+                    result.Msg = msg;
                 }
                 else
                 {
