@@ -55,22 +55,39 @@ namespace Ar.Services
 
            
         }
-        public int UpdateByPhone(string userCode ,string  phone, DateTime birthday,string recommendedPhone=null)
+        public int UpdateByPhone(string userCode ,string  phone, DateTime birthday, string ReferenceNumber ,string recommendedPhone =null)
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@phone", phone, System.Data.DbType.String);
             paras.Add("@Code", userCode, System.Data.DbType.String);
             paras.Add("@birthday", birthday, System.Data.DbType.DateTime);
+            paras.Add("@ReferenceNumber", ReferenceNumber, System.Data.DbType.String);
             if (!string.IsNullOrEmpty(recommendedPhone))
             {
                 paras.Add("@recommendedPhone", birthday, System.Data.DbType.DateTime);
-                return DapperSqlHelper.ExcuteNonQuery<User>(@"Update  [dbo].[User] set phone=@phone,IsMember= 1,birthday=@birthday,recommendedPhone=@recommendedPhone  where Code=@Code", paras, false);
-
+                return DapperSqlHelper.ExcuteNonQuery<User>(@"Update  [dbo].[User] set phone=@phone,birthday=@birthday,ReferenceNumber=@ReferenceNumber ,recommendedPhone=@recommendedPhone  where Code=@Code", paras, false);
             }
             else {
-                return DapperSqlHelper.ExcuteNonQuery<User>(@"Update  [dbo].[User] set phone=@phone,IsMember= 1,birthday=@birthday where Code=@Code", paras, false);
+                return DapperSqlHelper.ExcuteNonQuery<User>(@"Update  [dbo].[User] set phone=@phone,birthday=@birthday,ReferenceNumber=@ReferenceNumber where Code=@Code", paras, false);
 
             }
+        }
+        public int UpdateByuserCodePhone(string userCode, string phone, DateTime birthday)
+        {
+            DynamicParameters paras = new DynamicParameters();
+            paras.Add("@phone", phone, System.Data.DbType.String);
+            paras.Add("@Code", userCode, System.Data.DbType.String);
+            paras.Add("@birthday", birthday, System.Data.DbType.DateTime);
+                return DapperSqlHelper.ExcuteNonQuery<User>(@"Update  [dbo].[User] set phone=@phone,birthday=@birthday where Code=@Code", paras, false);
+
+            
+        }
+        public int UpdateIsMemberByuserCode(string userCode)
+        {
+            DynamicParameters paras = new DynamicParameters();
+            paras.Add("@IsMember", true, System.Data.DbType.Boolean);
+          
+            return DapperSqlHelper.ExcuteNonQuery<User>(@"Update  [dbo].[User] set IsMember=@IsMember where Code=@Code", paras, false);
 
 
         }

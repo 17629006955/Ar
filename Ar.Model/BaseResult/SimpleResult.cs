@@ -59,6 +59,10 @@ namespace Ar.Model.BaseResult
         /// </summary>
         USER_AUTH_ERROR = 4,
         SYSTEM_ERROR=5,
-        PARAMERS_VERIFY_ERROR=6  //参数验证失败
+        PARAMERS_VERIFY_ERROR=6 , //参数验证失败,
+         /// <summary>
+         /// 会员认证专用，其他不能使用
+         /// </summary>
+        PARAMERS_WX = 7  //微信
     }
 }
