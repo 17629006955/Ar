@@ -42,5 +42,7 @@ namespace Ar.IServices
 
         bool ExistMoney(string userCode, decimal money);
         object GetUseWalletInfoByUserCode(string userCode);
+
+        UseWallet GetUseWalletCountMoney(string userCode);
     }
 }

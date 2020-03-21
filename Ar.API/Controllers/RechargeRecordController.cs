@@ -215,7 +215,7 @@ namespace Ar.API.Controllers
         ////http://localhost:10010//api/RechargeRecord/Recharge?prepayid=hgjj
         [HttpGet]
         [HttpPost]
-        public IHttpActionResult wxPrePay(string prepayid)
+        public IHttpActionResult wxPrePay(string prepayid,string storeCode="")
         {
             SimpleResult result = new SimpleResult();
             IRechargeRecordService _service = new RechargeRecordService();
@@ -237,7 +237,7 @@ namespace Ar.API.Controllers
                                     //更新TopupOrder 的支付时间
                                     tos.UpdateTopupOrder(prepayid, payTime);
                                     var tosmodel = tos.GetTopupOrderbyWallePrCode(prepayid);
-                                    var list = _service.Recharge(tosmodel.RechargeTypeCode, tosmodel.UserCode, tosmodel.RecordsMoney);
+                                    var list = _service.Recharge(tosmodel.RechargeTypeCode, tosmodel.UserCode, tosmodel.RecordsMoney, storeCode);
                                     result.Resource = list;
                                     result.Status = Result.SUCCEED;
                                     scope.Complete();//这是最后提交事务

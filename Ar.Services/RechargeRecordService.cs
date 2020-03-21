@@ -42,11 +42,12 @@ namespace Ar.Services
             return list;
         }
 
-        public bool Recharge(string typeCode,string userCode, decimal? money = 0)
+        public bool Recharge(string typeCode,string userCode, decimal? money = 0,string storeCode="")
         {
             IRechargeTypeService s = new RechargeTypeService();
             IRecordsOfConsumptionService cs = new RecordsOfConsumptionService();
             IUseWalletService us = new UseWalletService();
+            IFinancialStatementsService _financialStatementsService = new FinancialStatementService();
             var type=s.GetRechargeTypeByCode(typeCode);
             var explain = "";
             decimal? donationAmount = 0;
@@ -75,6 +76,7 @@ namespace Ar.Services
                 Sort = 1,
                 IsMissionGiveaway = false
             };
+            _financialStatementsService.getDataRechargeRecord(userCode, typeCode, wallet, storeCode, "微信");
             using (var scope = new TransactionScope())//创建事务
             {
                 //钱包

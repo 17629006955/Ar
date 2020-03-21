@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FinancialStatementsService.cs" />
     <Compile Include="PropagandaService.cs" />
     <Compile Include="MembershipScoreService.cs" />
     <Compile Include="CouponTypeService.cs" />

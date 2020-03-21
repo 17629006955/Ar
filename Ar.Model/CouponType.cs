@@ -30,6 +30,7 @@ namespace AR.Model
 		private string _coupontypename;
 		private bool _status;
         private bool _isGivedType;
+        private decimal _money;
         /// <summary>
         /// 
         /// </summary>
@@ -38,10 +39,17 @@ namespace AR.Model
 			set{ _coupontypecode=value;}
 			get{return _coupontypecode;}
 		}
-		/// <summary>
-		/// 
-		/// </summary>
-		public string CouponTypeName
+
+        public decimal Money
+        {
+            set { _money = value; }
+            get { return _money; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string CouponTypeName
 		{
 			set{ _coupontypename=value;}
 			get{return _coupontypename;}
