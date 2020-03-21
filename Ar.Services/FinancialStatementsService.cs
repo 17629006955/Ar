@@ -90,6 +90,7 @@ namespace Ar.Services
             fs.Code = Guid.NewGuid().ToString();
             fs.CreateTime = order.CreateTime;
             fs.UserPhone = u?.Phone;
+            fs.UserCreateTime = u?.CreateTime;
             fs.StoreName = s?.StoreName;
             fs.ProductionType = "体验服务";
             fs.Cstname = "普通销售";
@@ -116,6 +117,7 @@ namespace Ar.Services
             fs.UseWalletMoney = uw.TotalAmount - order.Money;
             fs.UseWalletMoney1 = fs.UseWalletMoney;
             fs.UseWalletAccountPrincipal = uw.AccountPrincipal - order.Money * Math.Round(Convert.ToDecimal(uw.Ratio), 2);
+            fs.Ratio = (fs.UseWalletAccountPrincipal / fs.UseWalletMoney).ToString();
             fs.ProductInfoRate = p.Rate + "%";
             return fs;
         }
@@ -152,6 +154,7 @@ namespace Ar.Services
             fs.Code = Guid.NewGuid().ToString();
             fs.CreateTime = DateTime.Now;
             fs.UserPhone = u?.Phone;
+            fs.UserCreateTime = u?.CreateTime;
             fs.StoreName = s?.StoreName;
             fs.ProductionType = "体验服务";
             fs.Cstname = "普通销售";
@@ -167,8 +170,10 @@ namespace Ar.Services
             fs.CouponUseCode = "";
             fs.CouponUseMoney = 0;
             fs.UseWalletMoney = uw.TotalAmount+ useWallet.AccountPrincipal+ useWallet.DonationAmount;
+            fs.Ratio =(uw.AccountPrincipal + useWallet.AccountPrincipal / fs.UseWalletMoney).ToString();
             fs.UseWalletMoney1 = fs.UseWalletMoney;
             fs.UseWalletAccountPrincipal = uw.AccountPrincipal + useWallet.AccountPrincipal;
+            fs.Ratio = (fs.UseWalletAccountPrincipal / fs.UseWalletMoney).ToString();
             fs.ProductInfoRate = "0";
             return fs;
         }
