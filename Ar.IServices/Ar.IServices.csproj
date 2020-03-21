@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IFinancialStatementsService.cs" />
     <Compile Include="IPropagandaService.cs" />
     <Compile Include="IMembershipScoreService.cs" />
     <Compile Include="ICouponTypeService.cs" />
