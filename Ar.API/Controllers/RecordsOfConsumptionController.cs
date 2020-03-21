@@ -190,7 +190,7 @@ namespace Ar.API.Controllers
                         {
                             if (_useWalletService.ExistMoney(param.userCode, param.money))
                             {
-                                var re = _service.PayOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money, param.storeId, param.orderCode, param.couponCode);
+                                var re = _service.PayOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money, param.storeId, param.quantity,param.orderCode, param.couponCode);
                                 result.Resource = re;
                                 result.Status = Result.SUCCEED;
                             }
@@ -240,7 +240,7 @@ namespace Ar.API.Controllers
                                         var wxprepay = Common.wxPayOrderSomething(userStoreser.OpenID, param.money.ToString(), couponser?.CouponTypeName, store);
                                         if (wxprepay != null)
                                         {
-                                            var order = _service.WxPayOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money, wxprepay.prepayid, param.storeId, param.couponCode);
+                                            var order = _service.WxPayOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money, wxprepay.prepayid, param.storeId,param.quantity, param.couponCode);
 
                                             WxOrder wxorder = new WxOrder();
                                             wxorder.order = order;
@@ -308,7 +308,7 @@ namespace Ar.API.Controllers
             LogHelper.WriteLog("couponCode " + couponCode);
             SimpleResult result = new SimpleResult();
             IRecordsOfConsumptionService _service = new RecordsOfConsumptionService();
-            IStoreService _stoeservice = new StoreService();
+            IStoreService _storeService = new StoreService();
             ICouponService _couponservice = new CouponService();
             try
             {
@@ -319,18 +319,28 @@ namespace Ar.API.Controllers
                     {
                         if (!string.IsNullOrEmpty(prepayid) )
                         {
+                            var now= DateTime.Now;
                             var PayTime = Common.wxPayOrderQuery(prepayid);
                             LogHelper.WriteLog("微信支付时间： " + PayTime);
                             if (!string.IsNullOrEmpty(PayTime))
                             {
                                 IOrderService _orderService = new OrderService();
                                 ICouponService _couponService = new CouponService();
+                                IUserInfo _userService = new UserInfo();
                                 var order = _orderService.GetOrderByCode(orderCode);
                                 LogHelper.WriteLog("更新的订单： " + orderCode);
                                 order.PayTime = DateTime.Now;
                                 _orderService.UpdateOrder(order);
                                 _couponService.UsedUpdate(couponCode, userCode);
                                 LogHelper.WriteLog("更新的钱包和优惠券couponCode： " + couponCode);
+
+                                LogHelper.WriteLog("报表写入数据开始");
+                                IFinancialStatementsService _financialStatementsService = new FinancialStatementService();
+                                LogHelper.WriteLog("报表表数据更新");
+                                financialStatements fs =_financialStatementsService.getData(userCode,order,"微信");
+                                LogHelper.WriteLog("报表表数据更新完成");
+                                _financialStatementsService.Insert(fs);
+                                LogHelper.WriteLog("报表写入数据结束" + fs.Code);
                                 result.Status = Result.SUCCEED;
                                 scope.Complete();//这是最后提交事务
                             }
@@ -479,6 +489,9 @@ namespace Ar.API.Controllers
     public class PayOrderParam
     {
         public string orderCode { get; set; }
+
+        public int quantity { get; set; }
+
         public int paytype { get; set; }
         public string productCode { get; set; }
         public string userCode { get; set; }

@@ -77,21 +77,28 @@ namespace Ar.Services
             }
         }
 
-        public string  PayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string storeId, string orderCode = "", string couponCode = "")
+        public string  PayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string storeId, int quantity=1, string orderCode = "", string couponCode = "")
         {
             string msg = "";
             IProductInfoService _productInfoService = new ProductInfoService();
             DateTime now = DateTime.Now;
             ICouponService _couponService = new CouponService();
             IOrderService _orderService = new OrderService();
+            IUserInfo _userService = new UserInfo();
+            IStoreService _storeService = new StoreService();
             IUserStoreService _userStoreService = new UserStoreService();
             IRecordsOfConsumptionService _recordsOfConsumption = new RecordsOfConsumptionService();
             IUseWalletService _useWalletService = new UseWalletService();
+            IFinancialStatementsService _financialStatementsService = new FinancialStatementService();
+            ICouponTypeService _couponTypeService = new CouponTypeService();
+            var u = _userService.GetUserByCode(userCode);
             var p = _productInfoService.GetProductInfo(productCode);
-            //var userSotre=_userStoreService.GetUserStorebyUserCode(userCode);
+            var s=_storeService.GetStore(storeId);
+            var uw = _useWalletService.GetUseWalletCountMoney(userCode);
+
             Order order = new Order();
             order.Money = money;
-            order.Number = 1;
+            order.Number = quantity;
             order.PayTime = now;
             order.StoreCode = storeId;
             order.UserCode = userCode;
@@ -100,6 +107,7 @@ namespace Ar.Services
             order.ExperienceVoucherCode = couponCode;
             order.AppointmentTime = dateTime;
             order.WxPrepayId = string.Empty;
+            financialStatements fs = _financialStatementsService.getData(userCode, order, "会员卡");
             using (var scope = new TransactionScope())//创建事务
             {
                 if (!string.IsNullOrEmpty(orderCode))
@@ -127,12 +135,18 @@ namespace Ar.Services
                     LogHelper.WriteLog("会员支付0元 " + money);
                     LogHelper.WriteLog("couponCode " + couponCode);
                     _couponService.UsedUpdate(couponCode, userCode);
-                }else
+
+                    LogHelper.WriteLog("financialStatements " + fs.Code);
+                    _financialStatementsService.Insert(fs);
+                }
+                else
                 {
                     LogHelper.WriteLog("couponCode " + couponCode);
                     _couponService.UsedUpdate(couponCode, userCode);
                     LogHelper.WriteLog("会员支付金额 " + money);
                     _useWalletService.UpdateData(userCode, money);
+                    LogHelper.WriteLog("financialStatements " + fs.Code);
+                    _financialStatementsService.Insert(fs);
                 }
 
                
@@ -141,7 +155,7 @@ namespace Ar.Services
             return msg;
         }
 
-        public Order WxPayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string wxPrepayId, string storeId, string orderCode = "", string couponCode = "")
+        public Order WxPayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string wxPrepayId, string storeId, int quantity = 1, string orderCode = "", string couponCode = "")
         {
             IProductInfoService _productInfoService = new ProductInfoService();
             DateTime now = DateTime.Now;
@@ -169,7 +183,7 @@ namespace Ar.Services
                 order.CreateTime = now;
             }
             order.Money = money;
-            order.Number = 1;
+            order.Number = quantity;
             order.PayTime = null;
             order.StoreCode = storeId;
             order.UserCode = userCode;

@@ -66,5 +66,111 @@ namespace Ar.Services
             DapperSqlHelper.ExcuteNonQuery<Coupon>(sql, paras, false);
             return true;
         }
+
+        /// <summary>
+        /// 购买获取报表的实体
+        /// </summary>
+        /// <param name="userCode"></param>
+        /// <param name="order"></param>
+        /// <param name="payType"></param>
+        /// <returns></returns>
+        public financialStatements getData(string userCode, Order order, string payType)
+        {
+            ICouponService _couponService = new CouponService();
+            IProductInfoService _productInfoService = new ProductInfoService();
+            ICouponTypeService _couponTypeService = new CouponTypeService();
+            IUseWalletService _useWalletService = new UseWalletService();
+            IStoreService _storeService = new StoreService();
+            IUserInfo _userService = new UserInfo();
+            var uw = _useWalletService.GetUseWalletCountMoney(userCode);
+            var s = _storeService.GetStore(order.StoreCode);
+            var p = _productInfoService.GetProductInfo(order.ProductCode);
+            var u = _userService.GetUserByCode(userCode);
+            financialStatements fs = new financialStatements();
+            fs.Code = Guid.NewGuid().ToString();
+            fs.CreateTime = order.CreateTime;
+            fs.UserPhone = u?.Phone;
+            fs.StoreName = s?.StoreName;
+            fs.ProductionType = "体验服务";
+            fs.Cstname = "普通销售";
+            fs.ProductionCode = p.ProductCode;
+            fs.ProductionName = p.ProductName;
+            fs.Iquantity = order.Number;
+            fs.Itaxunitprice = p.CostPrice;
+            fs.Isum = p.CostPrice * order.Number;
+            fs.CpersonName = "业务员";
+            fs.PayType = payType;
+            fs.AmountOfIncome = order.Money;
+            fs.DonationAmount = 0;
+            fs.CouponUseCode = order.ExperienceVoucherCode;
+            if (!string.IsNullOrEmpty(order.ExperienceVoucherCode))
+            {
+                var coupon = _couponService.GetCouponByCode(order.ExperienceVoucherCode);
+                var couponMoney = _couponTypeService.GetCouponTypeByCode(coupon?.CouponTypeCode);
+                if (couponMoney != null)
+                {
+                    fs.CouponUseMoney = couponMoney.Money;
+                }
+            }
+            fs.GetCouponTime = order.CreateTime;
+            fs.UseWalletMoney = uw.TotalAmount - order.Money;
+            fs.UseWalletMoney1 = fs.UseWalletMoney;
+            fs.UseWalletAccountPrincipal = uw.AccountPrincipal - order.Money * Math.Round(Convert.ToDecimal(uw.Ratio), 2);
+            fs.ProductInfoRate = p.Rate + "%";
+            return fs;
+        }
+
+
+
+        /// <summary>
+        /// 充值
+        /// </summary>
+        /// <param name="userCode"></param>
+        /// <param name="order"></param>
+        /// <param name="payType"></param>
+        /// <returns></returns>
+        public financialStatements getDataRechargeRecord(string userCode, string typeCode,UseWallet useWallet, string storeCode, string payType)
+        {
+            ICouponService _couponService = new CouponService();
+            IRechargeTypeService rt = new RechargeTypeService();
+            IProductInfoService _productInfoService = new ProductInfoService();
+            ICouponTypeService _couponTypeService = new CouponTypeService();
+            IUseWalletService _useWalletService = new UseWalletService();
+            IUserStoreService _userStoreService = new UserStoreService();
+            IStoreService _storeService = new StoreService();
+            IUserInfo _userService = new UserInfo();
+            var rechargetype = rt.GetRechargeTypeByCode(typeCode);
+            var uw = _useWalletService.GetUseWalletCountMoney(userCode);
+            if (string.IsNullOrEmpty(storeCode))
+            {
+                var us = _userStoreService.GetUserStorebyUserCode(userCode);
+                storeCode = us.MembershipCardStore;
+            }
+            var s = _storeService.GetStore(storeCode);
+            var u = _userService.GetUserByCode(userCode);
+            financialStatements fs = new financialStatements();
+            fs.Code = Guid.NewGuid().ToString();
+            fs.CreateTime = DateTime.Now;
+            fs.UserPhone = u?.Phone;
+            fs.StoreName = s?.StoreName;
+            fs.ProductionType = "体验服务";
+            fs.Cstname = "普通销售";
+            fs.ProductionCode = rechargetype.RechargeTypeCode;
+            fs.ProductionName = rechargetype.RechargeTypeName;
+            fs.Iquantity = 1;
+            fs.Itaxunitprice = useWallet.AccountPrincipal;
+            fs.Isum = useWallet.AccountPrincipal;
+            fs.CpersonName = "业务员";
+            fs.PayType = payType;
+            fs.AmountOfIncome = useWallet.AccountPrincipal;
+            fs.DonationAmount = useWallet.DonationAmount;
+            fs.CouponUseCode = "";
+            fs.CouponUseMoney = 0;
+            fs.UseWalletMoney = uw.TotalAmount+ useWallet.AccountPrincipal+ useWallet.DonationAmount;
+            fs.UseWalletMoney1 = fs.UseWalletMoney;
+            fs.UseWalletAccountPrincipal = uw.AccountPrincipal + useWallet.AccountPrincipal;
+            fs.ProductInfoRate = "0";
+            return fs;
+        }
     }
 }

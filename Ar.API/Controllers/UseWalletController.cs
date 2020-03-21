@@ -60,7 +60,7 @@ namespace Ar.API.Controllers
         /// <returns></returns>
         ////http://localhost:10010//api/UseWallet/GetUseWalletInfoByUserCode?userCode=1
         [HttpGet]
-        public IHttpActionResult GetUseWalletInfoByUserCode(string userCode)
+        public IHttpActionResult GetUseWalletInfoByUserCode(string userCode,string storeCode="")
         {
             SimpleResult result = new SimpleResult();
             IUseWalletService _service = new UseWalletService();
@@ -81,7 +81,7 @@ namespace Ar.API.Controllers
                             {
                                 item.PayDatetime = Convert.ToDateTime(PayTime);
                                 tos.UpdateTopupOrder(item.WallePrCode, item.PayDatetime);
-                                _RechargeRecordService.Recharge(item.RechargeTypeCode, item.UserCode, item.RecordsMoney);
+                                _RechargeRecordService.Recharge(item.RechargeTypeCode, item.UserCode, item.RecordsMoney, storeCode);
                             }
 
                         }
