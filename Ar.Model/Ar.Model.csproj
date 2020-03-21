@@ -55,6 +55,7 @@
     <Compile Include="CouponType.cs" />
     <Compile Include="CustomerService.cs" />
     <Compile Include="ExperienceVoucher.cs" />
+    <Compile Include="FinancialStatements.cs" />
     <Compile Include="FristModel.cs" />
     <Compile Include="IntegralRecord.cs" />
     <Compile Include="ListType.cs" />
