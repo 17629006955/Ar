@@ -41,6 +41,11 @@ namespace Ar.API.Controllers
                     result.Resource = sendMessageResult.Message;
                     result.Status = Result.SUCCEED;
                 }
+                else
+                {
+                    result.Msg = "验证码没有发送成功";
+                    result.Status = Result.SYSTEM_ERROR;
+                }
             }
             else
             {
