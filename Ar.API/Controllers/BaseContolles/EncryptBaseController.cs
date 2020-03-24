@@ -39,7 +39,7 @@ namespace Ar.API.Controllers.BaseContolles
             //token = HttpContext.Current.Request["token"]; //RequestHelper.GetString("token");  
             HttpCookie Cookie = HttpContext.Current.Request.Cookies["authorization"];
             var Headers = HttpContext.Current.Request.Headers["Authorization"];
-            token = Headers?.Replace("Bearer", "");
+            token = Headers?.Replace("Bearer ", "");
             if (!string.IsNullOrWhiteSpace(app_key))
             {
                 app_secret= ConfigurationManager.AppSettings[app_key].ToString();

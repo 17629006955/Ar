@@ -37,7 +37,7 @@ namespace AR.Model
         private string _accessToken;
         private string _jsapi_ticket;
         private string _api_ticket;
-        private string _VIPName;
+        private string _vipName;
         private string _BackgroundPictureUrl;
         private string _SmallIcon;
         private string _BrandStoreName;
@@ -45,8 +45,8 @@ namespace AR.Model
 
         public string VIPName
         {
-            set { _VIPName = _VIPName; }
-            get { return _storecode; }
+            set { _vipName = value; }
+            get { return _vipName; }
         }
         public string BackgroundPictureUrl
         {
