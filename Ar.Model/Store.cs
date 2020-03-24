@@ -46,7 +46,7 @@ namespace AR.Model
         public string VIPName
         {
             set { _VIPName = _VIPName; }
-            get { return _storecode; }
+            get { return _VIPName; }
         }
         public string BackgroundPictureUrl
         {
