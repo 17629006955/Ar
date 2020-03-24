@@ -37,9 +37,32 @@ namespace AR.Model
         private string _accessToken;
         private string _jsapi_ticket;
         private string _api_ticket;
-        
+        private string _VIPName;
+        private string _BackgroundPictureUrl;
+        private string _SmallIcon;
+        private string _BrandStoreName;
         private DateTime? _accessTokenCreateTime;
 
+        public string VIPName
+        {
+            set { _VIPName = _VIPName; }
+            get { return _storecode; }
+        }
+        public string BackgroundPictureUrl
+        {
+            set { _BackgroundPictureUrl = value; }
+            get { return _BackgroundPictureUrl; }
+        }
+        public string SmallIcon
+        {
+            set { _SmallIcon = value; }
+            get { return _SmallIcon; }
+        }
+        public string BrandStoreName
+        {
+            set { _BrandStoreName = value; }
+            get { return _BrandStoreName; }
+        }
         /// <summary>
         /// 
         /// </summary>
