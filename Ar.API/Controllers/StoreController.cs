@@ -31,10 +31,18 @@ namespace Ar.API.Controllers
             IStoreService _service = new StoreService();
             try
             {
+                var vipName = ConfigurationManager.AppSettings["VIPName"].ToString();
+                var backgroundPictureUrl = ConfigurationManager.AppSettings["BackgroundPictureUrl"].ToString();
+                var smallIcon = ConfigurationManager.AppSettings["SmallIcon"].ToString();
+                var brandStoreName = ConfigurationManager.AppSettings["BrandStoreName"].ToString();
                 if (UserAuthorization)
                 {
                     var list = _service.GetStore(code);
-                    result.Resource = list;
+                    list.VIPName = vipName;
+                    list.BackgroundPictureUrl = backgroundPictureUrl;
+                    list.SmallIcon = smallIcon;
+                    list.BrandStoreName = vipName;
+                    result.Resource = brandStoreName;
                     result.Status = Result.SUCCEED;
                 }
                 else
