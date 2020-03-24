@@ -41,8 +41,8 @@ namespace Ar.API.Controllers
                     list.VIPName = vipName;
                     list.BackgroundPictureUrl = backgroundPictureUrl;
                     list.SmallIcon = smallIcon;
-                    list.BrandStoreName = vipName;
-                    result.Resource = brandStoreName;
+                    list.BrandStoreName = brandStoreName;
+                    result.Resource = list;
                     result.Status = Result.SUCCEED;
                 }
                 else
