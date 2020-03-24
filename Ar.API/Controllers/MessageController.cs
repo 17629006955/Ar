@@ -5,6 +5,7 @@ using Ar.Services;
 using AR.Model;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
@@ -28,23 +29,40 @@ namespace Ar.API.Controllers
             SimpleResult result = new SimpleResult();
             if (UserAuthorization)
             {
-                var sendMessageResult = Common.SendMessageCode(phone);
-                if (sendMessageResult != null && sendMessageResult.Status)
+                if (ConfigurationManager.AppSettings["isSendMessage"]!=null&&ConfigurationManager.AppSettings["isSendMessage"].ToString()=="true")
                 {
+                    var sendMessageResult = Common.SendMessageCode(phone);
+                    if (sendMessageResult != null && sendMessageResult.Status)
+                    {
+                        //写入到手机号和和数据库
+                        verificationService.Delete(phone);
+                        Verification verification = new Verification();
+                        verification.code = Guid.NewGuid().ToString();
+                        verification.VerificationCode = sendMessageResult.Message;
+                        verification.Phone = phone;
+                        verificationService.CreateVerification(verification);
+                        result.Resource = sendMessageResult.Message;
+                        result.Status = Result.SUCCEED;
+                    }
+                    else
+                    {
+                        result.Msg = "验证码没有发送成功";
+                        result.Status = Result.SYSTEM_ERROR;
+                    }
+                    
+                }
+                else {
                     //写入到手机号和和数据库
                     verificationService.Delete(phone);
                     Verification verification = new Verification();
                     verification.code = Guid.NewGuid().ToString();
-                    verification.VerificationCode = sendMessageResult.Message;
+                    Random rd = new Random();
+                    int num = rd.Next(100000, 1000000);
+                    verification.VerificationCode = num.ToString();
                     verification.Phone = phone;
                     verificationService.CreateVerification(verification);
-                    result.Resource = sendMessageResult.Message;
+                    result.Resource = num;
                     result.Status = Result.SUCCEED;
-                }
-                else
-                {
-                    result.Msg = "验证码没有发送成功";
-                    result.Status = Result.SYSTEM_ERROR;
                 }
             }
             else
@@ -97,6 +115,7 @@ namespace Ar.API.Controllers
             SimpleResult result = new SimpleResult();
             if (UserAuthorization)
             {
+
                 if (verificationService.CheckVerification(phone, verificationCode))
                 {
                     DateTime birthdaydate = new DateTime();
