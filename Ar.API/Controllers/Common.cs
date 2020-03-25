@@ -381,11 +381,11 @@ public static string wxJsApiParam { get; set; } //H5调起JS API参数
                 var prepayid = WxPayApi.GenerateOutTradeNo();
                 WxPayData unifiedOrderResult = jsApiPay.GetUnifiedOrderResult(store.appid.Trim(), store.mchid.Trim(), total_fee, store.StoreName, couponType,openid, prepayid);
                 wxJsApiParam = jsApiPay.GetJsApiParameters();//获取H5调起JS API参数                    
-
+                
                 LogHelper.WriteLog("wxJsApiParam:" + wxJsApiParam);
                 //在页面上显示订单信息
                 wxprepay.wxJsApiParam = wxJsApiParam;
-                wxprepay.prepayid = prepayid;
+                wxprepay.prepayid = unifiedOrderResult.GetValue("prepay_id").ToString() ;
                 return wxprepay;
             }
 

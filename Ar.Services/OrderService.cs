@@ -109,10 +109,11 @@ namespace Ar.Services
             paras.Add("@AppointmentTime", order.AppointmentTime, System.Data.DbType.DateTime);
             paras.Add("@ExperienceVoucherCode", order.ExperienceVoucherCode, System.Data.DbType.String);
             paras.Add("@OrderNO", order.OrderNO, System.Data.DbType.String);
+            paras.Add("@WxPrepayId", order.WxPrepayId, System.Data.DbType.String);
             string sql = @"insert into [dbo].[Order](OrderCode,UserCode,ProductCode,Number,Money,StoreCode,
-                    CreateTime,PayTime,AppointmentTime,ExperienceVoucherCode,OrderNO)
+                    CreateTime,PayTime,AppointmentTime,ExperienceVoucherCode,OrderNO,WxPrepayId)
                     values(@OrderCode,@UserCode,@ProductCode,@Number,@Money,@StoreCode,
-                    getdate(),@PayTime,@AppointmentTime,@ExperienceVoucherCode,@OrderNO)";
+                    getdate(),@PayTime,@AppointmentTime,@ExperienceVoucherCode,@OrderNO,@WxPrepayId)";
             DapperSqlHelper.ExcuteNonQuery<Order>(sql, paras, false);
             return order.OrderCode;
         }
