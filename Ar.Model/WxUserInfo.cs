@@ -15,7 +15,7 @@ namespace Ar.Model
         public string city { get; set; }
         public string country { get; set; }
         public string headimgurl { get; set; }
-        public string privilege { get; set; }
+
         public string unionid { get; set; }
     }
 }

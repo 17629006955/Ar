@@ -44,7 +44,7 @@ where u.UserTaskCode=@UserTaskCode
             UserTask userTask = new UserTask();
             if (string.IsNullOrEmpty(userTask.UserTaskCode))
             {
-                userTask.UserTaskCode = GetMaxCode();
+                userTask.UserTaskCode = Guid.NewGuid().ToString();
                 userTask.UserCode = userCode;
                 userTask.TaskCode = type;
                 userTask.TaskStartTime = DateTime.Now;

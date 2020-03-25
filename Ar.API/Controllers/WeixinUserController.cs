@@ -321,7 +321,7 @@ namespace Ar.API.Controllers
                             {
 
                                 user.Code = Guid.NewGuid().ToString();
-                                if (wxuserinfo.sex == 0)
+                                if (wxuserinfo.sex == 2)
                                 {
                                     user.Sex = true;
                                 }

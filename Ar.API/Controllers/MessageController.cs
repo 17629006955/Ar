@@ -198,6 +198,9 @@ namespace Ar.API.Controllers
             return Json(result);
 
         }
+        [HttpPost]
+        [HttpGet]
+        //http://localhost:10010//api/Message/BangMessageOk?userCode=18235139350
         public IHttpActionResult BangMessageOk(string userCode)
         {
             ICouponService _service = new CouponService();

@@ -95,8 +95,9 @@ namespace Ar.API.Controllers
         }
         public static WxUserInfo wxuserInfo(string access_token ,string openid)
         {
+            //  wxuserInfo
             //access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN
-            var url = ConfigurationManager.AppSettings["wxuserInfo"].ToString() + "?" + "access_token=" + access_token + "&openid=" + openid + "&lang=zh_CN";
+            var url = ConfigurationManager.AppSettings["wxuserInfo"].ToString()  + "=" + access_token + "&openid=" + openid + "&lang=zh_CN";
             LogHelper.WriteLog("微信获取用户信息url:" + url);
             HttpWebResponse response = HttpWebResponseUtility.CreateGetHttpResponse(url, 60000, null, null);
             Stream responseStream = response.GetResponseStream();

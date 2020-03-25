@@ -86,7 +86,7 @@ namespace Ar.Services
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@IsMember", true, System.Data.DbType.Boolean);
-          
+            paras.Add("@Code", userCode, System.Data.DbType.String);
             return DapperSqlHelper.ExcuteNonQuery<User>(@"Update  [dbo].[User] set IsMember=@IsMember where Code=@Code", paras, false);
 
 
