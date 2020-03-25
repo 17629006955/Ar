@@ -257,7 +257,16 @@ namespace Ar.API.Controllers
                                     } else
                                     {
                                         var order = _service.WxPayNoMoneyOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money, param.couponCode);
+                                        _couponService.UsedUpdate(param.couponCode, param.userCode);
+                                        LogHelper.WriteLog("更新的钱包和优惠券couponCode： " + param.couponCode);
 
+                                        LogHelper.WriteLog("报表写入数据开始");
+                                        IFinancialStatementsService _financialStatementsService = new FinancialStatementService();
+                                        LogHelper.WriteLog("报表表数据更新");
+                                        financialStatements fs = _financialStatementsService.getData(param.userCode, order, "微信");
+                                        LogHelper.WriteLog("报表表数据更新完成");
+                                        _financialStatementsService.Insert(fs);
+                                        LogHelper.WriteLog("报表写入数据结束" + fs.Code);
                                         WxOrder wxorder = new WxOrder();
                                         wxorder.order = order;
                                         result.Status = Result.SUCCEED;
