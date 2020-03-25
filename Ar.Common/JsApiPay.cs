@@ -134,7 +134,37 @@ namespace WxPayAPI
                 throw new WxPayException(ex.ToString());
             }
         }
-
+        public static String getMoney(String amount)
+        {
+            if (amount == null)
+            {
+                return "";
+            }
+            // 金额转化为分为单位
+            // 处理包含, ￥ 或者$的金额
+            String currency = amount.Replace("\\$|\\￥|\\,", "");
+            int index = currency.IndexOf(".");
+            int length = currency.Length;
+            long amLong = 0l;
+            if (index == -1)
+            {
+                amLong = Convert.ToInt64(currency + "00");
+            }
+            else if (length - index >= 3)
+            {
+                amLong = Convert.ToInt64(currency.Substring(0, index + 3).Replace(".", ""));
+            }
+            else if (length - index == 2)
+            {
+                amLong = Convert.ToInt64((currency.Substring(0, index + 2)).Replace(".", "") + 0);
+            }
+            else
+            {
+                amLong = Convert.ToInt64((currency.Substring(0, index + 1)).Replace(".", "") + "00");
+            }
+            return amLong.ToString();
+        }
+       
         /**
          * 调用统一下单，获得下单结果
          * @return 统一下单结果
@@ -149,7 +179,8 @@ namespace WxPayAPI
             data.SetValue("body", ConfigurationManager.AppSettings["Company"].ToString()+stoeName);
             data.SetValue("attach", stoeName);
             data.SetValue("out_trade_no", out_trade_no);
-            data.SetValue("total_fee", total_fee);
+           
+            data.SetValue("total_fee", getMoney(total_fee));
             data.SetValue("time_start", DateTime.Now.ToString("yyyyMMddHHmmss"));
             data.SetValue("time_expire", DateTime.Now.AddMinutes(10).ToString("yyyyMMddHHmmss"));
             if (string.IsNullOrEmpty(couponType) )

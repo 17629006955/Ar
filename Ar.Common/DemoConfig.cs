@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Net;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
@@ -27,7 +28,7 @@ namespace WxPayAPI.lib
             return "";
         }
         public string GetKey(){
-            return "";
+            return ConfigurationManager.AppSettings["MchIDKey"].ToString(); ;
         }
         public string GetAppSecret(){
             return "";
@@ -54,7 +55,7 @@ namespace WxPayAPI.lib
         /* 支付结果通知回调url，用于商户接收支付结果
         */
         public string GetNotifyUrl(){
-            return "";
+            return "https://pay.weixin.qq.com/wxpay/pay.action";
         }
 
         //=======【商户系统后台机器IP】===================================== 

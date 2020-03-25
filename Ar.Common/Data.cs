@@ -101,7 +101,7 @@ namespace WxPayAPI
                 }
                 else if (pair.Value.GetType() == typeof(string))
                 {
-                    xml += "<" + pair.Key + ">" + "<![CDATA[" + pair.Value + "]]></" + pair.Key + ">";
+                    xml += "<" + pair.Key + ">" +  pair.Value + "</" + pair.Key + ">";
                 }
                 else//除了string和int类型不能含有其他数据类型
                 {
@@ -225,15 +225,12 @@ namespace WxPayAPI
             str += "&key=" + WxPayConfig.GetConfig().GetKey();
             if (signType == SIGN_TYPE_MD5)
             {
-                var md5 = MD5.Create();
-                var bs = md5.ComputeHash(Encoding.UTF8.GetBytes(str));
-                var sb = new StringBuilder();
-                foreach (byte b in bs)
-                {
-                    sb.Append(b.ToString("x2"));
-                }
+                MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+                string t2 = BitConverter.ToString(md5.ComputeHash(UTF8Encoding.UTF8.GetBytes(str)));
+                t2 = t2.Replace("-", "");
+             
                 //所有字符转为大写
-                return sb.ToString().ToUpper();
+                return t2.ToString().ToUpper();
             }
             else if(signType==SIGN_TYPE_HMAC_SHA256)
             {
@@ -249,7 +246,7 @@ namespace WxPayAPI
         */
         public string MakeSign()
         {
-            return MakeSign(SIGN_TYPE_HMAC_SHA256);
+            return MakeSign(SIGN_TYPE_MD5);
         }
 
 

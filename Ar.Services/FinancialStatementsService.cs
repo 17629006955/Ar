@@ -92,14 +92,27 @@ namespace Ar.Services
             fs.UserPhone = u?.Phone;
             fs.UserCreateTime = u?.CreateTime;
             fs.StoreName = s?.StoreName;
-            fs.ProductionType = "体验服务";
+            switch (p.Type)
+            {
+                case "1":
+                    fs.ProductionType = "体验服务";break;
+                case "2":
+                    fs.ProductionType = "硬件产品"; break;
+                case "3":
+                    fs.ProductionType = "水吧服务"; break;
+                case "4":
+                    fs.ProductionType = "衍生品"; break;
+                case "5":
+                    fs.ProductionType = "配件"; break;
+
+            }
             fs.Cstname = "普通销售";
             fs.ProductionCode = p.ProductCode;
             fs.ProductionName = p.ProductName;
             fs.Iquantity = order.Number;
             fs.Itaxunitprice = p.CostPrice;
             fs.Isum = p.CostPrice * order.Number;
-            fs.CpersonName = "业务员";
+            fs.CpersonName = p.CreatorName;
             fs.PayType = payType;
             fs.AmountOfIncome = order.Money;
             fs.DonationAmount = 0;
@@ -121,7 +134,73 @@ namespace Ar.Services
             fs.ProductInfoRate = p.Rate + "%";
             return fs;
         }
+        /// <summary>
+        /// 购买获取报表的实体
+        /// </summary>
+        /// <param name="userCode"></param>
+        /// <param name="order"></param>
+        /// <param name="payType"></param>
+        /// <returns></returns>
+        public financialStatements getWriteOffData(string userCode, Order order, string payType)
+        {
+            ICouponService _couponService = new CouponService();
+            IProductInfoService _productInfoService = new ProductInfoService();
+            ICouponTypeService _couponTypeService = new CouponTypeService();
+            IUseWalletService _useWalletService = new UseWalletService();
+            IStoreService _storeService = new StoreService();
+            IUserInfo _userService = new UserInfo();
+            var uw = _useWalletService.GetUseWalletCountMoney(userCode);
+            var s = _storeService.GetStore(order.StoreCode);
+            var p = _productInfoService.GetProductInfo(order.ProductCode);
+            var u = _userService.GetUserByCode(userCode);
+            financialStatements fs = new financialStatements();
+            fs.Code = Guid.NewGuid().ToString();
+            fs.CreateTime = order.CreateTime;
+            fs.UserPhone = u?.Phone;
+            fs.UserCreateTime = u?.CreateTime;
+            fs.StoreName = s?.StoreName;
+            switch (p.Type)
+            {
+                case "1":
+                    fs.ProductionType = "体验服务"; break;
+                case "2":
+                    fs.ProductionType = "硬件产品"; break;
+                case "3":
+                    fs.ProductionType = "水吧服务"; break;
+                case "4":
+                    fs.ProductionType = "衍生品"; break;
+                case "5":
+                    fs.ProductionType = "配件"; break;
 
+            }
+            fs.Cstname = "普通销售";
+            fs.ProductionCode = p.ProductCode;
+            fs.ProductionName = p.ProductName;
+            fs.Iquantity = order.Number;
+            fs.Itaxunitprice = p.CostPrice;
+            fs.Isum = p.CostPrice * order.Number;
+            fs.CpersonName = p.CreatorName;
+            fs.PayType = payType;
+            fs.AmountOfIncome = order.Money;
+            fs.DonationAmount = 0;
+            fs.CouponUseCode = order.ExperienceVoucherCode;
+            if (!string.IsNullOrEmpty(order.ExperienceVoucherCode))
+            {
+                var coupon = _couponService.GetCouponByCode(order.ExperienceVoucherCode);
+                var couponMoney = _couponTypeService.GetCouponTypeByCode(coupon?.CouponTypeCode);
+                if (couponMoney != null)
+                {
+                    fs.CouponUseMoney = couponMoney.Money;
+                }
+            }
+            fs.GetCouponTime = order.CreateTime;
+            fs.UseWalletMoney = uw.TotalAmount - order.Money;
+            fs.UseWalletMoney1 = fs.UseWalletMoney;
+            fs.UseWalletAccountPrincipal = uw.AccountPrincipal - order.Money * Math.Round(Convert.ToDecimal(uw.Ratio), 2);
+            fs.Ratio = (fs.UseWalletAccountPrincipal / fs.UseWalletMoney).ToString();
+            fs.ProductInfoRate = p.Rate + "%";
+            return fs;
+        }
 
 
         /// <summary>

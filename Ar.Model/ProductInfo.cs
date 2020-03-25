@@ -47,6 +47,8 @@ namespace AR.Model
         private decimal? _costPrice;
         private string _rate;
         private string _type;
+        private string _creatorName;
+        
 
         private List<DateTime> _selectDate;
         private int _peopleCount;
@@ -206,6 +208,14 @@ namespace AR.Model
         {
             set { _type = value; }
             get { return _type; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string CreatorName
+        {
+            set { _creatorName = value; }
+            get { return _creatorName; }
         }
         #endregion Model
 

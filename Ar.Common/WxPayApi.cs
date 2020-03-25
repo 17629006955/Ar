@@ -398,7 +398,7 @@ namespace WxPayAPI
             inputObj.SetValue("mch_id", mchid);//商户号
             inputObj.SetValue("spbill_create_ip", WxPayConfig.GetConfig().GetIp());//终端ip	  	    
             inputObj.SetValue("nonce_str", GenerateNonceStr());//随机字符串
-            inputObj.SetValue("sign_type", WxPayData.SIGN_TYPE_HMAC_SHA256);//签名类型
+            inputObj.SetValue("sign_type", WxPayData.SIGN_TYPE_MD5);//签名类型
 
             //签名
             inputObj.SetValue("sign", inputObj.MakeSign());
