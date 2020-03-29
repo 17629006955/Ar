@@ -135,7 +135,7 @@ namespace Ar.API.Controllers
         ////http://localhost:10010//api/RechargeRecord/Recharge?typeCode=1&userCode=1
         [HttpGet]
         [HttpPost]
-        public IHttpActionResult  Recharge (string typeCode, string userCode, string storecode, decimal? money = 0)
+        public IHttpActionResult  Recharge (string typeCode, string userCode, string storeCode, decimal? money = 0)
         {
             ICouponService _couponService = new CouponService();
             IUseWalletService _useWalletService = new UseWalletService();
@@ -151,8 +151,8 @@ namespace Ar.API.Controllers
                         IUserStoreService _userStoreservice = new UserStoreService();
                     IRechargeTypeService s = new RechargeTypeService();
                     ITopupOrderServrce tos = new TopupOrderServrce();
-                    var store = _stoeservice.GetStore(storecode);
-                    var userStoreser = _userStoreservice.GetUserStorebyUserCodestoreCode(userCode, storecode);
+                    var store = _stoeservice.GetStore(storeCode);
+                    var userStoreser = _userStoreservice.GetUserStorebyUserCodestoreCode(userCode, storeCode);
                         if (userStoreser != null)
                         {//生成微信预支付订单
 
@@ -178,8 +178,9 @@ namespace Ar.API.Controllers
                                 tos.InsertTopupOrder(userCode, wxprepay.prepayid, typeCode, money);
 
                                 WxOrder wxorder = new WxOrder();
-                                wxorder.order = null;
+                                wxorder.orderCode = null;
                                 wxorder.wxJsApiParam = wxprepay.wxJsApiParam;
+                                wxorder.prepayid = wxprepay.prepayid;
                                 result.Resource = wxorder;
                                 result.Status = Result.SUCCEED;
                             }

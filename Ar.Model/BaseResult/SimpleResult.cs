@@ -18,6 +18,7 @@ namespace Ar.Model.BaseResult
 
         public string Msg { get; set; }
         public object Resource { get; set; }
+        public bool IsWxPay { get; set; }
 
 
 
@@ -64,5 +65,7 @@ namespace Ar.Model.BaseResult
          /// 会员认证专用，其他不能使用
          /// </summary>
         PARAMERS_WX = 7  //微信
+        
+       
     }
 }

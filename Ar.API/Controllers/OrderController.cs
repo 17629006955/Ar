@@ -29,6 +29,7 @@ namespace Ar.API.Controllers
         {
             SimpleResult result = new SimpleResult();
             IOrderService _service = new OrderService();
+            IUserStoreService _userStoreservice = new UserStoreService();
             try
             {
                 if (UserAuthorization)
@@ -46,6 +47,7 @@ namespace Ar.API.Controllers
                             }
                             
                         }
+                         
 
                     }
                     list = list.OrderByDescending(t => t.CreateTime)?.ToList();

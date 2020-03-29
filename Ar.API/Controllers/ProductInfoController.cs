@@ -120,13 +120,14 @@ namespace Ar.API.Controllers
                     }
                     else
                     {
-                        if (string.IsNullOrEmpty(orderInfo.ExperienceVoucherCode))
+                        if (!string.IsNullOrEmpty(orderInfo.ExperienceVoucherCode))
                         {
-                            var isUseCoupon = _couponService.Exist(orderInfo.ExperienceVoucherCode);
-                            if (isUseCoupon != 3)
-                            {
-                                orderInfo.ExperienceVoucherCode = "";
-                            }
+                            //var isUseCoupon = _couponService.Exist(orderInfo.ExperienceVoucherCode);
+                            //if (isUseCoupon != 3)
+                            //{
+                            //    orderInfo.ExperienceVoucherCode = "";
+                            //}
+                            _couponService.UpdatebycouponCode(orderInfo.ExperienceVoucherCode);
                         }
                         var productInfo = _service.GetProductInfo(orderInfo.ProductCode);
                         result.Status = Result.SUCCEED;

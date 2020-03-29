@@ -160,6 +160,7 @@ namespace AR.Model
         private DateTime? _usetime;
         private DateTime? _giveedtime;
         private string _couponusecode;
+        private string _orderCode;
         private Decimal _money;
 
 
@@ -192,7 +193,15 @@ namespace AR.Model
             set { _couponusecode = value; }
             get { return _couponusecode; }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        public string OrderCode
+        {
+            set { _orderCode = value; }
+            get { return _orderCode; }
+        }
+        
 
 
     }

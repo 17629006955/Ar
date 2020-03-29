@@ -210,7 +210,7 @@ namespace Ar.API.Controllers
                                 coupon.CouponTypeCode = couponType.CouponTypeCode;
                                 coupon.StratTime = DateTime.Now;
                                 coupon.VersionEndTime = DateTime.MaxValue;
-                                coupon.IsGiveed = true;
+                                coupon.IsGiveed = false;
                                 coupon.CouponUseCode = Str(10, true);
                                 //没有添加任务优惠券
                                 var re = _service.Insert(coupon);

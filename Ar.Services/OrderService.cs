@@ -90,6 +90,25 @@ namespace Ar.Services
                         where OrderCode=@OrderCode";
             return DapperSqlHelper.ExcuteNonQuery<Order>(sql, paras, false);
         }
+        public int UpdateOrderbyWxorder(Order order)
+        {
+            DynamicParameters paras = new DynamicParameters();
+            paras.Add("@OrderCode", order.OrderCode, System.Data.DbType.String);
+            paras.Add("@UserCode", order.UserCode, System.Data.DbType.String);
+            paras.Add("@ProductCode", order.ProductCode, System.Data.DbType.String);
+            paras.Add("@Number", order.Number, System.Data.DbType.Int32);
+            paras.Add("@Money", order.Money, System.Data.DbType.Decimal);
+            paras.Add("@StoreCode", order.StoreCode, System.Data.DbType.String);
+            paras.Add("@PayTime", order.PayTime, System.Data.DbType.DateTime);
+            paras.Add("@AppointmentTime", order.AppointmentTime, System.Data.DbType.DateTime);
+            paras.Add("@ExperienceVoucherCode", order.ExperienceVoucherCode, System.Data.DbType.String);
+            paras.Add("@OrderNO", order.OrderNO, System.Data.DbType.String);
+            paras.Add("@WxPrepayId", order.WxPrepayId, System.Data.DbType.String);
+            string sql = @"update [dbo].[Order] set  UserCode=@UserCode,ProductCode=@ProductCode,Number=@Number,
+                        Money=@Money,StoreCode=@StoreCode,PayTime=@PayTime,AppointmentTime=@AppointmentTime,ExperienceVoucherCode=@ExperienceVoucherCode,WxPrepayId=@WxPrepayId,OrderNO=@OrderNO
+                        where OrderCode=@OrderCode";
+            return DapperSqlHelper.ExcuteNonQuery<Order>(sql, paras, false);
+        }
 
         public string InsertOrder(Order order)
         {
