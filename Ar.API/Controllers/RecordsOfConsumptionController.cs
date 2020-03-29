@@ -49,6 +49,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetRecordsOfConsumptionList  " , ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -84,6 +85,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetRecordsOfConsumptionByCode code " + code, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -121,6 +123,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetRecordsOfConsumptionByUserCode userCode "+ userCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -297,10 +300,11 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("WxPayOrder PayOrder " , ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
-                LogHelper.WriteLog("微信支付 " + ex.Message);
-                LogHelper.WriteLog("微信支付 " + ex.StackTrace);
+              
+                LogHelper.WriteLog("微信支付", ex);
             }
             return Json(result);
 
@@ -379,6 +383,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("WxPayOrder userCode" + userCode+ " orderCode"+ orderCode+ " prepayid "+prepayid, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
                 LogHelper.WriteLog("微信支付回掉 " + ex.Message);
@@ -428,6 +433,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("IsWriteOffUser userCode" + userCode , ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -505,6 +511,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("WriteOff userCode" + userCode+ " orderCode"+ orderCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }

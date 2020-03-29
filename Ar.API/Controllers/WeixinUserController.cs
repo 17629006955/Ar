@@ -186,8 +186,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
-                
-                    result.Status = Result.FAILURE;
+                LogHelper.WriteLog("Wxconfig", ex);
+                result.Status = Result.FAILURE;
                     result.Msg = ex.Message;
               
 
@@ -247,7 +247,7 @@ namespace Ar.API.Controllers
 
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
-
+                LogHelper.WriteLog("WxCardExt", ex);
 
             }
             return Json(result);

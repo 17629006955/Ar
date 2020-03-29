@@ -13,6 +13,7 @@ using System.Web.Http;
 using System.Web.Script.Serialization;
 using Ar.IServices;
 using Ar.Services;
+using Ar.Common;
 
 namespace Ar.API.Controllers
 {
@@ -45,6 +46,7 @@ namespace Ar.API.Controllers
             }
             catch(Exception ex)
             {
+                LogHelper.WriteLog("GetProductInfoList ",ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -80,6 +82,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetProductInfo code"+ code, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -144,6 +147,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetPayPage orderCode"+ orderCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -178,6 +182,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetProductInfoListByListCode listCode"+ listCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }

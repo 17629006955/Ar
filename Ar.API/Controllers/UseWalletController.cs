@@ -14,6 +14,7 @@ using System.Web.Script.Serialization;
 using Ar.IServices;
 using Ar.Services;
 using AR.Model;
+using Ar.Common;
 
 namespace Ar.API.Controllers
 {
@@ -46,6 +47,7 @@ namespace Ar.API.Controllers
             }
             catch(Exception ex)
             {
+                LogHelper.WriteLog("GetUseWalletList " , ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
 
@@ -100,6 +102,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetUseWalletInfoByUserCode userCode" + userCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -136,6 +139,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetUseWalletUserCode userCode"+ userCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -162,6 +166,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("InsertUseWallet useWallet"+ useWallet.UserCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }

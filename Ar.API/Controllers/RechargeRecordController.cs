@@ -15,6 +15,7 @@ using Ar.IServices;
 using Ar.Services;
 using AR.Model;
 using System.Transactions;
+using Ar.Common;
 
 namespace Ar.API.Controllers
 {
@@ -48,6 +49,7 @@ namespace Ar.API.Controllers
         }
             catch(Exception ex)
             {
+                LogHelper.WriteLog("GetRechargeRecordList" , ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -85,6 +87,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetRechargeRecordListByUserCode userCode" + userCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -121,6 +124,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetRechargeRecordByCode code" + code, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -203,6 +207,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+         
+                LogHelper.WriteLog("wxPrePay typeCode" + typeCode + " userCode" + userCode+ " storeCode" + storeCode+ " money"+ money, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -257,6 +263,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("wxPrePay prepayid" + prepayid+ " storeCode"+ storeCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -292,6 +299,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("InsertRechargeRecord record" + record.ToString(), ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -328,6 +336,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetRechargePage userCode"+ userCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }

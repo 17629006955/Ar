@@ -14,6 +14,7 @@ using System.Web.Script.Serialization;
 using Ar.IServices;
 using Ar.Services;
 using AR.Model;
+using Ar.Common;
 
 namespace Ar.API.Controllers
 { 
@@ -46,6 +47,7 @@ namespace Ar.API.Controllers
             }
             catch(Exception ex)
             {
+                LogHelper.WriteLog("GetUserTaskList userCode" + userCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -81,6 +83,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetUserTaskByCode UserTaskCode" + UserTaskCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -116,6 +119,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("UpdateUserTask UserTaskCode"+ UserTaskCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }

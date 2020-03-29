@@ -14,6 +14,7 @@ using System.Web.Script.Serialization;
 using Ar.IServices;
 using Ar.Services;
 using AR.Model;
+using Ar.Common;
 
 namespace Ar.API.Controllers
 {
@@ -63,6 +64,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetOrderList userCode" + userCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -98,6 +100,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+             
+                LogHelper.WriteLog("GetOrderByCode code" + code, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -134,6 +138,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetPayOrderList userCode" + userCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -170,6 +175,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetNOPayOrderList userCode" + userCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -204,6 +210,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("UpdateOrder order" + order.OrderCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -238,6 +245,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("InsertOrder order" + order.OrderCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -272,6 +280,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("WxOrder order"+ order.OrderCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
