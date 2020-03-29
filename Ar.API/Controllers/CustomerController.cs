@@ -46,8 +46,8 @@ namespace Ar.API.Controllers
             }
             catch(Exception ex)
             {
-                LogHelper.WriteLog("GetCustomerServiceList获取客服列表" + ex.Message);
-                LogHelper.WriteLog("GetCustomerServiceList获取客服列表" + ex.StackTrace);
+                LogHelper.WriteLog("GetCustomerServiceList获取客服列表" + ex.Message,ex);
+                LogHelper.WriteLog("GetCustomerServiceList获取客服列表" +ex.StackTrace,ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -83,8 +83,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
-                LogHelper.WriteLog("GetCustomerService获取门店客服列表" + ex.Message);
-                LogHelper.WriteLog("GetCustomerService获取门店客服列表" + ex.StackTrace);
+                LogHelper.WriteLog("GetCustomerService获取门店客服列表" + ex.Message,ex);
+                LogHelper.WriteLog("GetCustomerService获取门店客服列表" +ex.StackTrace,ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }

@@ -46,8 +46,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
-                LogHelper.WriteLog("ListType获取页签：" + ex.Message);
-                LogHelper.WriteLog("ListType获取页签：" + ex.StackTrace);
+                LogHelper.WriteLog("ListType获取页签：" + ex.Message,ex);
+                LogHelper.WriteLog("ListType获取页签：" +ex.StackTrace,ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }

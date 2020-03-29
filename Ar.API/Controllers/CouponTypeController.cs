@@ -46,8 +46,8 @@ namespace Ar.API.Controllers
             }
             catch(Exception ex)
             {
-                LogHelper.WriteLog("GetCouponTypeByCode获取优惠卷类型code" + code + ex.Message);
-                LogHelper.WriteLog("GetCouponTypeByCode获取优惠卷类型code" + code + ex.StackTrace);
+                LogHelper.WriteLog("GetCouponTypeByCode获取优惠卷类型code" + code + ex.Message,ex);
+                LogHelper.WriteLog("GetCouponTypeByCode获取优惠卷类型code" + code +ex.StackTrace,ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -83,8 +83,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
-                LogHelper.WriteLog("GetCouponTypeList获取优惠卷类型" + ex.Message);
-                LogHelper.WriteLog("GetCouponTypeList获取优惠卷类型"  + ex.StackTrace);
+                LogHelper.WriteLog("GetCouponTypeList获取优惠卷类型" + ex.Message,ex);
+                LogHelper.WriteLog("GetCouponTypeList获取优惠卷类型"  +ex.StackTrace,ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }

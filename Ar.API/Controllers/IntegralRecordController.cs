@@ -50,8 +50,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
-                LogHelper.WriteLog("GetStoreByCode获取积分code：" +code+ ex.Message);
-                LogHelper.WriteLog("GetStoreByCode获取积分code：" + code  + ex.StackTrace);
+                LogHelper.WriteLog("GetStoreByCode获取积分code：" +code+ ex.Message,ex);
+                LogHelper.WriteLog("GetStoreByCode获取积分code：" + code  + ex.StackTrace,ex));
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -87,8 +87,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
-                LogHelper.WriteLog("GetIntegralRecordByUserCode获取积分userCode：" + userCode + ex.Message);
-                LogHelper.WriteLog("GetIntegralRecordByUserCode获取积分userCode：" + userCode + ex.StackTrace);
+                LogHelper.WriteLog("GetIntegralRecordByUserCode获取积分userCode：" + userCode + ex.Message,ex);
+                LogHelper.WriteLog("GetIntegralRecordByUserCode获取积分userCode：" + userCode + ex.StackTrace,ex));
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -124,8 +124,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
-                LogHelper.WriteLog("CreateUserStore创建积分："  + ex.Message);
-                LogHelper.WriteLog("CreateUserStore创建积分：" + ex.StackTrace);
+                LogHelper.WriteLog("CreateUserStore创建积分："  + ex.Message,ex);
+                LogHelper.WriteLog("CreateUserStore创建积分：" + ex.StackTrace,ex));
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
