@@ -29,8 +29,7 @@ namespace Ar.API.Controllers
         IUserStoreService userStoreService = new UserStoreService();
         IUserInfo userInfo = new UserInfo();
         IStoreService storeService = new StoreService();
-        //http://localhost:10010//api/WeixinUser/access_token
-      
+
         ///http://localhost:10010//api/WeixinUser/reAccessToken?reAccessToken=18235139350
         [HttpGet]
         public IHttpActionResult reAccessToken(string reAccessToken)
@@ -53,6 +52,7 @@ namespace Ar.API.Controllers
             return Json(result);
 
         }
+
         ////http://localhost:10010//api/WeixinUser/GetUserInfo?phone=18235139350
         [HttpGet]
         public IHttpActionResult GetUserInfo(string phone)

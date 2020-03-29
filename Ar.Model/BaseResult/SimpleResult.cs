@@ -18,7 +18,7 @@ namespace Ar.Model.BaseResult
 
         public string Msg { get; set; }
         public object Resource { get; set; }
-        public bool IsWxPay { get; set; }
+      
 
 
 

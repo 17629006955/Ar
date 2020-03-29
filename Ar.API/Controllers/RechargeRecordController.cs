@@ -186,6 +186,7 @@ namespace Ar.API.Controllers
                                 wxorder.wxJsApiParam = wxprepay.wxJsApiParam;
                                 wxorder.prepayid = wxprepay.prepayid;
                                 result.Resource = wxorder;
+                                wxorder.IsWxPay = true;
                                 result.Status = Result.SUCCEED;
                             }
                             else
@@ -222,34 +223,37 @@ namespace Ar.API.Controllers
         ////http://localhost:10010//api/RechargeRecord/Recharge?prepayid=hgjj
         [HttpGet]
         [HttpPost]
-        public IHttpActionResult wxPrePay(string prepayid,string storeCode="")
+        public IHttpActionResult wxPrePay(string prepayid,string storeCode)
         {
             SimpleResult result = new SimpleResult();
             IRechargeRecordService _service = new RechargeRecordService();
             ITopupOrderServrce tos = new TopupOrderServrce();
+            IStoreService _Storeservice = new StoreService();
             try
             {
                 if (UserAuthorization)
                 {
                     using (var scope = new TransactionScope())//创建事务
-                    {
-                        if (!string.IsNullOrEmpty(prepayid))
+                    { var store = _Storeservice.GetStore(storeCode);
+                        if (store != null)
                         {
-                            if (!string.IsNullOrEmpty(prepayid))
-                            {
-                                var PayTime = Common.wxPayOrderQuery(prepayid);
-                                if (!string.IsNullOrEmpty(PayTime))
+                           
+                                if (!string.IsNullOrEmpty(prepayid))
                                 {
-                                    var payTime = Convert.ToDateTime(PayTime);
-                                    //更新TopupOrder 的支付时间
-                                    tos.UpdateTopupOrder(prepayid, payTime);
-                                    var tosmodel = tos.GetTopupOrderbyWallePrCode(prepayid);
-                                    var list = _service.Recharge(tosmodel.RechargeTypeCode, tosmodel.UserCode, tosmodel.RecordsMoney, storeCode);
-                                    result.Resource = list;
-                                    result.Status = Result.SUCCEED;
-                                    scope.Complete();//这是最后提交事务
+                                    var PayTime = Common.wxPayOrderQuery(prepayid, store.appid.Trim(), store.mchid);
+                                    if (!string.IsNullOrEmpty(PayTime))
+                                    {
+                                        var payTime = Convert.ToDateTime(PayTime);
+                                        //更新TopupOrder 的支付时间
+                                        tos.UpdateTopupOrder(prepayid, payTime);
+                                        var tosmodel = tos.GetTopupOrderbyWallePrCode(prepayid);
+                                        var list = _service.Recharge(tosmodel.RechargeTypeCode, tosmodel.UserCode, tosmodel.RecordsMoney, storeCode);
+                                        result.Resource = list;
+                                        result.Status = Result.SUCCEED;
+                                        scope.Complete();//这是最后提交事务
+                                    }
                                 }
-                            }
+                            
                         }
                        
                     }

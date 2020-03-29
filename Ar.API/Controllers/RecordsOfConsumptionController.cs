@@ -252,9 +252,10 @@ namespace Ar.API.Controllers
                                             wxorder.orderCode = order.OrderCode;
                                             wxorder.wxJsApiParam = wxprepay.wxJsApiParam;
                                             wxorder.prepayid = wxprepay.prepayid;
+                                            wxorder.IsWxPay = true;
                                             result.Resource = wxorder;
                                             result.Status = Result.SUCCEED;
-                                            result.IsWxPay = true;
+                                           
                                         }
                                         else
                                         {
@@ -316,8 +317,9 @@ namespace Ar.API.Controllers
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        ////http://localhost:10010//api/RecordsOfConsumption/PayOrder?productCode=1&userCode=1&peopleCount=1&dateTime=2019-12-07&money=9&couponCode=1ac31b4d-e383-447a-9417-9c66ca9e6004 
+        ////http://localhost:10010//api/RecordsOfConsumption/WxPayOrder?userCode=1&orderCode=1&prepayid=1
         [HttpGet]
+        [HttpPost]
         public IHttpActionResult WxPayOrder(string userCode, string orderCode, string prepayid)
         {
             LogHelper.WriteLog("WxPayOrder接口");
@@ -338,35 +340,59 @@ namespace Ar.API.Controllers
                     {
                         if (!string.IsNullOrEmpty(prepayid) )
                         {
+                            IOrderService _orderService = new OrderService();
+                            ICouponService _couponService = new CouponService();
+                            IUserInfo _userService = new UserInfo();
+                            IStoreService _Storeservice = new StoreService();
                             var now= DateTime.Now;
-                            var PayTime = Common.wxPayOrderQuery(prepayid);
-                            LogHelper.WriteLog("微信支付时间： " + PayTime);
-                            if (!string.IsNullOrEmpty(PayTime))
+                            var order = _orderService.GetOrderByCode(orderCode);
+                            if (order !=null)
                             {
-                                IOrderService _orderService = new OrderService();
-                                ICouponService _couponService = new CouponService();
-                                IUserInfo _userService = new UserInfo();
-                                var order = _orderService.GetOrderByCode(orderCode);
-                                LogHelper.WriteLog("更新的订单： " + orderCode);
-                                order.PayTime = DateTime.Now;
-                                _orderService.UpdateOrder(order);
-                                var ss= _couponService.GetCouponByOrderCode(orderCode);
-                                if (ss!=null)
+                                var store = _Storeservice.GetStore(order.StoreCode);
+                                if (store != null)
                                 {
-                                    _couponService.UsedUpdate(ss.CouponUseCode, userCode, orderCode);
-                                    LogHelper.WriteLog("更新的钱包和优惠券couponCode： " + ss.CouponUseCode);
-                                }
-                                
+                                    var PayTime = Common.wxPayOrderQuery(prepayid, store.appid.Trim(), store.mchid);
+                                    LogHelper.WriteLog("微信支付时间： " + PayTime);
+                                    if (!string.IsNullOrEmpty(PayTime))
+                                    {
 
-                                LogHelper.WriteLog("报表写入数据开始");
-                                IFinancialStatementsService _financialStatementsService = new FinancialStatementService();
-                                LogHelper.WriteLog("报表表数据更新");
-                                financialStatements fs =_financialStatementsService.getData(userCode,order,"微信");
-                                LogHelper.WriteLog("报表表数据更新完成");
-                                _financialStatementsService.Insert(fs);
-                                LogHelper.WriteLog("报表写入数据结束" + fs.Code);
-                                result.Status = Result.SUCCEED;
-                                scope.Complete();//这是最后提交事务
+
+                                        LogHelper.WriteLog("更新的订单： " + orderCode);
+                                        order.PayTime = DateTime.Now;
+                                        _orderService.UpdateOrder(order);
+                                        var ss = _couponService.GetCouponByOrderCode(orderCode);
+                                        if (ss != null)
+                                        {
+                                            _couponService.UsedUpdate(ss.CouponUseCode, userCode, orderCode);
+                                            LogHelper.WriteLog("更新的钱包和优惠券couponCode： " + ss.CouponUseCode);
+                                        }
+
+
+                                        LogHelper.WriteLog("报表写入数据开始");
+                                        IFinancialStatementsService _financialStatementsService = new FinancialStatementService();
+                                        LogHelper.WriteLog("报表表数据更新");
+                                        financialStatements fs = _financialStatementsService.getData(userCode, order, "微信");
+                                        LogHelper.WriteLog("报表表数据更新完成");
+                                        _financialStatementsService.Insert(fs);
+                                        LogHelper.WriteLog("报表写入数据结束" + fs.Code);
+                                        result.Status = Result.SUCCEED;
+                                        scope.Complete();//这是最后提交事务
+                                    }
+                                    else
+                                    {
+                                        result.Status = Result.SYSTEM_ERROR;
+                                        result.Msg = "微信支付没有成功";
+                                    }
+                                }
+                                else
+                                {
+                                    result.Status = Result.SYSTEM_ERROR;
+                                    result.Msg = "订单对应的店铺不对";
+                                }
+                            } else
+                            {
+                                result.Status = Result.SYSTEM_ERROR;
+                                result.Msg = "订单编码不对";
                             }
 
                         }

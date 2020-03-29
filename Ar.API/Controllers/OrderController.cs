@@ -30,26 +30,34 @@ namespace Ar.API.Controllers
         {
             SimpleResult result = new SimpleResult();
             IOrderService _service = new OrderService();
-            IUserStoreService _userStoreservice = new UserStoreService();
+            IUserStoreService _userStoreService = new UserStoreService();
+            IStoreService _Storeservice = new StoreService();
+
             try
             {
                 if (UserAuthorization)
                 {
                     var list = _service.GetOrderList(userCode);
-                    foreach (var item in list)
+                    var userSotre = _userStoreService.GetUserStorebyUserCode(userCode);
+                    var store = _Storeservice.GetStore(userSotre.MembershipCardStore);
+                    if (store != null)
                     {
-                        if (!string.IsNullOrEmpty(item.WxPrepayId) && item.PayTime==null)
+                        foreach (var item in list)
                         {
-                            var PayTime = Common.wxPayOrderQuery(item.WxPrepayId);
-                            if (!string.IsNullOrEmpty(PayTime))
+                            if (!string.IsNullOrEmpty(item.WxPrepayId) && item.PayTime == null)
                             {
-                                item.PayTime = Convert.ToDateTime(PayTime);
-                                _service.UpdateOrder(item);
-                            }
-                            
-                        }
-                         
 
+                                var PayTime = Common.wxPayOrderQuery(item.WxPrepayId, store.appid.Trim(), store.mchid);
+                                if (!string.IsNullOrEmpty(PayTime))
+                                {
+                                    item.PayTime = Convert.ToDateTime(PayTime);
+                                    _service.UpdateOrder(item);
+                                }
+
+                            }
+
+
+                        }
                     }
                     list = list.OrderByDescending(t => t.CreateTime)?.ToList();
                     result.Resource = list;

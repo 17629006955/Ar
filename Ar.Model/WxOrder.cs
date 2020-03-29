@@ -11,7 +11,8 @@ namespace Ar.Model
     public class WxOrder
     {
         public string orderCode;
-        public string wxJsApiParam;
+        public JsApiParameters wxJsApiParam;
         public string prepayid;
+        public bool IsWxPay { get; set; }
     }
 }

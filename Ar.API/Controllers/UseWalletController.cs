@@ -62,32 +62,37 @@ namespace Ar.API.Controllers
         /// <returns></returns>
         ////http://localhost:10010//api/UseWallet/GetUseWalletInfoByUserCode?userCode=1
         [HttpGet]
-        public IHttpActionResult GetUseWalletInfoByUserCode(string userCode,string storeCode="")
+        public IHttpActionResult GetUseWalletInfoByUserCode(string userCode,string storeCode)
         {
             SimpleResult result = new SimpleResult();
             IUseWalletService _service = new UseWalletService();
             ITopupOrderServrce tos = new TopupOrderServrce();
             IRechargeRecordService _RechargeRecordService = new RechargeRecordService();
+            IStoreService _Storeservice = new StoreService();
             try
             {
                 if (UserAuthorization)
                 {
                     //查看没有给微信支付核对的订单继续核对
                     var topupOrder = tos.GetTopupOrderbyuserCode(userCode);
-                    foreach (var item in topupOrder)
+                    var store = _Storeservice.GetStore(storeCode);
+                    if (store != null)
                     {
-                        if (!string.IsNullOrEmpty(item.WallePrCode) && item.PayDatetime == null)
+                        foreach (var item in topupOrder)
                         {
-                            var PayTime = Common.wxPayOrderQuery(item.WallePrCode);
-                            if (!string.IsNullOrEmpty(PayTime))
+                            if (!string.IsNullOrEmpty(item.WallePrCode) && item.PayDatetime == null)
                             {
-                                item.PayDatetime = Convert.ToDateTime(PayTime);
-                                tos.UpdateTopupOrder(item.WallePrCode, item.PayDatetime);
-                                _RechargeRecordService.Recharge(item.RechargeTypeCode, item.UserCode, item.RecordsMoney, storeCode);
+                                var PayTime = Common.wxPayOrderQuery(item.WallePrCode, store.appid.Trim(), store.mchid);
+                                if (!string.IsNullOrEmpty(PayTime))
+                                {
+                                    item.PayDatetime = Convert.ToDateTime(PayTime);
+                                    tos.UpdateTopupOrder(item.WallePrCode, item.PayDatetime);
+                                    _RechargeRecordService.Recharge(item.RechargeTypeCode, item.UserCode, item.RecordsMoney, storeCode);
+                                }
+
                             }
 
                         }
-
                     }
                     var list = _service.GetUseWalletInfoByUserCode(userCode);
                     result.Resource = list;

@@ -10,6 +10,7 @@ using System.Net;
 using System.Web.Security;
 using LitJson;
 using System.Configuration;
+using Ar.Common;
 
 namespace WxPayAPI
 {
@@ -218,22 +219,34 @@ namespace WxPayAPI
         * 更详细的说明请参考网页端调起支付API：http://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_7
         * 
         */
-        public string GetJsApiParameters()
+        public JsApiParameters GetJsApiParameters()
         {
             Log.Debug(this.GetType().ToString(), "JsApiPay::GetJsApiParam is processing...");
 
             WxPayData jsApiParam = new WxPayData();
             jsApiParam.SetValue("appId", unifiedOrderResult.GetValue("appid"));
-            jsApiParam.SetValue("timeStamp", WxPayApi.GenerateTimeStamp());
-            jsApiParam.SetValue("nonceStr", WxPayApi.GenerateNonceStr());
+            var timeStam = WxPayApi.GenerateTimeStamp();
+            jsApiParam.SetValue("timeStamp", timeStam);
+            var nonceStr = WxPayApi.GenerateNonceStr();
+            jsApiParam.SetValue("nonceStr", nonceStr);
             jsApiParam.SetValue("package", "prepay_id=" + unifiedOrderResult.GetValue("prepay_id"));
             jsApiParam.SetValue("signType", "MD5");
-            jsApiParam.SetValue("paySign", jsApiParam.MakeSign());
+            var sign = jsApiParam.MakeSign();
+            jsApiParam.SetValue("paySign", sign);
+            //新的对象
+
+            JsApiParameters jsApiParammodel = new JsApiParameters();
+            jsApiParammodel.appId = unifiedOrderResult.GetValue("appid").ToString();
+            jsApiParammodel.timeStamp = timeStam;
+            jsApiParammodel.nonceStr = nonceStr;
+            jsApiParammodel.package = "prepay_id=" + unifiedOrderResult.GetValue("prepay_id");
+            jsApiParammodel.signType = "MD5";
+            jsApiParammodel.paySign = sign;
 
             string parameters = jsApiParam.ToJson();
-
+            LogHelper.WriteLog("wxJsApiParam parameters:" + parameters);
             Log.Debug(this.GetType().ToString(), "Get jsApiParam : " + parameters);
-            return parameters;
+            return jsApiParammodel;
         }
 
 
