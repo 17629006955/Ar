@@ -48,8 +48,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
-                LogHelper.WriteLog("GetCouponByUserCode获取" + userCode + "优惠卷："+ ex.Message);
-                LogHelper.WriteLog("GetCouponByUserCode获取" + userCode + "优惠卷："+ ex.StackTrace);
+                LogHelper.WriteLog("GetCouponByUserCode获取" + userCode + "优惠卷："+ ex.Message,ex);
+                LogHelper.WriteLog("GetCouponByUserCode获取" + userCode + "优惠卷："+ ex.StackTrace,ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -85,8 +85,8 @@ namespace Ar.API.Controllers
             }
             catch(Exception ex)
             {
-                LogHelper.WriteLog("GetCouponByCode根据CouponUseCode获取优惠卷信息：code=" + code + ex.Message);
-                LogHelper.WriteLog("GetCouponByCode根据CouponUseCode获取优惠卷信息：code=" + code + ex.StackTrace);
+                LogHelper.WriteLog("GetCouponByCode根据CouponUseCode获取优惠卷信息：code=" + code + ex.Message,ex);
+                LogHelper.WriteLog("GetCouponByCode根据CouponUseCode获取优惠卷信息：code=" + code + ex.StackTrace,ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -123,8 +123,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
-                LogHelper.WriteLog("GetCouponList获取用户的优惠卷信息userCode=" + userCode+ ex.Message);
-                LogHelper.WriteLog("GetCouponList获取用户的优惠卷信息userCode=" + userCode + ex.StackTrace);
+                LogHelper.WriteLog("GetCouponList获取用户的优惠卷信息userCode=" + userCode+ ex.Message,ex);
+                LogHelper.WriteLog("GetCouponList获取用户的优惠卷信息userCode=" + userCode + ex.StackTrace,ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -161,8 +161,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
-                LogHelper.WriteLog("InsertCouponByUser添加用户的优惠卷信息userCode=" + userCode + ",couponCode;" + couponCode + ex.Message);
-                LogHelper.WriteLog("InsertCouponByUser添加用户的优惠卷信息userCode=" + userCode + ",couponCode;" + couponCode + ex.StackTrace);
+                LogHelper.WriteLog("InsertCouponByUser添加用户的优惠卷信息userCode=" + userCode + ",couponCode;" + couponCode + ex.Message,ex);
+                LogHelper.WriteLog("InsertCouponByUser添加用户的优惠卷信息userCode=" + userCode + ",couponCode;" + couponCode + ex.StackTrace,ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -256,8 +256,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
-                LogHelper.WriteLog("GiveedUpdate=获取完成任务的优惠卷" + phone + ex.Message);
-                LogHelper.WriteLog("GiveedUpdate=获取完成任务的优惠卷" + phone + ex.StackTrace);
+                LogHelper.WriteLog("GiveedUpdate=获取完成任务的优惠卷" + phone + ex.Message,ex);
+                LogHelper.WriteLog("GiveedUpdate=获取完成任务的优惠卷" + phone + ex.StackTrace,ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }

@@ -48,8 +48,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
-                LogHelper.WriteLog("GetExperienceVoucherList获取体验卷列表" + ex.Message);
-                LogHelper.WriteLog("GetExperienceVoucherList获取体验卷列表" + ex.StackTrace);
+                LogHelper.WriteLog("GetExperienceVoucherList获取体验卷列表" + ex.Message,ex);
+                LogHelper.WriteLog("GetExperienceVoucherList获取体验卷列表" +ex.StackTrace,ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -85,8 +85,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
-                LogHelper.WriteLog("GetExperienceVoucherByCode获取体验卷列表code：" + code + ex.Message);
-                LogHelper.WriteLog("GetExperienceVoucherByCode获取体验卷列表code：" + code + ex.StackTrace);
+                LogHelper.WriteLog("GetExperienceVoucherByCode获取体验卷列表code：" + code + ex.Message,ex);
+                LogHelper.WriteLog("GetExperienceVoucherByCode获取体验卷列表code：" + code +ex.StackTrace,ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -120,8 +120,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
-                LogHelper.WriteLog("Insert插入体验卷：" + ex.Message);
-                LogHelper.WriteLog("Insert插入体验卷："+ ex.StackTrace);
+                LogHelper.WriteLog("Insert插入体验卷：" + ex.Message,ex);
+                LogHelper.WriteLog("Insert插入体验卷："+ex.StackTrace,ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
