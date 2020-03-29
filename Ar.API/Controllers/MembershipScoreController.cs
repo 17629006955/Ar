@@ -14,6 +14,7 @@ using System.Web.Script.Serialization;
 using Ar.IServices;
 using Ar.Services;
 using AR.Model;
+using Ar.Common;
 
 namespace Ar.API.Controllers
 {
@@ -49,6 +50,8 @@ namespace Ar.API.Controllers
             }
             catch(Exception ex)
             {
+                LogHelper.WriteLog("GetMembershipScoreByCode获取积分code："+code + ex.Message);
+                LogHelper.WriteLog("GetMembershipScoreByCode获取积分code："+code + ex.StackTrace);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -84,6 +87,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetMembershipScoreListByUserCode获取积分usercode：" +userCode+ ex.Message);
+                LogHelper.WriteLog("GetMembershipScoreListByUserCode获取积分usercode：" + userCode + ex.StackTrace);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -118,6 +123,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("Insert获取积分："  + ex.Message);
+                LogHelper.WriteLog("Insert获取积分："  + ex.StackTrace);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -153,6 +160,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("Update获取积分：userCode:" +userCode+",score;"+score+ ex.Message);
+                LogHelper.WriteLog("Update获取积分：userCode:" + userCode + ",score;" + score + ex.StackTrace);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
