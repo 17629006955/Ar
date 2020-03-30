@@ -1,4 +1,5 @@
 ﻿using Ar.API.Controllers.BaseContolles;
+using Ar.Common;
 using Ar.IServices;
 using Ar.Model.BaseResult;
 using Ar.Services;
@@ -135,6 +136,8 @@ namespace Ar.API.Controllers
                                     if (count > 0)
                                     {
                                         result.Status = Result.SUCCEED;
+                                        LogHelper.WriteLog("BangMessageCode :" + result.Status);
+                                        LogHelper.WriteLog("wxc :" + wxc);
                                         result.Resource = wxc;
                                     }
                                     else
@@ -203,6 +206,8 @@ namespace Ar.API.Controllers
         //http://localhost:10010//api/Message/BangMessageOk?userCode=18235139350
         public IHttpActionResult BangMessageOk(string userCode)
         {
+            LogHelper.WriteLog("BangMessageOk :" + userCode);
+          
             ICouponService _service = new CouponService();
             IUserInfo _userservice = new UserInfo();
             ICouponTypeService _couponTypeservice = new CouponTypeService();

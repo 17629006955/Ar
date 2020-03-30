@@ -79,7 +79,7 @@ namespace Ar.Services
 
         public string  PayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string storeId, int quantity=1, string orderCode = "", string couponCode = "")
         {
-            string msg = "";
+            string msg = "SUCCEED";
             IProductInfoService _productInfoService = new ProductInfoService();
             DateTime now = DateTime.Now;
             ICouponService _couponService = new CouponService();
@@ -98,7 +98,11 @@ namespace Ar.Services
 
             Order order = new Order();
             order.Money = money;
-            order.Number = quantity;
+            int ss = 0;
+            if (int.TryParse(peopleCount,out ss))
+            {
+                order.Number = ss;
+            }
             order.PayTime = now;
             order.StoreCode = storeId;
             order.UserCode = userCode;
@@ -134,7 +138,7 @@ namespace Ar.Services
                 {
                     LogHelper.WriteLog("会员支付0元 " + money);
                     LogHelper.WriteLog("couponCode " + couponCode);
-                    _couponService.UsedUpdate(couponCode, userCode);
+                    _couponService.UsedUpdate(couponCode, userCode, orderCode);
 
                     LogHelper.WriteLog("financialStatements " + fs.Code);
                     _financialStatementsService.Insert(fs);
@@ -142,7 +146,7 @@ namespace Ar.Services
                 else
                 {
                     LogHelper.WriteLog("couponCode " + couponCode);
-                    _couponService.UsedUpdate(couponCode, userCode);
+                    _couponService.UsedUpdate(couponCode, userCode, orderCode);
                     LogHelper.WriteLog("会员支付金额 " + money);
                     _useWalletService.UpdateData(userCode, money);
                     LogHelper.WriteLog("financialStatements " + fs.Code);
@@ -183,7 +187,11 @@ namespace Ar.Services
                 order.CreateTime = now;
             }
             order.Money = money;
-            order.Number = quantity;
+            int ss = 0;
+            if (int.TryParse(peopleCount, out ss))
+            {
+                order.Number = ss;
+            }
             order.PayTime = null;
             order.StoreCode = storeId;
             order.UserCode = userCode;
@@ -191,9 +199,18 @@ namespace Ar.Services
             order.ExperienceVoucherCode = couponCode;
             order.AppointmentTime = dateTime;
             order.WxPrepayId = wxPrepayId;
+            
+            
             LogHelper.WriteLog("订单编码OrderCode " + order.OrderCode);
             LogHelper.WriteLog("订单号OrderNO " + order.OrderNO);
-            _orderService.InsertOrder(order);
+            if (tempOrder != null && tempOrder.UserCode == userCode)
+            {
+                _orderService.UpdateOrderbyWxorder(order);
+            }
+            else
+            {
+                _orderService.InsertOrder(order);
+            }
             return order;
         }
         public Order WxPayNoMoneyOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money,string orderCode = "", string couponCode = "")
@@ -222,7 +239,11 @@ namespace Ar.Services
                 order.CreateTime = now;
             }
             order.Money = money;
-            order.Number = 1;
+            int ss = 0;
+            if (int.TryParse(peopleCount, out ss))
+            {
+                order.Number = ss;
+            }
             order.PayTime = DateTime.Now;
             order.StoreCode = userSotre.UserStoreCode;
             order.UserCode = userCode;

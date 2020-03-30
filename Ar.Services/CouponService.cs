@@ -24,6 +24,14 @@ namespace Ar.Services
                 takeEffectList= takeEffectList
             };
         }
+        public Coupon GetCouponByOrderCode(string OrderCode)
+        {
+            DynamicParameters paras = new DynamicParameters();
+            paras.Add("@OrderCode", OrderCode, System.Data.DbType.String);
+            Coupon record = DapperSqlHelper.FindOne<Coupon>("select a.*,b.CouponTypeName from [dbo].[Coupon] a,[dbo].[CouponType] b  where a.OrderCode=@OrderCode ", paras, false);
+            return record;
+        }
+
 
         public IList<CouponShow> GetUserCoupon(string userCode)
         {
@@ -72,12 +80,13 @@ namespace Ar.Services
         /// 使用
         /// </summary>
         /// <param name="couponCode"></param>
-        public bool UsedUpdate(string couponCode,string userCode)
+        public bool UsedUpdate(string couponCode,string userCode,string orderCode)
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@CouponUseCode", couponCode, System.Data.DbType.String);
             paras.Add("@userCode", userCode, System.Data.DbType.String);
-            string sql = "update [dbo].[Coupon] set IsUsed=1, UseTime=getdate(),userCode=@userCode where CouponUseCode=@CouponUseCode";
+            paras.Add("@orderCode", orderCode, System.Data.DbType.String);
+            string sql = "update [dbo].[Coupon] set IsUsed=1, UseTime=getdate(),userCode=@userCode,orderCode=@orderCode where CouponUseCode=@CouponUseCode";
             DapperSqlHelper.ExcuteNonQuery<Coupon>(sql, paras, false);
             return true;
         }
@@ -147,6 +156,24 @@ namespace Ar.Services
             return Guid.NewGuid().ToString();
         }
 
+
+        public bool UpdatebycouponCode(string couponCode)
+        {
+            DynamicParameters paras = new DynamicParameters();
+            paras.Add("@CouponUseCode", couponCode, System.Data.DbType.String);
+            string sql1 = "select * from [dbo].[Coupon] where CouponUseCode=@CouponUseCode ";
+            Coupon coupon = DapperSqlHelper.FindOne<Coupon>(sql1, paras, false);
+            if (coupon == null || coupon.VersionEndTime < DateTime.Now)
+            {
+                return false;
+            }
+            else
+            {
+                string sql = "update [dbo].[Coupon] set IsUsed=0 where CouponUseCode=@CouponUseCode";
+                DapperSqlHelper.ExcuteNonQuery<Coupon>(sql, paras, false);
+            }
+            return true;
+        }
         /// <summary>
         /// 判断优惠卷是否存在是否被使用
         /// </summary>

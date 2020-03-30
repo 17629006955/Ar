@@ -14,6 +14,7 @@ using System.Web.Script.Serialization;
 using Ar.IServices;
 using Ar.Services;
 using AR.Model;
+using Ar.Common;
 
 namespace Ar.API.Controllers
 {
@@ -27,6 +28,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetCouponByUserCode(string userCode)
         {
+            LogHelper.WriteLog("GetCouponByUserCode获取"+userCode+"优惠卷");
             SimpleResult result = new SimpleResult();
             ICouponService _service = new CouponService();
             try
@@ -46,6 +48,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetCouponByUserCode获取" + userCode + "优惠卷："+ ex.Message,ex);
+                LogHelper.WriteLog("GetCouponByUserCode获取" + userCode + "优惠卷："+ ex.StackTrace,ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -61,6 +65,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetCouponByCode(string code)
         {
+            LogHelper.WriteLog("GetCouponByCode根据CouponUseCode获取优惠卷信息：code=" + code);
             SimpleResult result = new SimpleResult();
             ICouponService _service = new CouponService();
             try
@@ -80,6 +85,8 @@ namespace Ar.API.Controllers
             }
             catch(Exception ex)
             {
+                LogHelper.WriteLog("GetCouponByCode根据CouponUseCode获取优惠卷信息：code=" + code + ex.Message,ex);
+                LogHelper.WriteLog("GetCouponByCode根据CouponUseCode获取优惠卷信息：code=" + code + ex.StackTrace,ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -96,6 +103,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetCouponList(string userCode)
         {
+          
             SimpleResult result = new SimpleResult();
             ICouponService _service = new CouponService();
             try
@@ -115,6 +123,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetCouponList获取用户的优惠卷信息userCode=" + userCode+ ex.Message,ex);
+                LogHelper.WriteLog("GetCouponList获取用户的优惠卷信息userCode=" + userCode + ex.StackTrace,ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -151,6 +161,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("InsertCouponByUser添加用户的优惠卷信息userCode=" + userCode + ",couponCode;" + couponCode + ex.Message,ex);
+                LogHelper.WriteLog("InsertCouponByUser添加用户的优惠卷信息userCode=" + userCode + ",couponCode;" + couponCode + ex.StackTrace,ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -210,7 +222,7 @@ namespace Ar.API.Controllers
                                 coupon.CouponTypeCode = couponType.CouponTypeCode;
                                 coupon.StratTime = DateTime.Now;
                                 coupon.VersionEndTime = DateTime.MaxValue;
-                                coupon.IsGiveed = true;
+                                coupon.IsGiveed = false;
                                 coupon.CouponUseCode = Str(10, true);
                                 //没有添加任务优惠券
                                 var re = _service.Insert(coupon);
@@ -244,6 +256,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GiveedUpdate=获取完成任务的优惠卷" + phone + ex.Message,ex);
+                LogHelper.WriteLog("GiveedUpdate=获取完成任务的优惠卷" + phone + ex.StackTrace,ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }

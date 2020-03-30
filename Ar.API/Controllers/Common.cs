@@ -80,9 +80,9 @@ namespace Ar.API.Controllers
             return messageReturn;
         }
 
-        public static WxCertification wxCertification(string authorizationCode ,Store store)
+        public static WxCertification wxCertification(string authorizationCode, Store store)
         {
-            var url = ConfigurationManager.AppSettings["access_token"].ToString() + "?" + "appid=" + store.appid.Trim() + "&secret=" + store.secret + "&code=" + authorizationCode+ "&grant_type=authorization_code";
+            var url = ConfigurationManager.AppSettings["access_token"].ToString() + "?" + "appid=" + store.appid.Trim() + "&secret=" + store.secret + "&code=" + authorizationCode + "&grant_type=authorization_code";
             LogHelper.WriteLog("微信认证url:" + url);
             HttpWebResponse response = HttpWebResponseUtility.CreateGetHttpResponse(url, 60000, null, null);
             Stream responseStream = response.GetResponseStream();
@@ -91,7 +91,43 @@ namespace Ar.API.Controllers
             JavaScriptSerializer jsonSerialize = new JavaScriptSerializer();
             LogHelper.WriteLog("微信认证接收:" + content);
             var wxAccessToken = jsonSerialize.Deserialize<WxCertification>(content);
-            return wxAccessToken;
+            if (wxAccessToken!=null && !string.IsNullOrEmpty(wxAccessToken.access_token))
+            {
+                var wt = wxticket(wxAccessToken.access_token);
+                if (wt != null)
+                {
+                    if (!string.IsNullOrEmpty(wt?.ticket))
+                    {
+                        IStoreService _stoeservice = new StoreService();
+                        store.accessToken = wxAccessToken.access_token;
+                        store.jsapi_ticket = wt?.ticket;
+                        store.accessTokenCreateTime = DateTime.Now;
+                        LogHelper.WriteLog("store.accessToken:" + store.accessToken);
+                        LogHelper.WriteLog("store.jsapi_ticket:" + store.jsapi_ticket);
+                        LogHelper.WriteLog("store.accessTokenCreateTime:" + store.accessTokenCreateTime);
+                        _stoeservice.UpdateStoreaccessToken(store);
+                    }
+                }
+                var wtapiticket = apiticket(wxAccessToken.access_token);
+                if (wtapiticket != null)
+                {
+                    if (!string.IsNullOrEmpty(wt?.ticket))
+                    {
+                        IStoreService _stoeservice = new StoreService();
+                        store.accessToken = wxAccessToken.access_token;
+                        store.api_ticket = wt?.ticket;
+                        store.accessTokenCreateTime = DateTime.Now;
+
+                        LogHelper.WriteLog("store.api_ticket:" + store.api_ticket);
+
+                        _stoeservice.UpdateStoreaccessToken(store);
+
+
+                    }
+                }
+            
+            }
+                return wxAccessToken;
         }
         public static WxUserInfo wxuserInfo(string access_token ,string openid)
         {
@@ -185,6 +221,9 @@ namespace Ar.API.Controllers
                                 LogHelper.WriteLog("store.accessToken:" + store.accessToken);
                                 LogHelper.WriteLog("store.jsapi_ticket:" + store.jsapi_ticket);
                                 LogHelper.WriteLog("store.accessTokenCreateTime:" + store.accessTokenCreateTime);
+                                var api_ticketwx = apiticket(accessToken.access_token);
+                                store.api_ticket = api_ticketwx?.ticket;
+                                LogHelper.WriteLog("store.api_ticket:" + store.api_ticket);
                                 _stoeservice.UpdateStoreaccessToken(store);
                                 url = url.Split('#')[0];
                                 var jsapi_ticket = wt?.ticket;
@@ -246,7 +285,12 @@ namespace Ar.API.Controllers
                 cardExt.nonce_str = WxPayApi.GenerateNonceStr();
                 cardExt.timestamp = WxPayApi.GenerateTimeStamp();
                 cardExt.signature = GetSignature(api_ticket, cardExt.nonce_str, cardExt.timestamp, cardExt.code, cardExt.openid, cardId);
-                
+                LogHelper.WriteLog("api_ticket :" + api_ticket);
+                LogHelper.WriteLog("nonce_str :" + cardExt.nonce_str);
+                LogHelper.WriteLog("timestamp :" + cardExt.timestamp);
+                LogHelper.WriteLog("code :" + cardExt.code);
+                LogHelper.WriteLog("openid :" + cardExt.openid);
+                LogHelper.WriteLog("cardId :" + cardId);
             }
             else
             {
@@ -275,6 +319,12 @@ namespace Ar.API.Controllers
                                 cardExt.nonce_str = WxPayApi.GenerateNonceStr();
                                 cardExt.timestamp = WxPayApi.GenerateTimeStamp();
                                 cardExt.signature = GetSignature(api_ticket, cardExt.nonce_str, cardExt.timestamp, cardExt.code, cardExt.openid, ConfigurationManager.AppSettings["Company"].ToString());
+                                LogHelper.WriteLog("api_ticket :" + api_ticket);
+                                LogHelper.WriteLog("nonce_str :" + cardExt.nonce_str);
+                                LogHelper.WriteLog("timestamp :" + cardExt.timestamp);
+                                LogHelper.WriteLog("code :" + cardExt.code);
+                                LogHelper.WriteLog("openid :" + cardExt.openid);
+                                LogHelper.WriteLog("cardId :" + cardId);
                             }
                             else
 
@@ -357,7 +407,6 @@ namespace Ar.API.Controllers
             return sb.ToString().ToLower();
         }
 
-public static string wxJsApiParam { get; set; } //H5调起JS API参数
         public static Wxprepay wxPayOrderSomething(string openid,string total_fee,string couponType, Store store)
         {
 
@@ -380,32 +429,32 @@ public static string wxJsApiParam { get; set; } //H5调起JS API参数
                 //JSAPI支付预处理
                 var prepayid = WxPayApi.GenerateOutTradeNo();
                 WxPayData unifiedOrderResult = jsApiPay.GetUnifiedOrderResult(store.appid.Trim(), store.mchid.Trim(), total_fee, store.StoreName, couponType,openid, prepayid);
-                wxJsApiParam = jsApiPay.GetJsApiParameters();//获取H5调起JS API参数                    
+                var wxJsApiParam = jsApiPay.GetJsApiParameters();//获取H5调起JS API参数                    
                 
-                LogHelper.WriteLog("wxJsApiParam:" + wxJsApiParam);
+                LogHelper.WriteLog("wxJsApiParam:" + wxJsApiParam.ToString());
                 //在页面上显示订单信息
                 wxprepay.wxJsApiParam = wxJsApiParam;
-                wxprepay.prepayid = unifiedOrderResult.GetValue("prepay_id").ToString() ;
+                wxprepay.prepayid = prepayid;
                 return wxprepay;
             }
 
            
            
         }
-        public static string wxPayOrderQuery(string out_trade_no)
+        public static string wxPayOrderQuery(string out_trade_no, string appid, string mchid)
         {
 
             WxPayData data = new WxPayData();
             if (!string.IsNullOrEmpty(out_trade_no))//如果微信订单号存在，则以微信订单号为准
             {
-                data.SetValue("transaction_id", out_trade_no);
+                data.SetValue("out_trade_no", out_trade_no);
             }
             else
             {
                 throw new WxPayException("订单查询接口中，out_trade_no填一个！");
             }
  
-            WxPayData result = WxPayApi.OrderQuery(data, Appid, Mchid);//提交订单查询请求给API，接收返回数据
+            WxPayData result = WxPayApi.OrderQuery(data, appid, mchid);//提交订单查询请求给API，接收返回数据
             if (result.IsSet("result_code") && result.GetValue("result_code").ToString() == "SUCCESS" && result.IsSet("trade_state") && result.GetValue("trade_state").ToString() == "SUCCESS")
             {
                 return result.GetValue("time_end").ToString() ;

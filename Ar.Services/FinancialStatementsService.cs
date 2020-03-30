@@ -129,8 +129,16 @@ namespace Ar.Services
             fs.GetCouponTime = order.CreateTime;
             fs.UseWalletMoney = uw.TotalAmount - order.Money;
             fs.UseWalletMoney1 = fs.UseWalletMoney;
+           
             fs.UseWalletAccountPrincipal = uw.AccountPrincipal - order.Money * Math.Round(Convert.ToDecimal(uw.Ratio), 2);
-            fs.Ratio = (fs.UseWalletAccountPrincipal / fs.UseWalletMoney).ToString();
+            if (fs.UseWalletMoney != 0)
+            {
+                fs.Ratio = (fs.UseWalletAccountPrincipal / fs.UseWalletMoney).ToString();
+            }
+            else
+            {
+                fs.Ratio = "1";
+            }
             fs.ProductInfoRate = p.Rate + "%";
             return fs;
         }

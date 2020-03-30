@@ -13,6 +13,7 @@ using System.Web.Http;
 using System.Web.Script.Serialization;
 using Ar.IServices;
 using Ar.Services;
+using Ar.Common;
 
 namespace Ar.API.Controllers
 {
@@ -45,6 +46,8 @@ namespace Ar.API.Controllers
             }
             catch(Exception ex)
             {
+                LogHelper.WriteLog("GetCouponTypeByCode获取优惠卷类型code" + code + ex.Message,ex);
+                LogHelper.WriteLog("GetCouponTypeByCode获取优惠卷类型code" + code +ex.StackTrace,ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -80,6 +83,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetCouponTypeList获取优惠卷类型" + ex.Message,ex);
+                LogHelper.WriteLog("GetCouponTypeList获取优惠卷类型"  +ex.StackTrace,ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }

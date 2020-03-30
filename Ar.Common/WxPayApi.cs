@@ -88,7 +88,7 @@ namespace WxPayAPI
             inputObj.SetValue("appid", appid);//公众账号ID
             inputObj.SetValue("mch_id", mch_id);//商户号
             inputObj.SetValue("nonce_str", WxPayApi.GenerateNonceStr());//随机字符串
-            inputObj.SetValue("sign_type", WxPayData.SIGN_TYPE_HMAC_SHA256);//签名类型
+            inputObj.SetValue("sign_type", WxPayData.SIGN_TYPE_MD5);//签名类型
             inputObj.SetValue("sign", inputObj.MakeSign());//签名
 
 

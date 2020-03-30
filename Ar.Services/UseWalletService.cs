@@ -196,6 +196,7 @@ namespace Ar.Services
             decimal? totalAmount = 0;
             decimal? accountPrincipal = 0;
             decimal? donationAmount = 0;
+            string Ratio = "1";
             IList<UseWallet> list = DapperSqlHelper.FindToList<UseWallet>("select * from [dbo].[UseWallet] where UserCode=@userCode and Status=1 order by Sort", paras, false);
             foreach (var w in list)
             {
@@ -204,10 +205,14 @@ namespace Ar.Services
                 w.TotalAmount = w.AccountPrincipal + w.DonationAmount;
                 totalAmount = totalAmount + w.TotalAmount;
             }
+            if (totalAmount != 0)
+            {
+                Ratio = (accountPrincipal / totalAmount).ToString();
+             }
             return new UseWallet(){ AccountPrincipal = accountPrincipal,
                 DonationAmount = donationAmount,
                 TotalAmount = totalAmount,
-                Ratio=(accountPrincipal/totalAmount).ToString(),
+                Ratio= Ratio
             };
         }
     }

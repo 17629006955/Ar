@@ -1,4 +1,5 @@
 ﻿using Ar.API.Controllers.BaseContolles;
+using Ar.Common;
 using Ar.IServices;
 using Ar.Model;
 using Ar.Model.BaseResult;
@@ -53,6 +54,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetUserByCode code" + code , ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -113,6 +115,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetUserInfoByCode usercode" + usercode+ "store"+ store, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }

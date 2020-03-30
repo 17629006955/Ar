@@ -14,6 +14,7 @@ using System.Web.Script.Serialization;
 using Ar.IServices;
 using Ar.Services;
 using AR.Model;
+using Ar.Common;
 
 namespace Ar.API.Controllers
 {
@@ -29,24 +30,34 @@ namespace Ar.API.Controllers
         {
             SimpleResult result = new SimpleResult();
             IOrderService _service = new OrderService();
+            IUserStoreService _userStoreService = new UserStoreService();
+            IStoreService _Storeservice = new StoreService();
+
             try
             {
                 if (UserAuthorization)
                 {
                     var list = _service.GetOrderList(userCode);
-                    foreach (var item in list)
+                    var userSotre = _userStoreService.GetUserStorebyUserCode(userCode);
+                    var store = _Storeservice.GetStore(userSotre.MembershipCardStore);
+                    if (store != null)
                     {
-                        if (!string.IsNullOrEmpty(item.WxPrepayId) && item.PayTime==null)
+                        foreach (var item in list)
                         {
-                            var PayTime = Common.wxPayOrderQuery(item.WxPrepayId);
-                            if (!string.IsNullOrEmpty(PayTime))
+                            if (!string.IsNullOrEmpty(item.WxPrepayId) && item.PayTime == null)
                             {
-                                item.PayTime = Convert.ToDateTime(PayTime);
-                                _service.UpdateOrder(item);
-                            }
-                            
-                        }
 
+                                var PayTime = Common.wxPayOrderQuery(item.WxPrepayId, store.appid.Trim(), store.mchid);
+                                if (!string.IsNullOrEmpty(PayTime))
+                                {
+                                    item.PayTime = Convert.ToDateTime(PayTime);
+                                    _service.UpdateOrder(item);
+                                }
+
+                            }
+
+
+                        }
                     }
                     list = list.OrderByDescending(t => t.CreateTime)?.ToList();
                     result.Resource = list;
@@ -61,6 +72,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetOrderList userCode" + userCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -96,6 +108,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+             
+                LogHelper.WriteLog("GetOrderByCode code" + code, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -132,6 +146,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetPayOrderList userCode" + userCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -168,6 +183,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetNOPayOrderList userCode" + userCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -202,6 +218,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("UpdateOrder order" + order.OrderCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -236,6 +253,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("InsertOrder order" + order.OrderCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -270,6 +288,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("WxOrder order"+ order.OrderCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }

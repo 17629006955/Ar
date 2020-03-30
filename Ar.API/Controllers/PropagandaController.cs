@@ -13,6 +13,7 @@ using System.Web.Http;
 using System.Web.Script.Serialization;
 using Ar.IServices;
 using Ar.Services;
+using Ar.Common;
 
 namespace Ar.API.Controllers
 {
@@ -45,6 +46,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetPropaganda", ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }

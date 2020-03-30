@@ -14,6 +14,7 @@ using System.Web.Script.Serialization;
 using Ar.IServices;
 using Ar.Services;
 using AR.Model;
+using Ar.Common;
 
 namespace Ar.API.Controllers
 {
@@ -47,6 +48,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetExperienceVoucherList获取体验卷列表" + ex.Message,ex);
+                LogHelper.WriteLog("GetExperienceVoucherList获取体验卷列表" +ex.StackTrace,ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -82,6 +85,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetExperienceVoucherByCode获取体验卷列表code：" + code + ex.Message,ex);
+                LogHelper.WriteLog("GetExperienceVoucherByCode获取体验卷列表code：" + code +ex.StackTrace,ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -115,6 +120,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("Insert插入体验卷：" + ex.Message,ex);
+                LogHelper.WriteLog("Insert插入体验卷："+ex.StackTrace,ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }

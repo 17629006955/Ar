@@ -15,6 +15,7 @@ using Ar.IServices;
 using Ar.Services;
 using AR.Model;
 using System.Transactions;
+using Ar.Common;
 
 namespace Ar.API.Controllers
 {
@@ -48,6 +49,7 @@ namespace Ar.API.Controllers
         }
             catch(Exception ex)
             {
+                LogHelper.WriteLog("GetRechargeRecordList" , ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -85,6 +87,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetRechargeRecordListByUserCode userCode" + userCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -121,6 +124,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetRechargeRecordByCode code" + code, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -135,7 +139,7 @@ namespace Ar.API.Controllers
         ////http://localhost:10010//api/RechargeRecord/Recharge?typeCode=1&userCode=1
         [HttpGet]
         [HttpPost]
-        public IHttpActionResult  Recharge (string typeCode, string userCode, string storecode, decimal? money = 0)
+        public IHttpActionResult  Recharge (string typeCode, string userCode, string storeCode, decimal? money = 0)
         {
             ICouponService _couponService = new CouponService();
             IUseWalletService _useWalletService = new UseWalletService();
@@ -151,8 +155,8 @@ namespace Ar.API.Controllers
                         IUserStoreService _userStoreservice = new UserStoreService();
                     IRechargeTypeService s = new RechargeTypeService();
                     ITopupOrderServrce tos = new TopupOrderServrce();
-                    var store = _stoeservice.GetStore(storecode);
-                    var userStoreser = _userStoreservice.GetUserStorebyUserCodestoreCode(userCode, storecode);
+                    var store = _stoeservice.GetStore(storeCode);
+                    var userStoreser = _userStoreservice.GetUserStorebyUserCodestoreCode(userCode, storeCode);
                         if (userStoreser != null)
                         {//生成微信预支付订单
 
@@ -178,9 +182,11 @@ namespace Ar.API.Controllers
                                 tos.InsertTopupOrder(userCode, wxprepay.prepayid, typeCode, money);
 
                                 WxOrder wxorder = new WxOrder();
-                                wxorder.order = null;
+                                wxorder.orderCode = null;
                                 wxorder.wxJsApiParam = wxprepay.wxJsApiParam;
+                                wxorder.prepayid = wxprepay.prepayid;
                                 result.Resource = wxorder;
+                                wxorder.IsWxPay = true;
                                 result.Status = Result.SUCCEED;
                             }
                             else
@@ -202,6 +208,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+         
+                LogHelper.WriteLog("wxPrePay typeCode" + typeCode + " userCode" + userCode+ " storeCode" + storeCode+ " money"+ money, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -215,34 +223,37 @@ namespace Ar.API.Controllers
         ////http://localhost:10010//api/RechargeRecord/Recharge?prepayid=hgjj
         [HttpGet]
         [HttpPost]
-        public IHttpActionResult wxPrePay(string prepayid,string storeCode="")
+        public IHttpActionResult wxPrePay(string prepayid,string storeCode)
         {
             SimpleResult result = new SimpleResult();
             IRechargeRecordService _service = new RechargeRecordService();
             ITopupOrderServrce tos = new TopupOrderServrce();
+            IStoreService _Storeservice = new StoreService();
             try
             {
                 if (UserAuthorization)
                 {
                     using (var scope = new TransactionScope())//创建事务
-                    {
-                        if (!string.IsNullOrEmpty(prepayid))
+                    { var store = _Storeservice.GetStore(storeCode);
+                        if (store != null)
                         {
-                            if (!string.IsNullOrEmpty(prepayid))
-                            {
-                                var PayTime = Common.wxPayOrderQuery(prepayid);
-                                if (!string.IsNullOrEmpty(PayTime))
+                           
+                                if (!string.IsNullOrEmpty(prepayid))
                                 {
-                                    var payTime = Convert.ToDateTime(PayTime);
-                                    //更新TopupOrder 的支付时间
-                                    tos.UpdateTopupOrder(prepayid, payTime);
-                                    var tosmodel = tos.GetTopupOrderbyWallePrCode(prepayid);
-                                    var list = _service.Recharge(tosmodel.RechargeTypeCode, tosmodel.UserCode, tosmodel.RecordsMoney, storeCode);
-                                    result.Resource = list;
-                                    result.Status = Result.SUCCEED;
-                                    scope.Complete();//这是最后提交事务
+                                    var PayTime = Common.wxPayOrderQuery(prepayid, store.appid.Trim(), store.mchid);
+                                    if (!string.IsNullOrEmpty(PayTime))
+                                    {
+                                        var payTime = Convert.ToDateTime(PayTime);
+                                        //更新TopupOrder 的支付时间
+                                        tos.UpdateTopupOrder(prepayid, payTime);
+                                        var tosmodel = tos.GetTopupOrderbyWallePrCode(prepayid);
+                                        var list = _service.Recharge(tosmodel.RechargeTypeCode, tosmodel.UserCode, tosmodel.RecordsMoney, storeCode);
+                                        result.Resource = list;
+                                        result.Status = Result.SUCCEED;
+                                        scope.Complete();//这是最后提交事务
+                                    }
                                 }
-                            }
+                            
                         }
                        
                     }
@@ -256,6 +267,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("wxPrePay prepayid" + prepayid+ " storeCode"+ storeCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -291,6 +303,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("InsertRechargeRecord record" + record.ToString(), ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
@@ -327,6 +340,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
+                LogHelper.WriteLog("GetRechargePage userCode"+ userCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }

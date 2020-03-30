@@ -10,8 +10,9 @@ namespace Ar.Model
 {
     public class WxOrder
     {
-        public Order order;
-        public string wxJsApiParam;
+        public string orderCode;
+        public JsApiParameters wxJsApiParam;
         public string prepayid;
+        public bool IsWxPay { get; set; }
     }
 }

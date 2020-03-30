@@ -29,8 +29,7 @@ namespace Ar.API.Controllers
         IUserStoreService userStoreService = new UserStoreService();
         IUserInfo userInfo = new UserInfo();
         IStoreService storeService = new StoreService();
-        //http://localhost:10010//api/WeixinUser/access_token
-      
+
         ///http://localhost:10010//api/WeixinUser/reAccessToken?reAccessToken=18235139350
         [HttpGet]
         public IHttpActionResult reAccessToken(string reAccessToken)
@@ -53,6 +52,7 @@ namespace Ar.API.Controllers
             return Json(result);
 
         }
+
         ////http://localhost:10010//api/WeixinUser/GetUserInfo?phone=18235139350
         [HttpGet]
         public IHttpActionResult GetUserInfo(string phone)
@@ -186,8 +186,8 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
-                
-                    result.Status = Result.FAILURE;
+                LogHelper.WriteLog("Wxconfig", ex);
+                result.Status = Result.FAILURE;
                     result.Msg = ex.Message;
               
 
@@ -247,7 +247,7 @@ namespace Ar.API.Controllers
 
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
-
+                LogHelper.WriteLog("WxCardExt", ex);
 
             }
             return Json(result);
