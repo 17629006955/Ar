@@ -34,6 +34,7 @@ namespace Ar.API.Controllers
 
         public static MessageReturn SendMessageCode(string pheone)
         {
+            LogHelper.WriteLog("SendMessageCode start");
             LogHelper.WriteLog("短信认证手机号:" + pheone);
             MessageReturn messageReturn = new MessageReturn();
             JavaScriptSerializer jsonSerialize = new JavaScriptSerializer();
@@ -61,6 +62,7 @@ namespace Ar.API.Controllers
                 var sendSmsResponse = jsonSerialize.Deserialize<SendSmsResponse>(response.Data);
                 if (sendSmsResponse.Code.Equals("OK"))
                 {
+                    LogHelper.WriteLog("SendMessageCode num"+ num.ToString());
                     messageReturn.Status = true;
                     messageReturn.Message = num.ToString() ;
                 }
@@ -69,19 +71,23 @@ namespace Ar.API.Controllers
             {
                 messageReturn.Status = false;
                 messageReturn.Message = e.Message;
-                LogHelper.WriteLog("短信认证错误:" + jsonSerialize.Serialize(messageReturn.Message));
+                LogHelper.WriteLog("短信认证错误:" + jsonSerialize.Serialize(messageReturn.Message),e);
             }
             catch (ClientException e)
             {
                 messageReturn.Status = false;
                 messageReturn.Message = e.Message;
-                LogHelper.WriteLog("短信认证错误:" + jsonSerialize.Serialize(messageReturn.Message));
+                LogHelper.WriteLog("短信认证错误:" + jsonSerialize.Serialize(messageReturn.Message),e);
             }
+            LogHelper.WriteLog("SendMessageCode end");
             return messageReturn;
         }
 
         public static WxCertification wxCertification(string authorizationCode, Store store)
         {
+            LogHelper.WriteLog("wxCertification start");
+            LogHelper.WriteLog("wxCertification authorizationCode"+ authorizationCode);
+            LogHelper.WriteLog("wxCertification store" + store);
             var url = ConfigurationManager.AppSettings["access_token"].ToString() + "?" + "appid=" + store.appid.Trim() + "&secret=" + store.secret + "&code=" + authorizationCode + "&grant_type=authorization_code";
             LogHelper.WriteLog("微信认证url:" + url);
             HttpWebResponse response = HttpWebResponseUtility.CreateGetHttpResponse(url, 60000, null, null);
@@ -127,10 +133,14 @@ namespace Ar.API.Controllers
                 }
             
             }
-                return wxAccessToken;
+            LogHelper.WriteLog("wxCertification end");
+            return wxAccessToken;
         }
         public static WxUserInfo wxuserInfo(string access_token ,string openid)
         {
+            LogHelper.WriteLog("wxuserInfo start");
+            LogHelper.WriteLog("wxuserInfo access_token"+ access_token);
+            LogHelper.WriteLog("wxuserInfo openid" + openid);
             //  wxuserInfo
             //access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN
             var url = ConfigurationManager.AppSettings["wxuserInfo"].ToString()  + "=" + access_token + "&openid=" + openid + "&lang=zh_CN";
@@ -139,13 +149,17 @@ namespace Ar.API.Controllers
             Stream responseStream = response.GetResponseStream();
             StreamReader reader = new StreamReader(responseStream);
             var content = reader.ReadToEnd();
+            LogHelper.WriteLog("wxuserInfo content" + content);
             JavaScriptSerializer jsonSerialize = new JavaScriptSerializer();
             LogHelper.WriteLog("微信获取用户信息接收:" + content);
             var wxuserInfo = jsonSerialize.Deserialize<WxUserInfo>(content);
+            LogHelper.WriteLog("wxuserInfo end");
             return wxuserInfo;
+          
         }
         public static WxAccessToken wxAccessToken(string Appid,string Secret)
         {
+            LogHelper.WriteLog("wxAccessToken start");
             LogHelper.WriteLog("Appid"+ Appid);
             LogHelper.WriteLog("Secret" + Secret);
             var url = ConfigurationManager.AppSettings["wxurl"].ToString() + "?" + "grant_type=client_credential&appid=" + Appid + "&secret=" + Secret;
@@ -153,13 +167,16 @@ namespace Ar.API.Controllers
             Stream responseStream = response.GetResponseStream();
             StreamReader reader = new StreamReader(responseStream);
             var content = reader.ReadToEnd();
+            LogHelper.WriteLog("wxAccessToken content" + content);
             JavaScriptSerializer jsonSerialize = new JavaScriptSerializer();
 
             var wxAccessToken = jsonSerialize.Deserialize<WxAccessToken>(content);
+            LogHelper.WriteLog("wxAccessToken end");
             return wxAccessToken;
         }
         public static Wxticket wxticket(string access_token)
         {
+            LogHelper.WriteLog("wxticket start");
             LogHelper.WriteLog("wxticket.accessToken:" + access_token);
             var url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token="+ access_token + "&type=jsapi";
             HttpWebResponse response = HttpWebResponseUtility.CreateGetHttpResponse(url, 60000, null, null);
@@ -169,23 +186,29 @@ namespace Ar.API.Controllers
             JavaScriptSerializer jsonSerialize = new JavaScriptSerializer();
 
             var Wxticket = jsonSerialize.Deserialize<Wxticket>(content);
+            LogHelper.WriteLog("wxticket content"+ content);
+            LogHelper.WriteLog("wxticket end");
             return Wxticket;
         }
         public static Wxticket apiticket(string access_token)
         {
+            LogHelper.WriteLog("apiticket start");
             LogHelper.WriteLog("wxticket.accessToken:" + access_token);
             var url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=" + access_token + "&type=wx_card";
             HttpWebResponse response = HttpWebResponseUtility.CreateGetHttpResponse(url, 60000, null, null);
             Stream responseStream = response.GetResponseStream();
             StreamReader reader = new StreamReader(responseStream);
             var content = reader.ReadToEnd();
+            LogHelper.WriteLog("apiticket content"+ content);
             JavaScriptSerializer jsonSerialize = new JavaScriptSerializer();
 
             var Wxticket = jsonSerialize.Deserialize<Wxticket>(content);
+            LogHelper.WriteLog("apiticket end");
             return Wxticket;
         }
         public static WxConfig GetWxConfig(Store store ,string url)
         {
+            LogHelper.WriteLog("GetWxConfig start");
             WxConfig wxConfig = new WxConfig();
             LogHelper.WriteLog("store.appid:" + store.appid.Trim());
             LogHelper.WriteLog("store.accessToken:" + store.accessToken);
@@ -261,10 +284,12 @@ namespace Ar.API.Controllers
                 }
 
             }
+            LogHelper.WriteLog("GetWxConfig end");
             return wxConfig;
         }
         public static addCard GetCardExt(Store store,string userCode)
         {
+            LogHelper.WriteLog("GetCardExt start");
             IUserStoreService userStoreService = new UserStoreService();
 
             var cardId = ConfigurationManager.AppSettings["cardId"].ToString();
@@ -352,6 +377,7 @@ namespace Ar.API.Controllers
 
             }
             addCard.cardExt = cardExt;
+            LogHelper.WriteLog("GetCardExt end");
             return addCard;
         }
         public static string getcardExtcode(string phone)

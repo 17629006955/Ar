@@ -27,6 +27,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetCustomerServiceList()
         {
+            LogHelper.WriteLog("GetCustomerServiceList start" );
             SimpleResult result = new SimpleResult();
             ICustomerServiceS _service = new CustomerServiceS();
             try
@@ -51,6 +52,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetCustomerServiceList result" + Json(result));
             return Json(result);
 
         }
@@ -64,6 +66,8 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetCustomerService(string code)
         {
+            LogHelper.WriteLog("GetCustomerService start");
+            LogHelper.WriteLog("GetCustomerService code" + code);
             SimpleResult result = new SimpleResult();
             ICustomerServiceS _service = new CustomerServiceS();
             try
@@ -88,6 +92,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetCustomerServiceList result" + Json(result));
             return Json(result);
 
         }

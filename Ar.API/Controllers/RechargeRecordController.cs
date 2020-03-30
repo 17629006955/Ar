@@ -30,6 +30,7 @@ namespace Ar.API.Controllers
         [HttpPost]
         public IHttpActionResult GetRechargeRecordList()
         {
+            LogHelper.WriteLog("GetProductInfoListByListCode start");
             SimpleResult result = new SimpleResult();
             IRechargeRecordService _service = new RechargeRecordService();
             try
@@ -53,6 +54,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetRechargeRecordList result" + Json(result));
             return Json(result);
 
         }
@@ -67,6 +69,8 @@ namespace Ar.API.Controllers
         [HttpPost]
         public IHttpActionResult GetRechargeRecordListByUserCode(string userCode)
         {
+
+            LogHelper.WriteLog("GetRechargeRecordListByUserCode userCode" + userCode);
             SimpleResult result = new SimpleResult();
             IRechargeRecordService _service = new RechargeRecordService();
             try
@@ -91,6 +95,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetRechargeRecordListByUserCode result" + Json(result));
             return Json(result);
 
         }
@@ -105,6 +110,7 @@ namespace Ar.API.Controllers
         [HttpPost]
         public IHttpActionResult GetRechargeRecordByCode(string code)
         {
+            LogHelper.WriteLog("GetRechargeRecordByCode code" + code);
             SimpleResult result = new SimpleResult();
             IRechargeRecordService _service = new RechargeRecordService();
             try
@@ -128,6 +134,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetRechargeRecordByCode result" + Json(result));
             return Json(result);
 
         }
@@ -141,6 +148,10 @@ namespace Ar.API.Controllers
         [HttpPost]
         public IHttpActionResult  Recharge (string typeCode, string userCode, string storeCode, decimal? money = 0)
         {
+            LogHelper.WriteLog("Recharge typeCode" + typeCode);
+            LogHelper.WriteLog("Recharge userCode" + userCode);
+            LogHelper.WriteLog("Recharge storeCode" + storeCode);
+            LogHelper.WriteLog("Recharge money" + money);
             ICouponService _couponService = new CouponService();
             IUseWalletService _useWalletService = new UseWalletService();
             IStoreService _stoeservice = new StoreService();
@@ -213,6 +224,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("Recharge result" + Json(result));
             return Json(result);
         }
         /// <summary>
@@ -225,6 +237,9 @@ namespace Ar.API.Controllers
         [HttpPost]
         public IHttpActionResult wxPrePay(string prepayid,string storeCode)
         {
+            LogHelper.WriteLog("wxPrePay prepayid" + prepayid);
+            LogHelper.WriteLog("wxPrePay storeCode" + storeCode);
+
             SimpleResult result = new SimpleResult();
             IRechargeRecordService _service = new RechargeRecordService();
             ITopupOrderServrce tos = new TopupOrderServrce();
@@ -271,6 +286,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("wxPrePay result" + Json(result));
             return Json(result);
         }
       
@@ -284,6 +300,7 @@ namespace Ar.API.Controllers
         [HttpPost]
         public IHttpActionResult InsertRechargeRecord(RechargeRecord record)
         {
+            LogHelper.WriteLog("InsertRechargeRecord " + record);
             SimpleResult result = new SimpleResult();
             IRechargeRecordService _service = new RechargeRecordService();
             try
@@ -307,6 +324,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("InsertRechargeRecord result" + Json(result));
             return Json(result);
         }
 
@@ -321,6 +339,7 @@ namespace Ar.API.Controllers
         [HttpPost]
         public IHttpActionResult GetRechargePage(string userCode)
         {
+            LogHelper.WriteLog("GetRechargePage userCode" + userCode);
             SimpleResult result = new SimpleResult();
             IUseWalletService _service = new UseWalletService();
             try
@@ -344,6 +363,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetRechargePage result" + Json(result));
             return Json(result);
         }
     }

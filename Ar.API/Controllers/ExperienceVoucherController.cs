@@ -28,11 +28,11 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetExperienceVoucherList()
         {
+            LogHelper.WriteLog("GetExperienceVoucherList start" );
             SimpleResult result = new SimpleResult();
             IExperienceVoucherService _service = new ExperienceVoucherService();
             try
             {
-
                 if (UserAuthorization)
                 {
                     var list = _service.GetExperienceVoucherList();
@@ -49,10 +49,11 @@ namespace Ar.API.Controllers
             catch (Exception ex)
             {
                 LogHelper.WriteLog("GetExperienceVoucherList获取体验卷列表" + ex.Message,ex);
-                LogHelper.WriteLog("GetExperienceVoucherList获取体验卷列表" +ex.StackTrace,ex);
+                LogHelper.WriteLog("GetExperienceVoucherList获取体验卷列表" + ex.StackTrace,ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetCustomerServiceList result" + Json(result));
             return Json(result);
 
         }
@@ -66,6 +67,8 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetExperienceVoucherByCode(string code)
         {
+            LogHelper.WriteLog("GetExperienceVoucherByCode start");
+            LogHelper.WriteLog("GetExperienceVoucherByCode code"+ code);
             SimpleResult result = new SimpleResult();
             IExperienceVoucherService _service = new ExperienceVoucherService();
             try
@@ -90,6 +93,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetExperienceVoucherByCode result" + Json(result));
             return Json(result);
         }
         /// <summary>
@@ -101,6 +105,7 @@ namespace Ar.API.Controllers
         [HttpPost]
         public IHttpActionResult Insert(ExperienceVoucher experienceVoucherv)
         {
+            LogHelper.WriteLog("Insert start");
             SimpleResult result = new SimpleResult();
             IExperienceVoucherService _service = new ExperienceVoucherService();
             try
@@ -125,6 +130,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("Insert result" + Json(result));
             return Json(result);
 
         }

@@ -31,6 +31,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetStoreByCode(string code)
         {
+            LogHelper.WriteLog("Insert start");
             SimpleResult result = new SimpleResult();
             IIntegralRecordService _service = new IntegralRecordService();
             try

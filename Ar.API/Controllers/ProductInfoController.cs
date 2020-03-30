@@ -27,6 +27,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetProductInfoList()
         {
+            LogHelper.WriteLog("GetProductInfoList start");
             SimpleResult result = new SimpleResult();
             IProductInfoService _service = new ProductInfoService();
             try
@@ -50,6 +51,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetProductInfoList result" + Json(result));
             return Json(result);
 
         }
@@ -63,6 +65,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetProductInfo(string code)
         {
+            LogHelper.WriteLog("GetProductInfo code" + code);
             SimpleResult result = new SimpleResult();
             IProductInfoService _service = new ProductInfoService();
             try
@@ -86,6 +89,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetProductInfo " + Json(result));
             return Json(result);
 
         }
@@ -98,6 +102,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetPayPage(string orderCode)
         {
+            LogHelper.WriteLog("GetPayPage " + orderCode);
             SimpleResult result = new SimpleResult();
             IOrderService _orderService = new OrderService();
            IProductInfoService _service = new ProductInfoService();
@@ -151,6 +156,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetPayPage result" + Json(result));
             return Json(result);
 
         }
@@ -163,6 +169,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetProductInfoListByListCode(string listCode)
         {
+            LogHelper.WriteLog("GetProductInfoListByListCode listCode" + listCode);
             SimpleResult result = new SimpleResult();
             IProductInfoService _service = new ProductInfoService();
             try
@@ -186,6 +193,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetProductInfoListByListCode result" + Json(result));
             return Json(result);
         }
     }

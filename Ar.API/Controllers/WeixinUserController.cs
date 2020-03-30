@@ -34,7 +34,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult reAccessToken(string reAccessToken)
         {
-
+            LogHelper.WriteLog("reAccessToken reAccessToken" + reAccessToken);
             var wxAccessToken = certificationService.ReAccessToken(reAccessToken);
             SimpleResult result = new SimpleResult();
             if (wxAccessToken != null)
@@ -48,7 +48,7 @@ namespace Ar.API.Controllers
                 result.Resource = certification;
                 result.Status = Result.SUCCEED;
             }
-
+            LogHelper.WriteLog("reAccessToken result" + Json(result));
             return Json(result);
 
         }
@@ -61,6 +61,7 @@ namespace Ar.API.Controllers
             var user = userInfo.GetUserByphone(phone);
             SimpleResult result = new SimpleResult();
             result.Resource = user;
+            LogHelper.WriteLog("GetUserInfo result" + Json(result));
             return Json(result);
 
         }
@@ -69,6 +70,7 @@ namespace Ar.API.Controllers
         //http://localhost:10010//api/WeixinUser/Login?storeCode=3
         public IHttpActionResult Login(string storeCode)
         {
+            LogHelper.WriteLog("Login storeCode" + storeCode);
             SimpleResult result = new SimpleResult();
             try
             {
@@ -97,6 +99,7 @@ namespace Ar.API.Controllers
             {
                 result.Msg = e.Message;
             }
+            LogHelper.WriteLog("Login result" + Json(result));
             return Json(result);
 
         }
@@ -192,6 +195,7 @@ namespace Ar.API.Controllers
               
 
             }
+            LogHelper.WriteLog("Wxconfig result" + Json(result));
             return Json(result);
 
         }
@@ -250,6 +254,7 @@ namespace Ar.API.Controllers
                 LogHelper.WriteLog("WxCardExt", ex);
 
             }
+            LogHelper.WriteLog("WxCardExt result" + Json(result));
             return Json(result);
 
         }
@@ -373,7 +378,9 @@ namespace Ar.API.Controllers
             catch (Exception e)
             {
                 result.Msg = e.Message+e.StackTrace;
+                LogHelper.WriteLog("Getaccess_token " , e);
             }
+            LogHelper.WriteLog("Getaccess_token result" + Json(result));
             return Json(result);
 
         }

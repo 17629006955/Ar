@@ -35,6 +35,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetUserByCode(string code)
         {
+            LogHelper.WriteLog("GetUserByCode code" + code);
             SimpleResult result = new SimpleResult();
             IUserInfo _service = new UserInfo();
             try
@@ -58,6 +59,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetUserByCode result" + Json(result));
             return Json(result);
         }
         /// <summary>
@@ -69,6 +71,8 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetUserInfoByCode(string usercode,string store)
         {
+            LogHelper.WriteLog("GetUserInfoByCode usercode" + usercode);
+            LogHelper.WriteLog("GetUserInfoByCode store" + store);
             SimpleResult result = new SimpleResult();
             IUserInfo _service = new UserInfo();
             ICustomerServiceS _customerServiceS = new CustomerServiceS();
@@ -119,6 +123,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetUserInfoByCode result" + Json(result));
             return Json(result);
         }
 

@@ -27,6 +27,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetTaskList()
         {
+            LogHelper.WriteLog("GetTaskList");
             SimpleResult result = new SimpleResult();
             ITaskService _service = new TaskService();
             try
@@ -50,6 +51,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetTaskList result" + Json(result));
             return Json(result);
 
         }
@@ -63,6 +65,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetTaskByCode(string code)
         {
+            LogHelper.WriteLog("GetTaskByCode code" + code);
             SimpleResult result = new SimpleResult();
             ITaskService _service = new TaskService();
             try
@@ -87,6 +90,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetTaskByCode result" + Json(result));
             return Json(result);
 
         }

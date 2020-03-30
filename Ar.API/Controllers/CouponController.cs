@@ -28,6 +28,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetCouponByUserCode(string userCode)
         {
+            LogHelper.WriteLog("GetCouponByUserCode start");
             LogHelper.WriteLog("GetCouponByUserCode获取"+userCode+"优惠卷");
             SimpleResult result = new SimpleResult();
             ICouponService _service = new CouponService();
@@ -37,6 +38,7 @@ namespace Ar.API.Controllers
                 {
                     var list = _service.GetCoupon(userCode);
                     result.Resource = list;
+                    LogHelper.WriteLog("GetCouponByUserCode list"+ list.ToString());
                     result.Status = Result.SUCCEED;
                 }
                 else
@@ -53,6 +55,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetCouponByUserCode end");
             return Json(result);
 
         }
@@ -65,6 +68,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetCouponByCode(string code)
         {
+            LogHelper.WriteLog("GetCouponByCode start");
             LogHelper.WriteLog("GetCouponByCode根据CouponUseCode获取优惠卷信息：code=" + code);
             SimpleResult result = new SimpleResult();
             ICouponService _service = new CouponService();
@@ -73,6 +77,7 @@ namespace Ar.API.Controllers
                 if (UserAuthorization)
                 {
                     var list = _service.GetCouponByCode(code);
+                    LogHelper.WriteLog("GetCouponByCode list" + list);
                     result.Resource = list;
                     result.Status = Result.SUCCEED;
                 }
@@ -90,6 +95,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetCouponByCode end");
             return Json(result);
 
         }
@@ -103,7 +109,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetCouponList(string userCode)
         {
-          
+            LogHelper.WriteLog("GetCouponList start");
             SimpleResult result = new SimpleResult();
             ICouponService _service = new CouponService();
             try
@@ -112,6 +118,7 @@ namespace Ar.API.Controllers
                 {
                     var list = _service.GetCouponList(userCode);
                     result.Resource = list;
+                    LogHelper.WriteLog("GetCouponList list"+ list);
                     result.Status = Result.SUCCEED;
                 }
                 else
@@ -128,6 +135,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetCouponList end");
             return Json(result);
 
         }
@@ -141,6 +149,9 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult InsertCouponByUser(string couponCode,string userCode)
         {
+            LogHelper.WriteLog("InsertCouponByUser start");
+            LogHelper.WriteLog("InsertCouponByUser couponCode" + couponCode);
+            LogHelper.WriteLog("InsertCouponByUser userCode" + userCode);
             SimpleResult result = new SimpleResult();
             ICouponService _service = new CouponService();
             try
@@ -166,6 +177,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("InsertCouponByUser end");
             return Json(result);
 
         }
@@ -197,6 +209,8 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GiveedUpdate(string phone)
         {
+            LogHelper.WriteLog("GiveedUpdate strat");
+            LogHelper.WriteLog("GiveedUpdate phone"+ phone);
             SimpleResult result = new SimpleResult();
             ICouponService _service = new CouponService();
             IUserInfo _userservice = new UserInfo();
@@ -261,6 +275,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GiveedUpdate end");
             return Json(result);
 
         }

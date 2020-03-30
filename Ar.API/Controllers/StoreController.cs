@@ -28,6 +28,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetStore(string code)
         {
+            LogHelper.WriteLog("GetStore code" + code);
             SimpleResult result = new SimpleResult();
             IStoreService _service = new StoreService();
             try
@@ -59,6 +60,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetStore result" + Json(result));
             return Json(result);
 
         }
@@ -71,6 +73,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetStoreList()
         {
+            LogHelper.WriteLog("GetStoreList");
             SimpleResult result = new SimpleResult();
             IStoreService _service = new StoreService();
             try
@@ -94,6 +97,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetStoreList result" + Json(result));
             return Json(result);
 
         }

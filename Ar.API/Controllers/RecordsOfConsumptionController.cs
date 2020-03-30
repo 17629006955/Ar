@@ -30,6 +30,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetRecordsOfConsumptionList()
         {
+            LogHelper.WriteLog("GetRecordsOfConsumptionList ");
             SimpleResult result = new SimpleResult();
             IRecordsOfConsumptionService _service = new RecordsOfConsumptionService();
             try
@@ -53,6 +54,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetRecordsOfConsumptionList result" + Json(result));
             return Json(result);
 
         }
@@ -66,6 +68,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetRecordsOfConsumptionByCode(string code)
         {
+            LogHelper.WriteLog("GetRecordsOfConsumptionByCode code" + code);
             SimpleResult result = new SimpleResult();
             IRecordsOfConsumptionService _service = new RecordsOfConsumptionService();
             try
@@ -89,6 +92,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetRecordsOfConsumptionByCode result" + Json(result));
             return Json(result);
 
         }
@@ -103,6 +107,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetRecordsOfConsumptionByUserCode(string userCode)
         {
+            LogHelper.WriteLog("GetRecordsOfConsumptionByUserCode userCode" + userCode);
             SimpleResult result = new SimpleResult();
             IRecordsOfConsumptionService _service = new RecordsOfConsumptionService();
             try
@@ -127,6 +132,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetRecordsOfConsumptionByUserCode result" + Json(result));
             return Json(result);
 
         }
@@ -307,6 +313,7 @@ namespace Ar.API.Controllers
               
                 LogHelper.WriteLog("微信支付", ex);
             }
+            LogHelper.WriteLog("PayOrder result" + Json(result));
             return Json(result);
 
         }
@@ -415,6 +422,7 @@ namespace Ar.API.Controllers
                 LogHelper.WriteLog("微信支付回掉 " + ex.Message);
                 LogHelper.WriteLog("微信支付回掉 " + ex.StackTrace);
             }
+            LogHelper.WriteLog("WxPayOrder result" + Json(result));
             return Json(result);
 
         }
@@ -476,6 +484,8 @@ namespace Ar.API.Controllers
         [HttpPost]
         public IHttpActionResult WriteOff(string userCode, string orderCode)
         {
+            LogHelper.WriteLog("WriteOff userCode" + userCode);
+            LogHelper.WriteLog("WriteOff orderCode" + orderCode);
             SimpleResult result = new SimpleResult();
             IRecordsOfConsumptionService _service = new RecordsOfConsumptionService();
             IWriteOffService _writeOffServicee = new WriteOffService();
@@ -541,6 +551,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("WriteOff result" + Json(result));
             return Json(result);
 
         }

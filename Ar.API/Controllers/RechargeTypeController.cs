@@ -27,6 +27,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetRechargeTypeList()
         {
+            LogHelper.WriteLog("GetRechargeTypeList ");
             SimpleResult result = new SimpleResult();
             IRechargeTypeService _service = new RechargeTypeService();
             try
@@ -50,6 +51,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetRechargeTypeList result" + Json(result));
             return Json(result);
 
         }
@@ -63,6 +65,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetRechargeTypeByCode(string code)
         {
+            LogHelper.WriteLog("GetRechargeTypeByCode code" + code);
             SimpleResult result = new SimpleResult();
             IRechargeTypeService _service = new RechargeTypeService();
             try
@@ -86,6 +89,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetRechargeTypeByCode result" + Json(result));
             return Json(result);
 
         }

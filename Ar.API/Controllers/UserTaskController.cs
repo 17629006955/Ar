@@ -28,6 +28,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetUserTaskList(string userCode)
         {
+            LogHelper.WriteLog("GetUserTaskList userCode" + userCode);
             SimpleResult result = new SimpleResult();
             IUserTaskService _service = new UserTaskService();
             try
@@ -51,6 +52,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetUserTaskList result" + Json(result));
             return Json(result);
 
         }
@@ -64,6 +66,8 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetUserTaskByCode(string UserTaskCode)
         {
+            LogHelper.WriteLog("GetUserTaskByCode UserTaskCode" + UserTaskCode);
+          
             SimpleResult result = new SimpleResult();
             IUserTaskService _service = new UserTaskService();
             try
@@ -87,6 +91,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetUserTaskByCode result" + Json(result));
             return Json(result);
 
         }
@@ -100,6 +105,8 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult UpdateUserTask(string UserTaskCode, int isComplete)
         {
+            LogHelper.WriteLog("UpdateUserTask UserTaskCode" + UserTaskCode);
+            LogHelper.WriteLog("UpdateUserTask isComplete" + isComplete);
             SimpleResult result = new SimpleResult();
             IUserTaskService _service = new UserTaskService();
             try
@@ -123,6 +130,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("UpdateUserTask result" + Json(result));
             return Json(result);
 
         }

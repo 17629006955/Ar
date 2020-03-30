@@ -28,6 +28,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetOrderList(string userCode)
         {
+            LogHelper.WriteLog("GetOrderList userCode" + userCode);
             SimpleResult result = new SimpleResult();
             IOrderService _service = new OrderService();
             IUserStoreService _userStoreService = new UserStoreService();
@@ -76,6 +77,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetOrderList result" + Json(result));
             return Json(result);
 
         }
@@ -89,6 +91,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetOrderByCode(string code)
         {
+            LogHelper.WriteLog("GetOrderByCode code" + code);
             SimpleResult result = new SimpleResult();
             IOrderService _service = new OrderService();
             try
@@ -113,6 +116,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetOrderByCode result" + Json(result));
             return Json(result);
 
         }
@@ -127,6 +131,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetPayOrderList(string userCode)
         {
+            LogHelper.WriteLog("GetPayOrderList userCode" + userCode);
             SimpleResult result = new SimpleResult();
             IOrderService _service = new OrderService();
             try
@@ -150,6 +155,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetPayOrderList result" + Json(result));
             return Json(result);
 
         }
@@ -164,6 +170,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetNOPayOrderList(string userCode)
         {
+            LogHelper.WriteLog("GetNOPayOrderList userCode" + userCode);
             SimpleResult result = new SimpleResult();
             IOrderService _service = new OrderService();
             try
@@ -187,6 +194,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetNOPayOrderList result" + Json(result));
             return Json(result);
 
         }
@@ -199,6 +207,7 @@ namespace Ar.API.Controllers
         [HttpPost]
         public IHttpActionResult UpdateOrder(Order order)
         {
+            LogHelper.WriteLog("UpdateOrder start");
             SimpleResult result = new SimpleResult();
             IOrderService _service = new OrderService();
             try

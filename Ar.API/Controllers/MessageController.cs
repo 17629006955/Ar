@@ -27,10 +27,11 @@ namespace Ar.API.Controllers
         //http://localhost:10010//api/Message/SendMessageCode?phone=18235139350
         public IHttpActionResult SendMessageCode(string phone)
         {
+            LogHelper.WriteLog("SendMessageCode ", phone);
             SimpleResult result = new SimpleResult();
             if (UserAuthorization)
             {
-                if (ConfigurationManager.AppSettings["isSendMessage"]!=null&&ConfigurationManager.AppSettings["isSendMessage"].ToString()=="true")
+                if (ConfigurationManager.AppSettings["isSendMessage"] != null && ConfigurationManager.AppSettings["isSendMessage"].ToString() == "true")
                 {
                     var sendMessageResult = Common.SendMessageCode(phone);
                     if (sendMessageResult != null && sendMessageResult.Status)
@@ -50,9 +51,10 @@ namespace Ar.API.Controllers
                         result.Msg = "验证码没有发送成功";
                         result.Status = Result.SYSTEM_ERROR;
                     }
-                    
+
                 }
-                else {
+                else
+                {
                     //写入到手机号和和数据库
                     verificationService.Delete(phone);
                     Verification verification = new Verification();
@@ -73,7 +75,7 @@ namespace Ar.API.Controllers
                 result.Msg = TokenMessage;
             }
 
-
+            LogHelper.WriteLog("SendMessageCode result" + Json(result));
             return Json(result);
 
         }
@@ -114,7 +116,9 @@ namespace Ar.API.Controllers
             ICouponTypeService _couponTypeservice = new CouponTypeService();
             IUserTaskService _userTaskservice = new UserTaskService();
             SimpleResult result = new SimpleResult();
-            if (UserAuthorization)
+            try
+            {
+                if (UserAuthorization)
             {
 
                 if (verificationService.CheckVerification(phone, verificationCode))
@@ -196,7 +200,14 @@ namespace Ar.API.Controllers
                 result.Resource = ReAccessToken;
                 result.Msg = TokenMessage;
             }
-
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLog("BangMessageCode：", ex);
+                result.Status = Result.FAILURE;
+                result.Msg = ex.Message;
+            }
+            LogHelper.WriteLog("BangMessageCode result" + Json(result));
 
             return Json(result);
 
@@ -207,35 +218,84 @@ namespace Ar.API.Controllers
         public IHttpActionResult BangMessageOk(string userCode)
         {
             LogHelper.WriteLog("BangMessageOk :" + userCode);
-          
+
             ICouponService _service = new CouponService();
             IUserInfo _userservice = new UserInfo();
             ICouponTypeService _couponTypeservice = new CouponTypeService();
             IUserTaskService _userTaskservice = new UserTaskService();
             SimpleResult result = new SimpleResult();
-            if (UserAuthorization)
+            try
             {
-                var user = userInfo.GetUserByCode(userCode);
-                if (user != null)
+                if (UserAuthorization)
                 {
-                    //写入到手机号和和数据库
-                    var count = userInfo.UpdateIsMemberByuserCode(userCode);
-                    if (count > 0)
+                    var user = userInfo.GetUserByCode(userCode);
+                    if (user != null)
                     {
-                        if (!string.IsNullOrEmpty(user.RecommendedPhone))
+                        //写入到手机号和和数据库
+                        var count = userInfo.UpdateIsMemberByuserCode(userCode);
+                        if (count > 0)
                         {
-                            var recouser = _userservice.GetUserByphone(user.RecommendedPhone);
-                            //判断是不是已经领够了2次
-                            if (recouser != null && recouser.IsMember)
+                            if (!string.IsNullOrEmpty(user.RecommendedPhone))
                             {
-                                if (_service.checkCoupon(recouser.Code))
+                                var recouser = _userservice.GetUserByphone(user.RecommendedPhone);
+                                //判断是不是已经领够了2次
+                                if (recouser != null && recouser.IsMember)
+                                {
+                                    if (_service.checkCoupon(recouser.Code))
+                                    {
+                                        var couponType = _couponTypeservice.GetCouponTypeByIsGivedType();
+                                        if (couponType != null)
+                                        {
+                                            Coupon coupon = new Coupon();
+                                            coupon.CouponCode = Guid.NewGuid().ToString();
+                                            coupon.UserCode = recouser.Code;
+                                            coupon.CouponTypeCode = couponType.CouponTypeCode;
+                                            coupon.StratTime = DateTime.Now;
+                                            coupon.VersionEndTime = DateTime.MaxValue;
+                                            coupon.IsGiveed = true;
+                                            coupon.CouponUseCode = Str(10, true);
+                                            //没有添加任务优惠券
+                                            var re = _service.Insert(coupon);
+                                            //更改任务状态
+                                            var userTask = _userTaskservice.GetUserTaskList(recouser.Code);
+                                            var ut = userTask.Where(u => u.TaskCode == "2").FirstOrDefault();
+                                            ut.IsComplete = true;
+                                            _userTaskservice.UpdateUserTask(ut.UserTaskCode, 1);
+                                            result.Resource = re;
+                                            result.Status = Result.SUCCEED;
+
+                                        }
+                                        else
+                                        {
+                                            result.Resource = "好友赠送任务已经结束";
+                                            result.Status = Result.SYSTEM_ERROR;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        result.Resource = "好友已经达到任务奖励上限";
+
+                                        result.Status = Result.SYSTEM_ERROR;
+                                    }
+                                }
+                                else
+                                {
+                                    result.Resource = "您还没有注册会员";
+                                    result.Status = Result.SYSTEM_ERROR;
+                                }
+                            }
+                            if (!user.IsMember)
+                            {
+                                //
+                                //添加赠送本人
+                                if (_service.checkCoupon(userCode))
                                 {
                                     var couponType = _couponTypeservice.GetCouponTypeByIsGivedType();
                                     if (couponType != null)
                                     {
                                         Coupon coupon = new Coupon();
                                         coupon.CouponCode = Guid.NewGuid().ToString();
-                                        coupon.UserCode = recouser.Code;
+                                        coupon.UserCode = userCode;
                                         coupon.CouponTypeCode = couponType.CouponTypeCode;
                                         coupon.StratTime = DateTime.Now;
                                         coupon.VersionEndTime = DateTime.MaxValue;
@@ -244,90 +304,50 @@ namespace Ar.API.Controllers
                                         //没有添加任务优惠券
                                         var re = _service.Insert(coupon);
                                         //更改任务状态
-                                        var userTask = _userTaskservice.GetUserTaskList(recouser.Code);
-                                        var ut = userTask.Where(u => u.TaskCode == "2").FirstOrDefault();
+                                        //更改任务状态
+                                        var userTask = _userTaskservice.GetUserTaskList(userCode);
+                                        var ut = userTask.Where(u => u.TaskCode == "1").FirstOrDefault();
                                         ut.IsComplete = true;
                                         _userTaskservice.UpdateUserTask(ut.UserTaskCode, 1);
                                         result.Resource = re;
                                         result.Status = Result.SUCCEED;
-
                                     }
-                                    else
-                                    {
-                                        result.Resource = "好友赠送任务已经结束";
-                                        result.Status = Result.SYSTEM_ERROR;
-                                    }
-                                }
-                                else
-                                {
-                                    result.Resource = "好友已经达到任务奖励上限";
 
-                                    result.Status = Result.SYSTEM_ERROR;
                                 }
                             }
-                            else
-                            {
-                                result.Resource = "您还没有注册会员";
-                                result.Status = Result.SYSTEM_ERROR;
-                            }
+
+                            result.Resource = count;
+                            result.Status = Result.SUCCEED;
                         }
-                        if (!user.IsMember)
+                        else
                         {
-                            //
-                            //添加赠送本人
-                            if (_service.checkCoupon(userCode))
-                            {
-                                var couponType = _couponTypeservice.GetCouponTypeByIsGivedType();
-                                if (couponType != null)
-                                {
-                                    Coupon coupon = new Coupon();
-                                    coupon.CouponCode = Guid.NewGuid().ToString();
-                                    coupon.UserCode = userCode;
-                                    coupon.CouponTypeCode = couponType.CouponTypeCode;
-                                    coupon.StratTime = DateTime.Now;
-                                    coupon.VersionEndTime = DateTime.MaxValue;
-                                    coupon.IsGiveed = true;
-                                    coupon.CouponUseCode = Str(10, true);
-                                    //没有添加任务优惠券
-                                    var re = _service.Insert(coupon);
-                                    //更改任务状态
-                                    //更改任务状态
-                                    var userTask = _userTaskservice.GetUserTaskList(userCode);
-                                    var ut = userTask.Where(u => u.TaskCode == "1").FirstOrDefault();
-                                    ut.IsComplete = true;
-                                    _userTaskservice.UpdateUserTask(ut.UserTaskCode, 1);
-                                    result.Resource = re;
-                                    result.Status = Result.SUCCEED;
-                                }
-
-                            }
+                            result.Status = Result.SYSTEM_ERROR;
+                            result.Resource = "添加没有成功，请重试。";
                         }
-
-                        result.Resource = count;
-                        result.Status = Result.SUCCEED;
                     }
                     else
                     {
                         result.Status = Result.SYSTEM_ERROR;
-                        result.Resource = "添加没有成功，请重试。";
+                        result.Resource = "当前用户不存在";
                     }
+
+
                 }
                 else
                 {
-                    result.Status = Result.SYSTEM_ERROR;
-                    result.Resource = "当前用户不存在";
+                    result.Status = ResultType;
+                    result.Resource = ReAccessToken;
+                    result.Msg = TokenMessage;
                 }
-
-
             }
-            else
+            catch (Exception ex)
             {
-                result.Status = ResultType;
-                result.Resource = ReAccessToken;
-                result.Msg = TokenMessage;
+                LogHelper.WriteLog("BangMessageOk：" + ex.Message, ex);
+                LogHelper.WriteLog("BangMessageOk：" + ex.StackTrace, ex);
+                result.Status = Result.FAILURE;
+                result.Msg = ex.Message;
             }
-
-
+            LogHelper.WriteLog("BangMessageOk result" + Json(result));
             return Json(result);
 
         }

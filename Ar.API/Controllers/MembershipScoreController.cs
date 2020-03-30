@@ -31,6 +31,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetMembershipScoreByCode(string code)
         {
+            LogHelper.WriteLog("GetMembershipScoreByCode code" + code);
             SimpleResult result = new SimpleResult();
             IMembershipScoreService _service = new MembershipScoreService();
             try
@@ -55,6 +56,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetMembershipScoreByCode result" + Json(result));
             return Json(result);
 
         }
@@ -68,6 +70,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetMembershipScoreListByUserCode(string userCode)
         {
+            LogHelper.WriteLog("GetMembershipScoreListByUserCode userCode" + userCode);
             SimpleResult result = new SimpleResult();
             IMembershipScoreService _service = new MembershipScoreService();
             try
@@ -92,6 +95,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetMembershipScoreByCode result" + Json(result));
             return Json(result);
 
         }
@@ -104,6 +108,7 @@ namespace Ar.API.Controllers
         [HttpPost]
         public IHttpActionResult Insert(MembershipScore membershipScore)
         {
+            LogHelper.WriteLog("GetMembershipScoreListByUserCode membershipScore" + membershipScore?.MembershipScoreCode);
             SimpleResult result = new SimpleResult();
             IMembershipScoreService _service = new MembershipScoreService();
             try
@@ -128,6 +133,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("Insert result" + Json(result));
             return Json(result);
 
         }

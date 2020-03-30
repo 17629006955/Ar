@@ -28,6 +28,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetUseWalletList()
         {
+            LogHelper.WriteLog("GetUseWalletList ");
             SimpleResult result = new SimpleResult();
             IUseWalletService _service = new UseWalletService();
             try
@@ -52,6 +53,7 @@ namespace Ar.API.Controllers
                 result.Msg = ex.Message;
 
             }
+            LogHelper.WriteLog("GetUseWalletList result" + Json(result));
             return Json(result);
 
         }
@@ -64,6 +66,8 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetUseWalletInfoByUserCode(string userCode,string storeCode)
         {
+            LogHelper.WriteLog("GetUseWalletInfoByUserCode userCode" + userCode);
+            LogHelper.WriteLog("GetUseWalletInfoByUserCode storeCode" + storeCode);
             SimpleResult result = new SimpleResult();
             IUseWalletService _service = new UseWalletService();
             ITopupOrderServrce tos = new TopupOrderServrce();
@@ -111,6 +115,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetUseWalletInfoByUserCode result" + Json(result));
             return Json(result);
 
         }
@@ -125,6 +130,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetUseWalletUserCode(string userCode)
         {
+            LogHelper.WriteLog("GetUseWalletUserCode userCode" + userCode);
             SimpleResult result = new SimpleResult();
             IUseWalletService _service = new UseWalletService();
             try
@@ -148,6 +154,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetUseWalletUserCode result" + Json(result));
             return Json(result);
 
         }
@@ -161,6 +168,7 @@ namespace Ar.API.Controllers
         [HttpPost]
         public IHttpActionResult InsertUseWallet(UseWallet useWallet)
         {
+            LogHelper.WriteLog("InsertUseWallet useWallet" + useWallet?.WalletCode);
             SimpleResult result = new SimpleResult();
             IUseWalletService _service = new UseWalletService();
             try
@@ -175,6 +183,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("InsertUseWallet result" + Json(result));
             return Json(result);
 
         }

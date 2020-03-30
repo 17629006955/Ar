@@ -27,6 +27,8 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetCouponTypeByCode(string code)
         {
+            LogHelper.WriteLog("GetCouponTypeByCode strat");
+            LogHelper.WriteLog("GetCouponTypeByCode code" + code);
             SimpleResult result = new SimpleResult();
             ICouponTypeService _service = new CouponTypeService();
             try
@@ -35,7 +37,8 @@ namespace Ar.API.Controllers
                 {
                     var list = _service.GetCouponTypeByCode(code);
                 result.Resource = list;
-                result.Status = Result.SUCCEED;
+                    LogHelper.WriteLog("GetCouponTypeByCode list"+ list);
+                    result.Status = Result.SUCCEED;
                 }
                 else
                 {
@@ -51,6 +54,7 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetCouponTypeByCode end");
             return Json(result);
 
         }
@@ -64,6 +68,7 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetCouponTypeList()
         {
+            LogHelper.WriteLog("GetCouponTypeList strat");
             SimpleResult result = new SimpleResult();
             ICouponTypeService _service = new CouponTypeService();
             try
@@ -71,6 +76,7 @@ namespace Ar.API.Controllers
                 if (UserAuthorization)
                 {
                     var list = _service.GetCouponTypeList();
+                    LogHelper.WriteLog("GetCouponTypeList list"+ list);
                     result.Resource = list;
                     result.Status = Result.SUCCEED;
                 }
@@ -88,6 +94,8 @@ namespace Ar.API.Controllers
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
+            LogHelper.WriteLog("GetCouponTypeList result"+ Json(result));
+            LogHelper.WriteLog("GetCouponTypeList end");
             return Json(result);
 
         }
