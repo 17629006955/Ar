@@ -44,7 +44,7 @@ namespace Ar.API.Controllers
         }
         public ActionResult ProcessRequest()
         {
-
+            LogHelper.WriteLog("ProcessRequest " );
             //接收从微信后台POST过来的数据
             System.IO.Stream s = Request.InputStream;
             int count = 0;
