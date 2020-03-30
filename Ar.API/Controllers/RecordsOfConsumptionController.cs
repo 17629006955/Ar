@@ -453,7 +453,7 @@ namespace Ar.API.Controllers
                                     result.Status = Result.SUCCEED;
                                     IFinancialStatementsService _financialStatementsService = new FinancialStatementService();
                                     //写入核销数据到报表中
-                                    financialStatements fs = _financialStatementsService.getWriteOffData(userCode, order, "会员卡");
+                                    financialStatements fs = _financialStatementsService.getWriteOff(userCode, orderCode, "会员卡");
                                     LogHelper.WriteLog("financialStatements " + fs.Code);
                                     _financialStatementsService.Insert(fs);
                                 }

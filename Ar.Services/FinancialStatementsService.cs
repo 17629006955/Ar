@@ -256,5 +256,90 @@ namespace Ar.Services
             fs.ProductInfoRate = "0";
             return fs;
         }
+
+
+        /// <summary>
+        /// 核销
+        /// </summary>
+        /// <param name="userCode"></param>
+        /// <param name="order"></param>
+        /// <param name="payType"></param>
+        /// <returns></returns>
+        public financialStatements getWriteOff(string userCode, string orderCode,string payType)
+        {
+            var dateTime = DateTime.Now;
+            ICouponService _couponService = new CouponService();
+            IProductInfoService _productInfoService = new ProductInfoService();
+            ICouponTypeService _couponTypeService = new CouponTypeService();
+            IUseWalletService _useWalletService = new UseWalletService();
+            IOrderService _orderService = new OrderService();
+            IStoreService _storeService = new StoreService();
+            IUserInfo _userService = new UserInfo();
+            var order=_orderService.GetOrderByCode(orderCode);
+            var uw = _useWalletService.GetUseWalletCountMoney(userCode);
+            var s = _storeService.GetStore(order.StoreCode);
+            var p = _productInfoService.GetProductInfo(order.ProductCode);
+            var u = _userService.GetUserByCode(userCode);
+            financialStatements fs = new financialStatements();
+            fs.Code = Guid.NewGuid().ToString();
+            fs.CreateTime = dateTime;
+            fs.UserPhone = u?.Phone;
+            fs.UserCreateTime = u?.CreateTime;
+            fs.StoreName = s?.StoreName;
+            switch (p.Type)
+            {
+                case "1":
+                    fs.ProductionType = "体验服务"; break;
+                case "2":
+                    fs.ProductionType = "硬件产品"; break;
+                case "3":
+                    fs.ProductionType = "水吧服务"; break;
+                case "4":
+                    fs.ProductionType = "衍生品"; break;
+                case "5":
+                    fs.ProductionType = "配件"; break;
+
+            }
+            fs.Cstname = "普通销售";
+            fs.ProductionCode = "";
+            fs.ProductionName = "";
+            fs.Iquantity = 0;
+            fs.Itaxunitprice = 0;
+            fs.Isum = 0;
+            fs.CpersonName = p.CreatorName;
+            fs.PayType = payType;
+            fs.AmountOfIncome = 0;
+            fs.DonationAmount = 0;
+            fs.CouponUseCode = "";
+            fs.CouponUseMoney = 0;
+            fs.GetCouponTime = null;
+            fs.UseWalletMoney = uw.TotalAmount;
+            fs.UseWalletMoney1 = fs.UseWalletMoney;
+            fs.UseWalletAccountPrincipal = uw.AccountPrincipal;
+            fs.Ratio = (fs.UseWalletAccountPrincipal / fs.UseWalletMoney).ToString();
+            fs.RecordsOfConsumptionCreateTime = dateTime;
+            fs.WriteOffUser =u.UserName;
+            fs.ProductionCode1 = p.ProductCode;
+            fs.ProductionName1 = p.ProductName;
+            fs.ExperiencePrice = p.ExperiencePrice;
+            fs.Iquantity1 = order.Number;
+            fs.RecordsMoney = p.CostPrice * order.Number;
+            if (!string.IsNullOrEmpty(order.ExperienceVoucherCode))
+            {
+                var coupon = _couponService.GetCouponByCode(order.ExperienceVoucherCode);
+                var couponMoney = _couponTypeService.GetCouponTypeByCode(coupon?.CouponTypeCode);
+                if (couponMoney != null)
+                {
+                    fs.CouponUseMoney1 = couponMoney.Money;
+                }
+            }
+            fs.ActualConsumption = fs.RecordsMoney=fs.CouponUseMoney1;
+            fs.FinancialRevenueAccounting = fs.UseWalletAccountPrincipal;
+            fs.Imoney = fs.FinancialRevenueAccounting*(1-Convert.ToDecimal((p.Rate)));
+            fs.ProductInfoRate = p.Rate + "%";
+            fs.Itax = fs.FinancialRevenueAccounting * Convert.ToDecimal((p.Rate)); 
+            fs.GrossProfit = fs.Imoney + fs.Itax;
+            return fs;
+        }
     }
 }
