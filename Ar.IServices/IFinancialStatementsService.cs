@@ -11,5 +11,7 @@ namespace Ar.IServices
         financialStatements getWriteOffData(string userCode, Order order, string payType);
         financialStatements getDataRechargeRecord(string userCode, string typeCode, UseWallet useWallet, string storeCode, string payType);
 
+        financialStatements getWriteOff(string userCode, string orderCode, string payType);
+
     }
 }
