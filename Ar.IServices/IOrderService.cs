@@ -13,6 +13,6 @@ namespace Ar.IServices
         int UpdateOrderbyWxorder(Order order);
         int UpdateOrder(Order order);
         string InsertOrder(Order order);
-
+        int DeletOrderInfo(string orderCode);
     }
 }

@@ -11,6 +11,13 @@ namespace Ar.Services
 {
     public class OrderService : IOrderService
     {
+        public int DeletOrderInfo(string orderCode)
+        {
+            DynamicParameters paras = new DynamicParameters();
+            paras.Add("@OrderCode", orderCode, System.Data.DbType.String);
+            return DapperSqlHelper.ExcuteNonQuery<Order>(@"delete  [dbo].[Order] where OrderCode=@OrderCode", paras, false);
+            
+        }
         public Order GetOrderInfo(string orderCode)
         {
             DynamicParameters paras = new DynamicParameters();

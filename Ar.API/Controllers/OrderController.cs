@@ -15,6 +15,7 @@ using Ar.IServices;
 using Ar.Services;
 using AR.Model;
 using Ar.Common;
+using System.Transactions;
 
 namespace Ar.API.Controllers
 {
@@ -43,20 +44,23 @@ namespace Ar.API.Controllers
                     var store = _Storeservice.GetStore(userSotre.MembershipCardStore);
                     if (store != null)
                     {
-                        foreach (var item in list)
+                        using (var scope = new TransactionScope())//创建事务
                         {
-                            if (!string.IsNullOrEmpty(item.WxPrepayId) && item.PayTime == null)
+                            foreach (var item in list)
                             {
-
-                                var PayTime = Common.wxPayOrderQuery(item.WxPrepayId, store.appid.Trim(), store.mchid);
-                                if (!string.IsNullOrEmpty(PayTime))
+                                if (!string.IsNullOrEmpty(item.WxPrepayId) && item.PayTime == null)
                                 {
-                                    item.PayTime = Convert.ToDateTime(PayTime);
-                                    _service.UpdateOrder(item);
+
+                                    var PayTime = Common.wxPayOrderQuery(item.WxPrepayId, store.appid.Trim(), store.mchid);
+                                    if (!string.IsNullOrEmpty(PayTime))
+                                    {
+                                        item.PayTime = Convert.ToDateTime(PayTime);
+                                        _service.UpdateOrder(item);
+                                    }
+
                                 }
-
+                                scope.Complete();//这是最后提交事务
                             }
-
 
                         }
                     }
@@ -111,12 +115,87 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
-             
+
                 LogHelper.WriteLog("GetOrderByCode code" + code, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
             LogHelper.WriteLog("GetOrderByCode result" + Json(result));
+            return Json(result);
+
+        }
+        /// <summary>
+        /// 获取订单
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        ////http://localhost:10010//api/Order/GetOrderByCode?code=1
+        [HttpGet]
+        public IHttpActionResult CancellationOfOrder(string orderCode)
+        {
+            LogHelper.WriteLog("CancellationOfOrder code" + orderCode);
+            SimpleResult result = new SimpleResult();
+            IOrderService _orderService = new OrderService();
+            IProductInfoService _service = new ProductInfoService();
+            ICouponService _couponService = new CouponService();
+
+            try
+            {
+                if (UserAuthorization)
+                {
+                    string msg = "";
+                    var orderInfo = _orderService.GetOrderInfo(orderCode);
+                    if (orderInfo == null)
+                    {
+                        msg = "订单不存在！";
+                        result.Status = Result.SYSTEM_ERROR;
+                        result.Resource = null;
+                        result.Msg = msg;
+                    }
+                    else if (orderInfo.PayTime != null)
+                    {
+                        msg = "该订单已付款！";
+                        result.Status = Result.SYSTEM_ERROR;
+                        result.Resource = null;
+                        result.Msg = msg;
+                    }
+                    else
+                    {
+                        using (var scope = new TransactionScope())//创建事务
+                        {
+                            if (!string.IsNullOrEmpty(orderInfo.ExperienceVoucherCode))
+                            {
+                                //var isUseCoupon = _couponService.Exist(orderInfo.ExperienceVoucherCode);
+                                //if (isUseCoupon != 3)
+                                //{
+                                //    orderInfo.ExperienceVoucherCode = "";
+                                //}
+
+                                _couponService.UpdatebycouponCode(orderInfo.ExperienceVoucherCode);
+                            }
+                            _orderService.DeletOrderInfo(orderCode);
+                            scope.Complete();//这是最后提交事务
+                        }
+                        result.Status = Result.SUCCEED;
+
+                    }
+
+                }
+                else
+                {
+                    result.Status = ResultType;
+                    result.Resource = ReAccessToken;
+                    result.Msg = TokenMessage;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                LogHelper.WriteLog("CancellationOfOrder orderCode" + orderCode, ex);
+                result.Status = Result.FAILURE;
+                result.Msg = ex.Message;
+            }
+            LogHelper.WriteLog("CancellationOfOrder result" + Json(result));
             return Json(result);
 
         }
@@ -249,7 +328,7 @@ namespace Ar.API.Controllers
             {
                 if (UserAuthorization)
                 {
-                 _service.InsertOrder(order);
+                    _service.InsertOrder(order);
                     result.Resource = null;
                     result.Status = Result.SUCCEED;
                 }
@@ -297,7 +376,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
-                LogHelper.WriteLog("WxOrder order"+ order.OrderCode, ex);
+                LogHelper.WriteLog("WxOrder order" + order.OrderCode, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
             }
