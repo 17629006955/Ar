@@ -41,7 +41,8 @@ namespace AR.Model
 		private string _cardtelephone;
 		private string _instructions;
         private string _recommendedPhone;
-        
+        private string _referenceNumber;
+
         /// <summary>
         /// 
         /// </summary>
@@ -155,7 +156,15 @@ namespace AR.Model
             set { _recommendedPhone = value; }
             get { return _recommendedPhone; }
         }
-        
+        /// <summary>
+        /// 
+        /// </summary>
+        public string ReferenceNumber
+        {
+            set { _referenceNumber = value; }
+            get { return _referenceNumber; }
+        }
+
         #endregion Model
 
     }

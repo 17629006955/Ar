@@ -127,60 +127,63 @@ namespace Ar.API.Controllers
                     if (DateTime.TryParse(birthday, out birthdaydate))
                     {
                         var use = userInfo.GetUserByCode(userCode);
-                        if (use != null && !use.IsMember)
-                        {
-                            var store = storeService.GetStore(storeCode);
-                            if (store != null)
+                            if (use != null)
                             {
-                                var wxc = Common.GetCardExt(store, userCode);
-                                if (wxc != null)
+                                if (!use.IsMember && string.IsNullOrEmpty(use.ReferenceNumber))
                                 {
-                                    //写入到手机号和和数据库
-                                    var count = userInfo.UpdateByPhone(userCode, phone, birthdaydate, wxc.cardExt.code, recommendedPhone);
-                                    if (count > 0)
+                                    var store = storeService.GetStore(storeCode);
+                                    if (store != null)
                                     {
-                                        result.Status = Result.SUCCEED;
-                                        LogHelper.WriteLog("BangMessageCode :" + result.Status);
-                                        LogHelper.WriteLog("wxc :" + wxc);
-                                        result.Resource = wxc;
+                                        var wxc = Common.GetCardExt(store, userCode);
+                                        if (wxc != null)
+                                        {
+                                            //写入到手机号和和数据库
+                                            var count = userInfo.UpdateByPhone(userCode, phone, birthdaydate, wxc.cardExt.code, recommendedPhone);
+                                            if (count > 0)
+                                            {
+                                                result.Status = Result.SUCCEED;
+                                                LogHelper.WriteLog("BangMessageCode :" + result.Status);
+                                                LogHelper.WriteLog("wxc :" + wxc);
+                                                result.Resource = wxc;
+                                            }
+                                            else
+                                            {
+                                                result.Status = Result.SYSTEM_ERROR;
+                                                result.Msg = "获取配置失败重新获取";
+                                            }
+                                        }
+                                        else
+                                        {
+                                            result.Status = Result.USER_AUTH_ERROR;
+                                            result.Msg = "获取配置失败重新获取";
+                                        }
                                     }
                                     else
                                     {
                                         result.Status = Result.SYSTEM_ERROR;
-                                        result.Msg = "获取配置失败重新获取";
+                                        result.Msg = "店铺不存在";
                                     }
+
                                 }
                                 else
                                 {
-                                    result.Status = Result.USER_AUTH_ERROR;
-                                    result.Msg = "获取配置失败重新获取";
+                                    var count = userInfo.UpdateByuserCodePhone(userCode, phone, birthdaydate);
+                                    if (count > 0)
+                                    {
+                                        result.Status = Result.SUCCEED;
+                                    }
+                                    else
+                                    {
+                                        result.Status = Result.SYSTEM_ERROR;
+                                        result.Msg = "当前用户绑定手机号失败";
+                                    }
                                 }
                             }
                             else
                             {
                                 result.Status = Result.SYSTEM_ERROR;
-                                result.Msg = "店铺不存在";
+                                result.Msg = "当前用户不存在";
                             }
-
-                        }
-                        else if (use.IsMember)
-                        {
-                            var count = userInfo.UpdateByuserCodePhone(userCode, phone, birthdaydate);
-                            if (count > 0)
-                            {
-                                result.Status = Result.SUCCEED;
-                            }
-                            else
-                            {
-                                result.Status = Result.SYSTEM_ERROR;
-                                result.Msg = "当前用户绑定手机号失败";
-                            }
-                        }
-                        else
-                        {
-                            result.Status = Result.SYSTEM_ERROR;
-                            result.Msg = "当前用户不存在";
-                        }
                     }
                     else
                     {
