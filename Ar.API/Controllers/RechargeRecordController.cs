@@ -205,8 +205,9 @@ namespace Ar.API.Controllers
                                 result.Resource = "微信充值失败，重新充值";
                                 result.Status = Result.SYSTEM_ERROR;
                             }
-                            scope.Complete();//这是最后提交事务
+                           
                         }
+                        scope.Complete();//这是最后提交事务
                     }
                     
                 }
@@ -278,7 +279,7 @@ namespace Ar.API.Controllers
 
                             }
                         }
-                       
+                        scope.Complete();//这是最后提交事务
                     }
                 }
                 else
