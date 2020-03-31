@@ -64,22 +64,25 @@ namespace Ar.API.Controllers
         /// <returns></returns>
         ////http://localhost:10010//api/UseWallet/GetUseWalletInfoByUserCode?userCode=1
         [HttpGet]
-        public IHttpActionResult GetUseWalletInfoByUserCode(string userCode,string storeCode)
+        public IHttpActionResult GetUseWalletInfoByUserCode(string userCode)
         {
             LogHelper.WriteLog("GetUseWalletInfoByUserCode userCode" + userCode);
-            LogHelper.WriteLog("GetUseWalletInfoByUserCode storeCode" + storeCode);
+           
             SimpleResult result = new SimpleResult();
             IUseWalletService _service = new UseWalletService();
             ITopupOrderServrce tos = new TopupOrderServrce();
             IRechargeRecordService _RechargeRecordService = new RechargeRecordService();
             IStoreService _Storeservice = new StoreService();
+            IUserStoreService _userStoreService = new UserStoreService();
             try
             {
                 if (UserAuthorization)
                 {
                     //查看没有给微信支付核对的订单继续核对
                     var topupOrder = tos.GetTopupOrderbyuserCode(userCode);
-                    var store = _Storeservice.GetStore(storeCode);
+                    var userSotre = _userStoreService.GetUserStorebyUserCode(userCode);
+                    var store = _Storeservice.GetStore(userSotre.MembershipCardStore);
+                  
                     if (store != null)
                     {
                         foreach (var item in topupOrder)
@@ -89,9 +92,11 @@ namespace Ar.API.Controllers
                                 var PayTime = Common.wxPayOrderQuery(item.WallePrCode, store.appid.Trim(), store.mchid);
                                 if (!string.IsNullOrEmpty(PayTime))
                                 {
-                                    item.PayDatetime = Convert.ToDateTime(PayTime);
+                                    LogHelper.WriteLog("GetUseWalletInfoByUserCode PayTime" + PayTime);
+                                    DateTime dt = DateTime.ParseExact(PayTime, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture);
+                                    item.PayDatetime = dt;
                                     tos.UpdateTopupOrder(item.WallePrCode, item.PayDatetime);
-                                    _RechargeRecordService.Recharge(item.RechargeTypeCode, item.UserCode, item.RecordsMoney, storeCode);
+                                    _RechargeRecordService.Recharge(item.RechargeTypeCode, item.UserCode, item.RecordsMoney, store.StoreCode);
                                 }
 
                             }

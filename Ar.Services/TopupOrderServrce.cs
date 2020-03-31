@@ -54,8 +54,8 @@ namespace Ar.Services
         public int UpdateTopupOrder(string prepayid,DateTime? payDatetime)
         {
             DynamicParameters paras = new DynamicParameters();
-            paras.Add("@PayDatetime", payDatetime, System.Data.DbType.String);
-            paras.Add("@WallePrCode", prepayid, System.Data.DbType.DateTime);
+            paras.Add("@PayDatetime", payDatetime, System.Data.DbType.DateTime);
+            paras.Add("@WallePrCode", prepayid, System.Data.DbType.String);
             string sql = @"update [dbo].[TopupOrder] set PayDatetime=@PayDatetime
             where  WallePrCode=@WallePrCode";
            return  DapperSqlHelper.ExcuteNonQuery<Order>(sql, paras, false);

@@ -363,9 +363,9 @@ namespace Ar.API.Controllers
                                     if (!string.IsNullOrEmpty(PayTime))
                                     {
 
-
+                                        DateTime dt = DateTime.ParseExact(PayTime, "yyyyMMddHHmmss", null);
                                         LogHelper.WriteLog("更新的订单： " + orderCode);
-                                        order.PayTime = DateTime.Now;
+                                        order.PayTime = dt;
                                         _orderService.UpdateOrder(order);
                                         var ss = _couponService.GetCouponByOrderCode(orderCode);
                                         if (ss != null)

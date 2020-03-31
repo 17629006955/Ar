@@ -244,21 +244,28 @@ namespace Ar.API.Controllers
             IRechargeRecordService _service = new RechargeRecordService();
             ITopupOrderServrce tos = new TopupOrderServrce();
             IStoreService _Storeservice = new StoreService();
+            IUserStoreService _userStoreService = new UserStoreService();
             try
             {
                 if (UserAuthorization)
                 {
                     using (var scope = new TransactionScope())//创建事务
-                    { var store = _Storeservice.GetStore(storeCode);
-                        if (store != null)
+                    {
+                        var opupOrder=tos.GetTopupOrderbyWallePrCode(prepayid);
+                        if (opupOrder!=null )
                         {
-                           
+                            var userSotre = _userStoreService.GetUserStorebyUserCode(opupOrder.UserCode);
+                            var store = _Storeservice.GetStore(userSotre.MembershipCardStore);                    
+                            if (store != null)
+                            {
                                 if (!string.IsNullOrEmpty(prepayid))
                                 {
                                     var PayTime = Common.wxPayOrderQuery(prepayid, store.appid.Trim(), store.mchid);
                                     if (!string.IsNullOrEmpty(PayTime))
                                     {
-                                        var payTime = Convert.ToDateTime(PayTime);
+                                        LogHelper.WriteLog("wxPrePay PayTime" + PayTime);
+                                        DateTime dt = DateTime.ParseExact(PayTime, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture);
+                                        var payTime = dt;
                                         //更新TopupOrder 的支付时间
                                         tos.UpdateTopupOrder(prepayid, payTime);
                                         var tosmodel = tos.GetTopupOrderbyWallePrCode(prepayid);
@@ -268,7 +275,8 @@ namespace Ar.API.Controllers
                                         scope.Complete();//这是最后提交事务
                                     }
                                 }
-                            
+
+                            }
                         }
                        
                     }

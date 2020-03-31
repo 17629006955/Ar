@@ -50,11 +50,14 @@ namespace Ar.API.Controllers
                             {
                                 if (!string.IsNullOrEmpty(item.WxPrepayId) && item.PayTime == null)
                                 {
+                                    
 
                                     var PayTime = Common.wxPayOrderQuery(item.WxPrepayId, store.appid.Trim(), store.mchid);
                                     if (!string.IsNullOrEmpty(PayTime))
                                     {
-                                        item.PayTime = Convert.ToDateTime(PayTime);
+                                        LogHelper.WriteLog("GetOrderList PayTime" + PayTime);
+                                        DateTime dt = DateTime.ParseExact(PayTime, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture);
+                                        item.PayTime = dt;
                                         _service.UpdateOrder(item);
                                     }
 

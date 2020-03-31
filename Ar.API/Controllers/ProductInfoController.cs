@@ -135,7 +135,9 @@ namespace Ar.API.Controllers
                             //{
                             //    orderInfo.ExperienceVoucherCode = "";
                             //}
+                            orderInfo.ExperienceVoucherCode = null;
                             _couponService.UpdatebycouponCode(orderInfo.ExperienceVoucherCode);
+                            _orderService.UpdateOrder(orderInfo);
                         }
                         var productInfo = _service.GetProductInfo(orderInfo.ProductCode);
                         result.Status = Result.SUCCEED;
