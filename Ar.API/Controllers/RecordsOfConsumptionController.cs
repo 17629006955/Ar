@@ -535,9 +535,19 @@ namespace Ar.API.Controllers
                                     result.Status = Result.SUCCEED;
                                     IFinancialStatementsService _financialStatementsService = new FinancialStatementService();
                                     //写入核销数据到报表中
-                                    financialStatements fs = _financialStatementsService.getWriteOff(userCode, orderCode, "会员卡");
+                                    financialStatements fs = null;
+                                    if (string.IsNullOrEmpty(order.WxPrepayId))
+                                    {
+                                        fs = _financialStatementsService.getWriteOff(userCode, orderCode, "会员卡");
+                                    } else
+                                    {
+                                         fs = _financialStatementsService.getWriteOff(userCode, orderCode, "微信");
+                                    }
                                     LogHelper.WriteLog("financialStatements " + fs.Code);
-                                    _financialStatementsService.Insert(fs);
+                                    if (fs!=null)
+                                    {
+                                        _financialStatementsService.Insert(fs);
+                                    }
                                 }
                                 else
                                 {

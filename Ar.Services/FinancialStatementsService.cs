@@ -219,21 +219,29 @@ namespace Ar.Services
                 }
             }
             fs.GetCouponTime = order.CreateTime;
-            fs.UseWalletMoney = uw.TotalAmount - order.Money;
-            fs.UseWalletMoney1 = fs.UseWalletMoney;
-            fs.UseWalletAccountPrincipal = uw.AccountPrincipal - order.Money * Math.Round(Convert.ToDecimal(uw.Ratio), 2);
-        
-            var fr = fs.UseWalletAccountPrincipal / fs.UseWalletMoney * 100;
-            if (fr != 0m)
+            if (payType.Equals("微信"))
             {
-                decimal cc = Convert.ToDecimal(fr);
-                fs.Ratio = Math.Round(cc, 2).ToString() + '%';
+                fs.UseWalletMoney = order.Money;
+                fs.Ratio = "100%";
             }
             else
             {
-                fs.Ratio = "100%";
+                fs.UseWalletMoney = uw.TotalAmount - order.Money;
+                fs.UseWalletMoney1 = fs.UseWalletMoney;
+                fs.UseWalletAccountPrincipal = uw.AccountPrincipal - order.Money * Math.Round(Convert.ToDecimal(uw.Ratio), 2);
+
+                var fr = fs.UseWalletAccountPrincipal / fs.UseWalletMoney * 100;
+                if (fr != 0m)
+                {
+                    decimal cc = Convert.ToDecimal(fr);
+                    fs.Ratio = Math.Round(cc, 2).ToString() + '%';
+                }
+                else
+                {
+                    fs.Ratio = "100%";
+                }
+                fs.ProductInfoRate = p.Rate + "%";
             }
-            fs.ProductInfoRate = p.Rate + "%";
             return fs;
         }
 
@@ -348,17 +356,25 @@ namespace Ar.Services
             fs.CouponUseCode = "";
             fs.CouponUseMoney = 0;
             fs.GetCouponTime = null;
-            fs.UseWalletMoney = uw.TotalAmount;
-            fs.UseWalletMoney1 = fs.UseWalletMoney;
-            fs.UseWalletAccountPrincipal = uw.AccountPrincipal;
-            fs.Ratio = (fs.UseWalletAccountPrincipal / fs.UseWalletMoney).ToString();
+            if (payType.Equals("微信"))
+            {
+                fs.UseWalletMoney = order.Money;
+                fs.Ratio = "100%";
+            }
+            else
+            {
+                fs.UseWalletMoney = uw.TotalAmount;
+                fs.UseWalletMoney1 = fs.UseWalletMoney;
+                fs.UseWalletAccountPrincipal = uw.AccountPrincipal;
+                fs.Ratio = (fs.UseWalletAccountPrincipal / fs.UseWalletMoney).ToString();
+            }
             fs.RecordsOfConsumptionCreateTime = dateTime;
             fs.WriteOffUser =u.UserName;
             fs.ProductionCode1 = p.ProductCode;
             fs.ProductionName1 = p.ProductName;
             fs.ExperiencePrice = p.ExperiencePrice;
             fs.Iquantity1 = order.Number;
-            fs.RecordsMoney = p.CostPrice * order.Number;
+            fs.RecordsMoney = p.ExperiencePrice * order.Number;
             if (!string.IsNullOrEmpty(order.ExperienceVoucherCode))
             {
                 var coupon = _couponService.GetCouponByCode(order.ExperienceVoucherCode);
@@ -366,14 +382,28 @@ namespace Ar.Services
                 if (couponMoney != null)
                 {
                     fs.CouponUseMoney1 = couponMoney.Money;
+                    fs.ActualConsumption = fs.RecordsMoney - fs.CouponUseMoney1;
                 }
             }
-            fs.ActualConsumption = fs.RecordsMoney=fs.CouponUseMoney1;
-            fs.FinancialRevenueAccounting = fs.UseWalletAccountPrincipal;
-            fs.Imoney = fs.FinancialRevenueAccounting*(1-Convert.ToDecimal((p.Rate)));
+            else {
+                fs.ActualConsumption = fs.RecordsMoney;
+            }
+
+            if (payType.Equals("微信"))
+            {
+                fs.FinancialRevenueAccounting = fs.RecordsMoney;
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(fs.Ratio))
+                {
+                    fs.FinancialRevenueAccounting = fs.RecordsMoney * Convert.ToDecimal(fs.Ratio);
+                }
+            }
+            fs.Imoney = fs.FinancialRevenueAccounting * Convert.ToDecimal((100 - Convert.ToDouble(p.Rate)) * 0.01);
             fs.ProductInfoRate = p.Rate + "%";
-            fs.Itax = fs.FinancialRevenueAccounting * Convert.ToDecimal((p.Rate)); 
-            fs.GrossProfit = fs.Imoney + fs.Itax;
+            fs.Itax = fs.FinancialRevenueAccounting * Convert.ToDecimal((Convert.ToDouble(p.Rate))*0.01); 
+            fs.GrossProfit = fs.Imoney;
             return fs;
         }
     }
