@@ -202,12 +202,14 @@ namespace Ar.API.Controllers
                                 var re = _service.PayOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money, param.storeId, param.quantity,param.orderCode, param.couponCode);
                                 result.Resource = "SUCCEED";
                                 result.Status = Result.SUCCEED;
+                                LogHelper.WriteLog("result.Status " + Result.SUCCEED);
                             }
                             else
                             {
                                 result.Status = Result.SYSTEM_ERROR;
                                 result.Msg = "账号余额不足";
                                 result.Resource = null;
+                                LogHelper.WriteLog("result.Status " + Result.SYSTEM_ERROR);
                             }
                         }
                     }

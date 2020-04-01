@@ -62,9 +62,9 @@ namespace Ar.API.Controllers
                                     }
 
                                 }
-                                scope.Complete();//这是最后提交事务
+                                
                             }
-
+                            scope.Complete();//这是最后提交事务
                         }
                     }
                     list = list.OrderByDescending(t => t.CreateTime)?.ToList();
