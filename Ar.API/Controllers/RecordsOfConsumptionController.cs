@@ -363,12 +363,42 @@ namespace Ar.API.Controllers
                                 {
                                     var PayTime = Common.wxPayOrderQuery(prepayid, store.appid.Trim(), store.mchid);
                                     LogHelper.WriteLog("微信支付时间： " + PayTime);
-                                    if (!string.IsNullOrEmpty(PayTime))
+                                    if (ConfigurationManager.AppSettings["isWxpay"] != null && ConfigurationManager.AppSettings["isWxpay"].ToString() == "true")
                                     {
+                                        if (!string.IsNullOrEmpty(PayTime))
+                                        {
 
-                                        DateTime dt = DateTime.ParseExact(PayTime, "yyyyMMddHHmmss", null);
-                                        LogHelper.WriteLog("更新的订单： " + orderCode);
-                                        order.PayTime = dt;
+                                            DateTime dt = DateTime.ParseExact(PayTime, "yyyyMMddHHmmss", null);
+                                            LogHelper.WriteLog("更新的订单： " + orderCode);
+                                            order.PayTime = dt;
+                                            _orderService.UpdateOrder(order);
+                                            var ss = _couponService.GetCouponByOrderCode(orderCode);
+                                            if (ss != null)
+                                            {
+                                                _couponService.UsedUpdate(ss.CouponUseCode, userCode, orderCode);
+                                                LogHelper.WriteLog("更新的钱包和优惠券couponCode： " + ss.CouponUseCode);
+                                            }
+
+
+                                            LogHelper.WriteLog("报表写入数据开始");
+                                            IFinancialStatementsService _financialStatementsService = new FinancialStatementService();
+                                            LogHelper.WriteLog("报表表数据更新");
+                                            financialStatements fs = _financialStatementsService.getData(userCode, order, "微信");
+                                            LogHelper.WriteLog("报表表数据更新完成");
+                                            _financialStatementsService.Insert(fs);
+                                            LogHelper.WriteLog("报表写入数据结束" + fs.Code);
+                                            result.Status = Result.SUCCEED;
+
+                                        }
+                                        else
+                                        {
+                                            result.Status = Result.SYSTEM_ERROR;
+                                            result.Msg = "微信支付没有成功";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        order.PayTime = DateTime.Now;
                                         _orderService.UpdateOrder(order);
                                         var ss = _couponService.GetCouponByOrderCode(orderCode);
                                         if (ss != null)
@@ -386,12 +416,6 @@ namespace Ar.API.Controllers
                                         _financialStatementsService.Insert(fs);
                                         LogHelper.WriteLog("报表写入数据结束" + fs.Code);
                                         result.Status = Result.SUCCEED;
-                                        
-                                    }
-                                    else
-                                    {
-                                        result.Status = Result.SYSTEM_ERROR;
-                                        result.Msg = "微信支付没有成功";
                                     }
                                 }
                                 else

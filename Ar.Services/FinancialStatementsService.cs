@@ -110,8 +110,8 @@ namespace Ar.Services
             fs.ProductionCode = p.ProductCode;
             fs.ProductionName = p.ProductName;
             fs.Iquantity = order.Number;
-            fs.Itaxunitprice = p.CostPrice;
-            fs.Isum = p.CostPrice * order.Number;
+            fs.Itaxunitprice = p.ExperiencePrice;
+            fs.Isum = p.ExperiencePrice * order.Number;
             fs.CpersonName = p.CreatorName;
             fs.PayType = payType;
             fs.AmountOfIncome = order.Money;
@@ -127,18 +127,35 @@ namespace Ar.Services
                 }
             }
             fs.GetCouponTime = order.CreateTime;
-            fs.UseWalletMoney = uw.TotalAmount - order.Money;
-            fs.UseWalletMoney1 = fs.UseWalletMoney;
-           
-            fs.UseWalletAccountPrincipal = uw.AccountPrincipal - order.Money * Math.Round(Convert.ToDecimal(uw.Ratio), 2);
-            if (fs.UseWalletMoney != 0)
+            if (payType.Equals("微信"))
             {
-                fs.Ratio = (fs.UseWalletAccountPrincipal / fs.UseWalletMoney).ToString();
+                fs.UseWalletMoney = order.Money;
+                fs.Ratio = "100%";
             }
             else
             {
-                fs.Ratio = "1";
+                fs.UseWalletMoney = uw.TotalAmount - order.Money;
+                fs.UseWalletAccountPrincipal = uw.AccountPrincipal - order.Money * Math.Round(Convert.ToDecimal(uw.Ratio), 2);
+                if (fs.UseWalletMoney != 0)
+                {
+                    var fr = fs.UseWalletAccountPrincipal / fs.UseWalletMoney * 100;
+                    if (fr != 0m)
+                    {
+                        decimal cc = Convert.ToDecimal(fr);
+                        fs.Ratio = Math.Round(cc, 2).ToString() + '%';
+                    }
+                    else
+                    {
+                        fs.Ratio = "100%";
+                    }
+                }
+                else
+                {
+                    fs.Ratio = "100%";
+                }
+                fs.UseWalletMoney1 = fs.UseWalletMoney;
             }
+
             fs.ProductInfoRate = p.Rate + "%";
             return fs;
         }
@@ -205,7 +222,17 @@ namespace Ar.Services
             fs.UseWalletMoney = uw.TotalAmount - order.Money;
             fs.UseWalletMoney1 = fs.UseWalletMoney;
             fs.UseWalletAccountPrincipal = uw.AccountPrincipal - order.Money * Math.Round(Convert.ToDecimal(uw.Ratio), 2);
-            fs.Ratio = (fs.UseWalletAccountPrincipal / fs.UseWalletMoney).ToString();
+        
+            var fr = fs.UseWalletAccountPrincipal / fs.UseWalletMoney * 100;
+            if (fr != 0m)
+            {
+                decimal cc = Convert.ToDecimal(fr);
+                fs.Ratio = Math.Round(cc, 2).ToString() + '%';
+            }
+            else
+            {
+                fs.Ratio = "100%";
+            }
             fs.ProductInfoRate = p.Rate + "%";
             return fs;
         }
