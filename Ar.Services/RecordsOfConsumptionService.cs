@@ -77,7 +77,7 @@ namespace Ar.Services
             }
         }
 
-        public string  PayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string storeId, int quantity=1, string orderCode = "", string couponCode = "")
+        public string  PayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string storeId, string orderCode = "", string couponCode = "")
         {
             string msg = "SUCCEED";
             IProductInfoService _productInfoService = new ProductInfoService();
@@ -159,7 +159,7 @@ namespace Ar.Services
             return msg;
         }
 
-        public Order WxPayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string wxPrepayId, string storeId, int quantity = 1, string orderCode = "", string couponCode = "")
+        public Order WxPayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string wxPrepayId, string storeId,string orderCode = "", string couponCode = "")
         {
             IProductInfoService _productInfoService = new ProductInfoService();
             DateTime now = DateTime.Now;

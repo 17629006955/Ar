@@ -199,7 +199,7 @@ namespace Ar.API.Controllers
                         {
                             if (_useWalletService.ExistMoney(param.userCode, param.money))
                             {
-                                var re = _service.PayOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money, param.storeId, param.quantity,param.orderCode, param.couponCode);
+                                var re = _service.PayOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money, param.storeId,param.orderCode, param.couponCode);
                                 result.Resource = "SUCCEED";
                                 result.Status = Result.SUCCEED;
                                 LogHelper.WriteLog("result.Status " + Result.SUCCEED);
@@ -251,7 +251,7 @@ namespace Ar.API.Controllers
                                         var wxprepay = Common.wxPayOrderSomething(userStoreser.OpenID, param.money.ToString(), couponser?.CouponTypeName, store);
                                         if (wxprepay != null)
                                         {
-                                            var order = _service.WxPayOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money, wxprepay.prepayid, param.storeId, param.quantity, param.orderCode, param.couponCode);
+                                            var order = _service.WxPayOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money, wxprepay.prepayid, param.storeId, param.orderCode, param.couponCode);
                                             if (!string.IsNullOrEmpty(param.couponCode))
                                             { 
                                             _couponService.UsedUpdate(param.couponCode, param.userCode, order.OrderCode);
@@ -563,9 +563,6 @@ namespace Ar.API.Controllers
     public class PayOrderParam
     {
         public string orderCode { get; set; }
-
-        public int quantity { get; set; }
-
         public int paytype { get; set; }
         public string productCode { get; set; }
         public string userCode { get; set; }
