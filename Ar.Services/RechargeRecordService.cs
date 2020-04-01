@@ -6,6 +6,7 @@ using Ar.Repository;
 using AR.Model;
 using Dapper;
 using System.Transactions;
+using Ar.Common;
 
 namespace Ar.Services
 {
@@ -76,7 +77,9 @@ namespace Ar.Services
                 Sort = 1,
                 IsMissionGiveaway = false
             };
-            _financialStatementsService.getDataRechargeRecord(userCode, typeCode, wallet, storeCode, "微信");
+            var fs =_financialStatementsService.getDataRechargeRecord(userCode, typeCode, wallet, storeCode, "微信");
+            LogHelper.WriteLog("报表表数据更新完成");
+            _financialStatementsService.Insert(fs);
             using (var scope = new TransactionScope())//创建事务
             {
                 //钱包
