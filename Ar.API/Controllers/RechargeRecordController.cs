@@ -273,7 +273,7 @@ namespace Ar.API.Controllers
                                         var list = _service.Recharge(tosmodel.RechargeTypeCode, tosmodel.UserCode, tosmodel.RecordsMoney, storeCode);
                                         result.Resource = list;
                                         result.Status = Result.SUCCEED;
-                                        scope.Complete();//这是最后提交事务
+                                       
                                     }
                                 }
 

@@ -185,8 +185,8 @@ namespace Ar.Services
             fs.ProductionCode = p.ProductCode;
             fs.ProductionName = p.ProductName;
             fs.Iquantity = order.Number;
-            fs.Itaxunitprice = p.CostPrice;
-            fs.Isum = p.CostPrice * order.Number;
+            fs.Itaxunitprice = p.ExperiencePrice;
+            fs.Isum = p.ExperiencePrice * order.Number;
             fs.CpersonName = p.CreatorName;
             fs.PayType = payType;
             fs.AmountOfIncome = order.Money;
