@@ -64,7 +64,7 @@ namespace Ar.Services
             paras.Add("@ReferenceNumber", ReferenceNumber, System.Data.DbType.String);
             if (!string.IsNullOrEmpty(recommendedPhone))
             {
-                paras.Add("@recommendedPhone", birthday, System.Data.DbType.DateTime);
+                paras.Add("@recommendedPhone", recommendedPhone, System.Data.DbType.String);
                 return DapperSqlHelper.ExcuteNonQuery<User>(@"Update  [dbo].[User] set phone=@phone,birthday=@birthday,ReferenceNumber=@ReferenceNumber ,recommendedPhone=@recommendedPhone  where Code=@Code", paras, false);
             }
             else {
