@@ -29,6 +29,10 @@ namespace Ar.API.Controllers
         public IHttpActionResult GetUserTaskList(string userCode)
         {
             LogHelper.WriteLog("GetUserTaskList userCode" + userCode);
+            var sharePictures = ConfigurationManager.AppSettings["sharePictures"].ToString();
+            var shareDescriptions = ConfigurationManager.AppSettings["shareDescriptions"].ToString();
+            var shareTitle = ConfigurationManager.AppSettings["shareTitle"].ToString();
+
             SimpleResult result = new SimpleResult();
             IUserTaskService _service = new UserTaskService();
             try
@@ -36,7 +40,16 @@ namespace Ar.API.Controllers
                 if (UserAuthorization)
                 {
                     var list = _service.GetUserTaskList(userCode);
-                result.Resource = list;
+                    foreach (var t in list)
+                    {
+                        if (t.TaskCode == "2")
+                        {
+                            t.ShareDescriptions = shareDescriptions;
+                            t.SharePictures = sharePictures;
+                            t.ShareTitle = shareTitle;
+                        }
+                    }
+                    result.Resource = list;
                 result.Status = Result.SUCCEED;
                 }
                 else
