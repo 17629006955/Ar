@@ -63,7 +63,7 @@ namespace Ar.Services
             {
                 donationAmount = type.DonationAmount;
                 money = type.Money;
-                ratio = donationAmount / (money + donationAmount);
+                ratio = donationAmount/ (money + donationAmount);
                 explain = "充值类型" + type.RechargeTypeName + ",本金：" + money + ",赠送：+" + donationAmount;
             }
             UseWallet wallet = new UseWallet()
@@ -72,7 +72,7 @@ namespace Ar.Services
                 UserCode = userCode,
                 AccountPrincipal = money,
                 DonationAmount = donationAmount,
-                Ratio = decimal.Round(decimal.Parse(ratio.ToString()), 2).ToString(),
+                Ratio = decimal.Round(decimal.Parse(ratio.ToString()), 4).ToString(),
                 Status = true,
                 Sort = 1,
                 IsMissionGiveaway = false

@@ -135,14 +135,14 @@ namespace Ar.Services
             else
             {
                 fs.UseWalletMoney = uw.TotalAmount - order.Money;
-                fs.UseWalletAccountPrincipal = uw.AccountPrincipal - order.Money * Math.Round(Convert.ToDecimal(uw.Ratio), 2);
+                fs.UseWalletAccountPrincipal = uw.AccountPrincipal - order.Money * (1-Convert.ToDecimal(uw.Ratio));
                 if (fs.UseWalletMoney != 0)
                 {
-                    var fr = fs.UseWalletAccountPrincipal / fs.UseWalletMoney * 100;
-                    if (fr != 0m)
+                    
+                    if (!string.IsNullOrEmpty(uw.Ratio))
                     {
-                        decimal cc = Convert.ToDecimal(fr);
-                        fs.Ratio = Math.Round(cc, 2).ToString() + '%';
+
+                        fs.Ratio = Math.Round(100-Convert.ToDouble(uw.Ratio)*100,2).ToString() + '%';
                     }
                     else
                     {
@@ -228,13 +228,12 @@ namespace Ar.Services
             {
                 fs.UseWalletMoney = uw.TotalAmount - order.Money;
                 fs.UseWalletMoney1 = fs.UseWalletMoney;
-                fs.UseWalletAccountPrincipal = uw.AccountPrincipal - order.Money * Math.Round(Convert.ToDecimal(uw.Ratio), 2);
+                fs.UseWalletAccountPrincipal = uw.AccountPrincipal - order.Money * (1 - Convert.ToDecimal(uw.Ratio));
 
                 var fr = fs.UseWalletAccountPrincipal / fs.UseWalletMoney * 100;
-                if (fr != 0m)
+                if (!string.IsNullOrEmpty(uw.Ratio))
                 {
-                    decimal cc = Convert.ToDecimal(fr);
-                    fs.Ratio = Math.Round(cc, 2).ToString() + '%';
+                    fs.Ratio = Math.Round(100-Convert.ToDouble(uw.Ratio) * 100, 2).ToString() + '%';
                 }
                 else
                 {
@@ -292,10 +291,14 @@ namespace Ar.Services
             fs.CouponUseCode = "";
             fs.CouponUseMoney = 0;
             fs.UseWalletMoney = uw.TotalAmount+ useWallet.AccountPrincipal+ useWallet.DonationAmount;
-            fs.Ratio =(uw.AccountPrincipal + useWallet.AccountPrincipal / fs.UseWalletMoney).ToString();
+            if (!string.IsNullOrEmpty(uw.Ratio))
+            {
+                fs.Ratio = Math.Round(100-Convert.ToDouble(uw.Ratio) * 100, 2).ToString() + '%';
+            }
+            
             fs.UseWalletMoney1 = fs.UseWalletMoney;
             fs.UseWalletAccountPrincipal = uw.AccountPrincipal + useWallet.AccountPrincipal;
-            fs.Ratio = (fs.UseWalletAccountPrincipal / fs.UseWalletMoney).ToString();
+           
             fs.ProductInfoRate = "0";
             return fs;
         }
@@ -366,7 +369,10 @@ namespace Ar.Services
                 fs.UseWalletMoney = uw.TotalAmount;
                 fs.UseWalletMoney1 = fs.UseWalletMoney;
                 fs.UseWalletAccountPrincipal = uw.AccountPrincipal;
-                fs.Ratio = (fs.UseWalletAccountPrincipal / fs.UseWalletMoney).ToString();
+                if (!string.IsNullOrEmpty(uw.Ratio))
+                {
+                    fs.Ratio = Math.Round(100-Convert.ToDouble(uw.Ratio) * 100, 2).ToString() + '%';
+                }
             }
             fs.RecordsOfConsumptionCreateTime = dateTime;
             fs.WriteOffUser =u.UserName;
@@ -395,9 +401,9 @@ namespace Ar.Services
             }
             else
             {
-                if (string.IsNullOrEmpty(fs.Ratio))
+                if (!string.IsNullOrEmpty(uw.Ratio))
                 {
-                    fs.FinancialRevenueAccounting = fs.RecordsMoney * Convert.ToDecimal(fs.Ratio);
+                    fs.FinancialRevenueAccounting = fs.RecordsMoney * Convert.ToDecimal((1-Convert.ToDouble(uw.Ratio)));
                 }
             }
             fs.Imoney = fs.FinancialRevenueAccounting * Convert.ToDecimal((100 - Convert.ToDouble(p.Rate)) * 0.01);

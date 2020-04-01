@@ -1,4 +1,5 @@
-﻿using Ar.IServices;
+﻿using Ar.Common;
+using Ar.IServices;
 using Ar.Repository;
 using AR.Model;
 using Dapper;
@@ -61,12 +62,15 @@ namespace Ar.Services
             decimal tempTotal = 0;
             foreach (var w in list)
             {
+                LogHelper.WriteLog("w.AccountPrincipal " +w.AccountPrincipal);
                 if (w.AccountPrincipal > 0)
                 {
                     var ratio = decimal.Parse(w.Ratio);
-                    tempTotal = decimal.Parse((w.AccountPrincipal + w.DonationAmount).ToString());
+                    tempTotal = tempTotal+ decimal.Parse((w.AccountPrincipal + w.DonationAmount).ToString());
+                    LogHelper.WriteLog("w.tempTotal " + tempTotal);
                 }
             }
+            LogHelper.WriteLog("w.tempTotal " + tempTotal);
             if (tempTotal >= money)
             {
                 result = true;
@@ -204,11 +208,20 @@ namespace Ar.Services
                 donationAmount = donationAmount + w.DonationAmount;
                 w.TotalAmount = w.AccountPrincipal + w.DonationAmount;
                 totalAmount = totalAmount + w.TotalAmount;
+                
             }
-            if (totalAmount != 0)
+            decimal? totalAmounttemp = 0;
+            foreach (var x in list)
             {
-                Ratio = (accountPrincipal / totalAmount).ToString();
-             }
+
+                totalAmounttemp = x.AccountPrincipal + x.DonationAmount;
+                if (totalAmounttemp != 0)
+                {
+                    Ratio = x.Ratio;
+                    break;
+                }
+            }
+
             return new UseWallet(){ AccountPrincipal = accountPrincipal,
                 DonationAmount = donationAmount,
                 TotalAmount = totalAmount,
