@@ -58,7 +58,7 @@ namespace Ar.API.Controllers
             try
             {
                 CommonResponse response = client.GetCommonResponse(request);
-                
+                LogHelper.WriteLog("SendMessageCode response" + response);
                 var sendSmsResponse = jsonSerialize.Deserialize<SendSmsResponse>(response.Data);
                 if (sendSmsResponse.Code.Equals("OK"))
                 {

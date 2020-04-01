@@ -110,6 +110,12 @@ namespace Ar.API.Controllers
         //http://localhost:10010//api/Message/BangMessageCode?phone=18235139350&verificationCode=232232&userCode=121ewe&birthday='yyyy-mm-dd'
         public IHttpActionResult BangMessageCode(string phone, string verificationCode, string userCode, string storeCode, string birthday, string recommendedPhone = null)
         {
+            LogHelper.WriteLog("BangMessageCode phone" + phone);
+            LogHelper.WriteLog("BangMessageCode verificationCode" + verificationCode);
+            LogHelper.WriteLog("BangMessageCode userCode" + userCode);
+            LogHelper.WriteLog("BangMessageCode storeCode" + storeCode);
+            LogHelper.WriteLog("BangMessageCode birthday" + birthday);
+            LogHelper.WriteLog("BangMessageCode recommendedPhone" + recommendedPhone);
             IStoreService storeService = new StoreService();
             ICouponService _service = new CouponService();
             IUserInfo _userservice = new UserInfo();
