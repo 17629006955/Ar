@@ -11,7 +11,7 @@ namespace Ar.IServices
     public interface IUserInfo
     {
          bool LogIn(string userName,string pwd);
-        User GetUserByphone(string phone);
+        User GetUserByphone(string phone,string storeCode);
         User GetUserByCode(string code);
         int CreateUser(User user);
         int UpdateByPhone(string userCode, string phone, DateTime birthday, string ReferenceNumber, string recommendedPhone = null);

@@ -21,11 +21,13 @@ namespace Ar.Services
             return userone==null?false:true;
         }
 
-        public User GetUserByphone(string phone)
+        public User GetUserByphone(string phone,string storeCode)
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@phone", phone, System.Data.DbType.String);
-            User userone = DapperSqlHelper.FindOne<User>("select * from [dbo].[User] where phone=@phone", paras, false);
+            paras.Add("@StoreCode", storeCode, System.Data.DbType.String);
+            User userone = DapperSqlHelper.FindOne<User>(@"select u.* from [dbo].[User] u
+LEFT JOIN dbo.UserStore s ON s.UserCode = u.Code WHERE u.Phone = @phone AND s.MembershipCardStore = @StoreCode", paras, false);
 
             return userone;
         }

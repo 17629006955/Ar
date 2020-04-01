@@ -53,18 +53,7 @@ namespace Ar.API.Controllers
 
         }
 
-        ////http://localhost:10010//api/WeixinUser/GetUserInfo?phone=18235139350
-        [HttpGet]
-        public IHttpActionResult GetUserInfo(string phone)
-        {
-            
-            var user = userInfo.GetUserByphone(phone);
-            SimpleResult result = new SimpleResult();
-            result.Resource = user;
-            LogHelper.WriteLog("GetUserInfo result" + Json(result));
-            return Json(result);
-
-        }
+       
         [HttpGet]
         [HttpPost]
         //http://localhost:10010//api/WeixinUser/Login?storeCode=3

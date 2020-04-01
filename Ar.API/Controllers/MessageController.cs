@@ -246,50 +246,60 @@ namespace Ar.API.Controllers
                         {
                             if (!string.IsNullOrEmpty(user.RecommendedPhone))
                             {
-                                var recouser = _userservice.GetUserByphone(user.RecommendedPhone);
-                                //判断是不是已经领够了2次
-                                if (recouser != null && recouser.IsMember)
+                                IUserStoreService _userStoreservice = new UserStoreService();
+                                var store = _userStoreservice.GetUserStorebyUserCode(userCode);
+                                if (store != null)
                                 {
-                                    if (_service.checkCoupon(recouser.Code))
+                                    var recouser = _userservice.GetUserByphone(user.RecommendedPhone, store.MembershipCardStore);
+                                    //判断是不是已经领够了2次
+                                    if (recouser != null && recouser.IsMember)
                                     {
-                                        var couponType = _couponTypeservice.GetCouponTypeByIsGivedType();
-                                        if (couponType != null)
+                                        if (_service.checkCoupon(recouser.Code))
                                         {
-                                            Coupon coupon = new Coupon();
-                                            coupon.CouponCode = Guid.NewGuid().ToString();
-                                            coupon.UserCode = recouser.Code;
-                                            coupon.CouponTypeCode = couponType.CouponTypeCode;
-                                            coupon.StratTime = DateTime.Now;
-                                            coupon.VersionEndTime = DateTime.MaxValue;
-                                            coupon.IsGiveed = true;
-                                            coupon.CouponUseCode = Str(10, true);
-                                            //没有添加任务优惠券
-                                            var re = _service.Insert(coupon);
-                                            //更改任务状态
-                                            var userTask = _userTaskservice.GetUserTaskList(recouser.Code);
-                                            var ut = userTask.Where(u => u.TaskCode == "2").FirstOrDefault();
-                                            ut.IsComplete = true;
-                                            _userTaskservice.UpdateUserTask(ut.UserTaskCode, 1);
-                                            result.Resource = re;
-                                            result.Status = Result.SUCCEED;
+                                            var couponType = _couponTypeservice.GetCouponTypeByIsGivedType();
+                                            if (couponType != null)
+                                            {
+                                                Coupon coupon = new Coupon();
+                                                coupon.CouponCode = Guid.NewGuid().ToString();
+                                                coupon.UserCode = recouser.Code;
+                                                coupon.CouponTypeCode = couponType.CouponTypeCode;
+                                                coupon.StratTime = DateTime.Now;
+                                                coupon.VersionEndTime = DateTime.MaxValue;
+                                                coupon.IsGiveed = true;
+                                                coupon.CouponUseCode = Str(10, true);
+                                                //没有添加任务优惠券
+                                                var re = _service.Insert(coupon);
+                                                //更改任务状态
+                                                var userTask = _userTaskservice.GetUserTaskList(recouser.Code);
+                                                var ut = userTask.Where(u => u.TaskCode == "2").FirstOrDefault();
+                                                ut.IsComplete = true;
+                                                _userTaskservice.UpdateUserTask(ut.UserTaskCode, 1);
+                                                result.Resource = re;
+                                                result.Status = Result.SUCCEED;
 
+                                            }
+                                            else
+                                            {
+                                                result.Resource = "好友赠送任务已经结束";
+                                                result.Status = Result.SYSTEM_ERROR;
+                                            }
                                         }
                                         else
                                         {
-                                            result.Resource = "好友赠送任务已经结束";
+                                            result.Resource = "好友已经达到任务奖励上限";
+
                                             result.Status = Result.SYSTEM_ERROR;
                                         }
                                     }
                                     else
                                     {
-                                        result.Resource = "好友已经达到任务奖励上限";
-
+                                        result.Resource = "您还没有注册会员";
                                         result.Status = Result.SYSTEM_ERROR;
                                     }
                                 }
                                 else
                                 {
-                                    result.Resource = "您还没有注册会员";
+                                    result.Resource = "店铺不存在";
                                     result.Status = Result.SYSTEM_ERROR;
                                 }
                             }
