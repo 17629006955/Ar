@@ -16,8 +16,8 @@ namespace Ar.IServices
         int CreateUser(User user);
         int UpdateByPhone(string userCode, string phone, DateTime birthday, string ReferenceNumber, string recommendedPhone = null);
         int UpdateReferenceNumber(string userCode, string ReferenceNumber);
-        int UpdateByuserCodePhone(string userCode, string phone, DateTime birthday);
-        int UpdateIsMemberByuserCode(string userCode);
+        int UpdateByuserCodePhone(string userCode, string phone, DateTime birthday,string idcard);
+        int UpdateIsMemberByuserCode(string userCode, string ReferenceNumber);
 
     }
 }

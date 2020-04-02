@@ -52,18 +52,57 @@ namespace Ar.Common.tool
                     }
                     return request.GetResponse() as HttpWebResponse;
                 }
+        /*
+    *  url:POST请求地址
+    *  postData:json格式的请求报文,例如：{"key1":"value1","key2":"value2"}
+    */
 
-                /// <summary>  
-                /// 创建POST方式的HTTP请求  
-                /// </summary>  
-                /// <param name="url">请求的URL</param>  
-                /// <param name="parameters">随同请求POST的参数名称及参数值字典</param>  
-                /// <param name="timeout">请求的超时时间</param>  
-                /// <param name="userAgent">请求的客户端浏览器信息，可以为空</param>  
-                /// <param name="requestEncoding">发送HTTP请求时所用的编码</param>  
-                /// <param name="cookies">随同HTTP请求发送的Cookie信息，如果不需要身份验证可以为空</param>  
-                /// <returns></returns>  
-                public static HttpWebResponse CreatePostHttpResponse(string url, IDictionary<string, string> parameters,
+        public static string PostUrl(string url, string postData)
+        {
+            string result = "";
+
+            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+
+            req.Method = "POST";
+
+            req.Timeout = 60000;//设置请求超时时间，单位为毫秒
+
+            req.ContentType = "application/json";
+
+            byte[] data = Encoding.UTF8.GetBytes(postData);
+
+            req.ContentLength = data.Length;
+
+            using (Stream reqStream = req.GetRequestStream())
+            {
+                reqStream.Write(data, 0, data.Length);
+
+                reqStream.Close();
+            }
+
+            HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+
+            Stream stream = resp.GetResponseStream();
+
+            //获取响应内容
+            using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
+            {
+                result = reader.ReadToEnd();
+            }
+
+            return result;
+        }
+        /// <summary>  
+        /// 创建POST方式的HTTP请求  
+        /// </summary>  
+        /// <param name="url">请求的URL</param>  
+        /// <param name="parameters">随同请求POST的参数名称及参数值字典</param>  
+        /// <param name="timeout">请求的超时时间</param>  
+        /// <param name="userAgent">请求的客户端浏览器信息，可以为空</param>  
+        /// <param name="requestEncoding">发送HTTP请求时所用的编码</param>  
+        /// <param name="cookies">随同HTTP请求发送的Cookie信息，如果不需要身份验证可以为空</param>  
+        /// <returns></returns>  
+        public static HttpWebResponse CreatePostHttpResponse(string url, IDictionary<string, string> parameters,
                     int? timeout, string userAgent, Encoding requestEncoding, CookieCollection cookies)
                 {
                     if (string.IsNullOrEmpty(url))

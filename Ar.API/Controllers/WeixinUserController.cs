@@ -247,7 +247,7 @@ namespace Ar.API.Controllers
             return Json(result);
 
         }
-
+        
         //http://localhost:10010//api/WeixinUser/Getaccess_token?authorizationCode=18235139350&membershipCardStore=3
         /// <summary>
         /// 进来新判断是否有认证有的话直接返回没有的话直接

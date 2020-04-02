@@ -1,6 +1,8 @@
 ﻿using Ar.API.Controllers.BaseContolles;
 using Ar.Common;
+using Ar.Common.tool;
 using Ar.IServices;
+using Ar.Model;
 using Ar.Model.BaseResult;
 using Ar.Services;
 using AR.Model;
@@ -8,8 +10,10 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Http;
+using System.Web.Script.Serialization;
 
 namespace Ar.API.Controllers
 {
@@ -121,94 +125,141 @@ namespace Ar.API.Controllers
             IUserInfo _userservice = new UserInfo();
             ICouponTypeService _couponTypeservice = new CouponTypeService();
             IUserTaskService _userTaskservice = new UserTaskService();
+            IUserStoreService userStoreService = new UserStoreService();
             SimpleResult result = new SimpleResult();
             try
             {
                 if (UserAuthorization)
-            {
-
-                if (verificationService.CheckVerification(phone, verificationCode))
                 {
-                    DateTime birthdaydate = new DateTime();
-                    if (DateTime.TryParse(birthday, out birthdaydate))
+
+                    if (verificationService.CheckVerification(phone, verificationCode))
                     {
-                        var use = userInfo.GetUserByCode(userCode);
-                            if (use != null)
+                        DateTime birthdaydate = new DateTime();
+                        if (DateTime.TryParse(birthday, out birthdaydate))
+                        {
+                            var store = storeService.GetStore(storeCode);
+                            if (store != null)
                             {
-                                if (!use.IsMember && string.IsNullOrEmpty(use.ReferenceNumber))
+                                var use = userInfo.GetUserByCode(userCode);
+                                if (use != null)
                                 {
-                                    var store = storeService.GetStore(storeCode);
-                                    if (store != null)
+                                    var userStore = userStoreService.GetUserStorebyUserCode(userCode);
+                                    if (userStore != null)
                                     {
-                                        var wxc = Common.GetCardExt(store, userCode);
-                                        if (wxc != null)
+                                        var cardId = ConfigurationManager.AppSettings["cardId"].ToString();
+                                        var card = getcardlist(store.accessToken, userStore.OpenID, cardId);
+                                        if (card != null && card.FirstOrDefault()?.code != null)
                                         {
-                                            //写入到手机号和和数据库
-                                            var count = userInfo.UpdateByPhone(userCode, phone, birthdaydate, wxc.cardExt.code, recommendedPhone);
-                                            if (count > 0)
+                                            var code = card.FirstOrDefault()?.code;
+                                            var cardstatus = getcardstatus(store.accessToken, code, cardId);
+                                            if (cardstatus.user_card_status.Equals("NORMAL"))
                                             {
-                                                result.Status = Result.SUCCEED;
-                                                LogHelper.WriteLog("BangMessageCode :" + result.Status);
-                                                LogHelper.WriteLog("wxc :" + wxc);
-                                                result.Resource = wxc;
+                                                var count = userInfo.UpdateByuserCodePhone(userCode, phone, birthdaydate, code);
+
+                                                if (count > 0)
+                                                {
+                                                    result.Status = Result.SUCCEED;
+                                                }
+                                                else
+                                                {
+                                                    result.Status = Result.SYSTEM_ERROR;
+                                                    result.Msg = "当前用户绑定手机号失败";
+                                                }
                                             }
                                             else
                                             {
-                                                result.Status = Result.SYSTEM_ERROR;
-                                                result.Msg = "获取配置失败重新获取";
+                                                var wxc = Common.GetCardExt(store, userCode);
+                                                if (wxc != null)
+                                                {
+                                                    //写入到手机号和和数据库
+                                                    var count = userInfo.UpdateByPhone(userCode, phone, birthdaydate, wxc.cardExt.code, recommendedPhone);
+                                                    if (count > 0)
+                                                    {
+                                                        result.Status = Result.SUCCEED;
+                                                        LogHelper.WriteLog("BangMessageCode :" + result.Status);
+                                                        LogHelper.WriteLog("wxc :" + wxc);
+                                                        LogHelper.WriteLog("code :" + wxc.cardExt.code);
+                                                        result.Resource = wxc;
+                                                    }
+                                                    else
+                                                    {
+                                                        result.Status = Result.SYSTEM_ERROR;
+                                                        result.Msg = "获取配置失败重新获取";
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    result.Status = Result.USER_AUTH_ERROR;
+                                                    result.Msg = "获取配置失败重新获取";
+                                                }
                                             }
+
                                         }
                                         else
                                         {
-                                            result.Status = Result.USER_AUTH_ERROR;
-                                            result.Msg = "获取配置失败重新获取";
+                                            var wxc = Common.GetCardExt(store, userCode);
+                                            if (wxc != null)
+                                            {
+                                                //写入到手机号和和数据库
+                                                var count = userInfo.UpdateByPhone(userCode, phone, birthdaydate, wxc.cardExt.code, recommendedPhone);
+                                                if (count > 0)
+                                                {
+                                                    result.Status = Result.SUCCEED;
+                                                    LogHelper.WriteLog("BangMessageCode :" + result.Status);
+                                                    LogHelper.WriteLog("wxc :" + wxc);
+                                                    LogHelper.WriteLog("code :" + wxc.cardExt.code);
+                                                    result.Resource = wxc;
+                                                }
+                                                else
+                                                {
+                                                    result.Status = Result.SYSTEM_ERROR;
+                                                    result.Msg = "获取配置失败重新获取";
+                                                }
+                                            }
+                                            else
+                                            {
+                                                result.Status = Result.USER_AUTH_ERROR;
+                                                result.Msg = "获取配置失败重新获取";
+                                            }
                                         }
                                     }
                                     else
                                     {
                                         result.Status = Result.SYSTEM_ERROR;
-                                        result.Msg = "店铺不存在";
-                                    }
+                                        result.Msg = "当前用户不存在";
 
+                                    }
                                 }
                                 else
                                 {
-                                    var count = userInfo.UpdateByuserCodePhone(userCode, phone, birthdaydate);
-                                    if (count > 0)
-                                    {
-                                        result.Status = Result.SUCCEED;
-                                    }
-                                    else
-                                    {
-                                        result.Status = Result.SYSTEM_ERROR;
-                                        result.Msg = "当前用户绑定手机号失败";
-                                    }
+                                    result.Status = Result.SYSTEM_ERROR;
+                                    result.Msg = "当前用户不存在";
                                 }
                             }
                             else
                             {
                                 result.Status = Result.SYSTEM_ERROR;
-                                result.Msg = "当前用户不存在";
+                                result.Msg = "店铺不存在";
                             }
+                        }
+                        else
+                        {
+                            result.Status = Result.SYSTEM_ERROR;
+                            result.Msg = "选择生日有误";
+                        }
                     }
                     else
                     {
                         result.Status = Result.SYSTEM_ERROR;
-                        result.Msg = "选择生日有误";
+                        result.Msg = "验证码错误或者已经过期，请重新获取验证码。";
                     }
                 }
                 else
                 {
-                    result.Status = Result.SYSTEM_ERROR;
-                    result.Msg = "验证码错误或者已经过期，请重新获取验证码。";
+                    result.Status = ResultType;
+                    result.Resource = ReAccessToken;
+                    result.Msg = TokenMessage;
                 }
-            }
-            else
-            {
-                result.Status = ResultType;
-                result.Resource = ReAccessToken;
-                result.Msg = TokenMessage;
-            }
             }
             catch (Exception ex)
             {
@@ -232,6 +283,8 @@ namespace Ar.API.Controllers
             IUserInfo _userservice = new UserInfo();
             ICouponTypeService _couponTypeservice = new CouponTypeService();
             IUserTaskService _userTaskservice = new UserTaskService();
+            IStoreService storeService = new StoreService();
+            IUserStoreService userStoreService = new UserStoreService();
             SimpleResult result = new SimpleResult();
             try
             {
@@ -240,103 +293,137 @@ namespace Ar.API.Controllers
                     var user = userInfo.GetUserByCode(userCode);
                     if (user != null)
                     {
-                        //写入到手机号和和数据库
-                        var count = userInfo.UpdateIsMemberByuserCode(userCode);
-                        if (count > 0)
+                        var userStore = userStoreService.GetUserStorebyUserCode(userCode);
+                        if (userStore != null)
                         {
-                            if (!string.IsNullOrEmpty(user.RecommendedPhone))
+                            var store = storeService.GetStore(userStore.MembershipCardStore);
+                            if (store != null)
                             {
-                                IUserStoreService _userStoreservice = new UserStoreService();
-                                var store = _userStoreservice.GetUserStorebyUserCode(userCode);
-                                if (store != null)
+                                var cardId = ConfigurationManager.AppSettings["cardId"].ToString();
+                                var card = getcardlist(store.accessToken, userStore.OpenID, cardId);
+                                if (card != null && card.FirstOrDefault()?.code != null)
                                 {
-                                    var recouser = _userservice.GetUserByphone(user.RecommendedPhone, store.MembershipCardStore);
-                                    //判断是不是已经领够了2次
-                                    if (recouser != null && recouser.IsMember)
+                                    var code = card.FirstOrDefault()?.code;
+                                    var cardstatus = getcardstatus(store.accessToken, code, cardId);
+                                    if (cardstatus.user_card_status.Equals("NORMAL"))
                                     {
-                                        if (_service.checkCoupon(recouser.Code))
+                                        //写入到手机号和和数据库
+                                        var count = userInfo.UpdateIsMemberByuserCode(userCode, code);
+                                        if (count > 0)
                                         {
-                                            var couponType = _couponTypeservice.GetCouponTypeByIsGivedType();
-                                            if (couponType != null)
+                                            if (!string.IsNullOrEmpty(user.RecommendedPhone))
                                             {
-                                                Coupon coupon = new Coupon();
-                                                coupon.CouponCode = Guid.NewGuid().ToString();
-                                                coupon.UserCode = recouser.Code;
-                                                coupon.CouponTypeCode = couponType.CouponTypeCode;
-                                                coupon.StratTime = DateTime.Now;
-                                                coupon.VersionEndTime = DateTime.MaxValue;
-                                                coupon.IsGiveed = true;
-                                                coupon.CouponUseCode = Str(10, true);
-                                                //没有添加任务优惠券
-                                                var re = _service.Insert(coupon);
-                                                //更改任务状态
-                                                var userTask = _userTaskservice.GetUserTaskList(recouser.Code);
-                                                var ut = userTask.Where(u => u.TaskCode == "2").FirstOrDefault();
-                                                ut.IsComplete = true;
-                                                _userTaskservice.UpdateUserTask(ut.UserTaskCode, 1);
-                                                result.Resource = re;
-                                                result.Status = Result.SUCCEED;
+                                                IUserStoreService _userStoreservice = new UserStoreService();
 
+                                                if (store != null)
+                                                {
+                                                    var recouser = _userservice.GetUserByphone(user.RecommendedPhone, store.StoreCode);
+                                                    //判断是不是已经领够了2次
+                                                    if (recouser != null && recouser.IsMember)
+                                                    {
+                                                        if (_service.checkCoupon(recouser.Code))
+                                                        {
+                                                            var couponType = _couponTypeservice.GetCouponTypeByIsGivedType();
+                                                            if (couponType != null)
+                                                            {
+                                                                Coupon coupon = new Coupon();
+                                                                coupon.CouponCode = Guid.NewGuid().ToString();
+                                                                coupon.UserCode = recouser.Code;
+                                                                coupon.CouponTypeCode = couponType.CouponTypeCode;
+                                                                coupon.StratTime = DateTime.Now;
+                                                                coupon.VersionEndTime = DateTime.MaxValue;
+                                                                coupon.IsGiveed = true;
+                                                                coupon.CouponUseCode = Str(10, true);
+                                                                //没有添加任务优惠券
+                                                                var re = _service.Insert(coupon);
+                                                                //更改任务状态
+                                                                var userTask = _userTaskservice.GetUserTaskList(recouser.Code);
+                                                                var ut = userTask.Where(u => u.TaskCode == "2").FirstOrDefault();
+                                                                ut.IsComplete = true;
+                                                                _userTaskservice.UpdateUserTask(ut.UserTaskCode, 1);
+                                                                result.Resource = re;
+                                                                result.Status = Result.SUCCEED;
+
+                                                            }
+                                                            else
+                                                            {
+                                                                result.Resource = "好友赠送任务已经结束";
+                                                                result.Status = Result.SYSTEM_ERROR;
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            result.Resource = "好友已经达到任务奖励上限";
+
+                                                            result.Status = Result.SYSTEM_ERROR;
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        result.Resource = "您还没有注册会员";
+                                                        result.Status = Result.SYSTEM_ERROR;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    result.Resource = "店铺不存在";
+                                                    result.Status = Result.SYSTEM_ERROR;
+                                                }
                                             }
-                                            else
+                                            if (!user.IsMember)
                                             {
-                                                result.Resource = "好友赠送任务已经结束";
-                                                result.Status = Result.SYSTEM_ERROR;
+                                                //
+                                                //添加赠送本人
+                                                if (_service.checkCoupon(userCode))
+                                                {
+                                                    var couponType = _couponTypeservice.GetCouponTypeByIsGivedType();
+                                                    if (couponType != null)
+                                                    {
+                                                        Coupon coupon = new Coupon();
+                                                        coupon.CouponCode = Guid.NewGuid().ToString();
+                                                        coupon.UserCode = userCode;
+                                                        coupon.CouponTypeCode = couponType.CouponTypeCode;
+                                                        coupon.StratTime = DateTime.Now;
+                                                        coupon.VersionEndTime = DateTime.MaxValue;
+                                                        coupon.IsGiveed = true;
+                                                        coupon.CouponUseCode = Str(10, true);
+                                                        //没有添加任务优惠券
+                                                        var re = _service.Insert(coupon);
+                                                        //更改任务状态
+                                                        //更改任务状态
+                                                        var userTask = _userTaskservice.GetUserTaskList(userCode);
+                                                        var ut = userTask.Where(u => u.TaskCode == "1").FirstOrDefault();
+                                                        ut.IsComplete = true;
+                                                        _userTaskservice.UpdateUserTask(ut.UserTaskCode, 1);
+                                                        result.Resource = re;
+                                                        result.Status = Result.SUCCEED;
+                                                    }
+
+                                                }
                                             }
+
+                                            result.Resource = count;
+                                            result.Status = Result.SUCCEED;
                                         }
                                         else
                                         {
-                                            result.Resource = "好友已经达到任务奖励上限";
-
                                             result.Status = Result.SYSTEM_ERROR;
+                                            result.Resource = "添加没有成功，请重试。";
                                         }
                                     }
                                     else
                                     {
-                                        result.Resource = "您还没有注册会员";
                                         result.Status = Result.SYSTEM_ERROR;
+                                        result.Resource = "添加没有成功，请重试。";
                                     }
+
                                 }
                                 else
                                 {
-                                    result.Resource = "店铺不存在";
                                     result.Status = Result.SYSTEM_ERROR;
+                                    result.Resource = "添加没有成功，请重试。";
                                 }
                             }
-                            if (!user.IsMember)
-                            {
-                                //
-                                //添加赠送本人
-                                if (_service.checkCoupon(userCode))
-                                {
-                                    var couponType = _couponTypeservice.GetCouponTypeByIsGivedType();
-                                    if (couponType != null)
-                                    {
-                                        Coupon coupon = new Coupon();
-                                        coupon.CouponCode = Guid.NewGuid().ToString();
-                                        coupon.UserCode = userCode;
-                                        coupon.CouponTypeCode = couponType.CouponTypeCode;
-                                        coupon.StratTime = DateTime.Now;
-                                        coupon.VersionEndTime = DateTime.MaxValue;
-                                        coupon.IsGiveed = true;
-                                        coupon.CouponUseCode = Str(10, true);
-                                        //没有添加任务优惠券
-                                        var re = _service.Insert(coupon);
-                                        //更改任务状态
-                                        //更改任务状态
-                                        var userTask = _userTaskservice.GetUserTaskList(userCode);
-                                        var ut = userTask.Where(u => u.TaskCode == "1").FirstOrDefault();
-                                        ut.IsComplete = true;
-                                        _userTaskservice.UpdateUserTask(ut.UserTaskCode, 1);
-                                        result.Resource = re;
-                                        result.Status = Result.SUCCEED;
-                                    }
-
-                                }
-                            }
-
-                            result.Resource = count;
-                            result.Status = Result.SUCCEED;
                         }
                         else
                         {
@@ -370,5 +457,95 @@ namespace Ar.API.Controllers
             return Json(result);
 
         }
+        public string List2JSON(List<FescoParameter> objlist)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("{");
+            bool isone = false;
+            foreach (var item in objlist)
+            {
+                if (isone)
+                {
+                    sb.Append(",");
+
+                }
+                sb.Append("\"");
+                sb.Append(item.Key);
+                sb.Append("\"");
+                sb.Append(":");
+                if (item.Value.GetType() == typeof(bool))
+                {
+                    sb.Append(false);
+                }
+                else
+                {
+                    sb.Append("\"");
+                    sb.Append(item.Value);
+                    sb.Append("\"");
+                }
+
+                isone = true;
+            }
+            sb.Append("}");
+            return sb.ToString();
+        }
+
+        public List<card> getcardlist(string authorizationCode, string openid, string card_id)
+        {
+            LogHelper.WriteLog("getcardlist start");
+            LogHelper.WriteLog("getcardlist authorizationCode" + authorizationCode);
+            LogHelper.WriteLog("getcardlist openid" + openid);
+            LogHelper.WriteLog("getcardlist card_id" + card_id);
+            var url = "https://api.weixin.qq.com/card/user/getcardlist?access_token=" + authorizationCode;
+            LogHelper.WriteLog("微信认证url:" + url);
+
+            Getcardlist getcardlist = new Getcardlist();
+            getcardlist.openid = openid;
+            getcardlist.card_id = card_id;
+            JavaScriptSerializer jsonSerialize = new JavaScriptSerializer();
+            string postDate = jsonSerialize.Serialize(getcardlist);
+            string content = HttpWebResponseUtility.PostUrl(url, postDate);
+
+
+            LogHelper.WriteLog("getcardlist content:" + content);
+            var cardModel = jsonSerialize.Deserialize<cardModel>(content);
+            if (cardModel != null && cardModel.errcode == 0)
+            {
+                cardModel.card_list.FirstOrDefault();
+            }
+
+
+
+            LogHelper.WriteLog("getcardlist end");
+            return cardModel.card_list;
+        }
+        public Cardstatus getcardstatus(string authorizationCode, string code, string card_id)
+        {
+            LogHelper.WriteLog("getcardlist start");
+            LogHelper.WriteLog("getcardlist authorizationCode" + authorizationCode);
+            LogHelper.WriteLog("getcardlist card_id" + card_id);
+            LogHelper.WriteLog("getcardlist code" + code);
+            var url = "https://api.weixin.qq.com/card/code/get?access_token=" + authorizationCode;
+            LogHelper.WriteLog("微信认证url:" + url);
+
+            Getcardstatus getcardstatus = new Getcardstatus();
+            getcardstatus.card_id = card_id;
+            getcardstatus.code = code;
+            getcardstatus.check_consume = false;
+            JavaScriptSerializer jsonSerialize = new JavaScriptSerializer();
+            string postDate = jsonSerialize.Serialize(getcardstatus);
+            string content = HttpWebResponseUtility.PostUrl(url, postDate);
+
+
+            LogHelper.WriteLog("getcardlist content:" + content);
+            var cardstatus = jsonSerialize.Deserialize<Cardstatus>(content);
+            if (cardstatus != null && cardstatus.errcode == 0)
+            {
+
+            }
+            LogHelper.WriteLog("getcardlist end");
+            return cardstatus;
+        }
+
     }
 }

@@ -6,7 +6,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
-    <_PublishTargetUrl>E:\VrPush</_PublishTargetUrl>
+    <_PublishTargetUrl>E:\zcc</_PublishTargetUrl>
   </PropertyGroup>
   <ItemGroup>
     <File Include="ApplicationInsights.config">
@@ -37,10 +37,10 @@
       <publishTime>05/01/2020 20:33:16</publishTime>
     </File>
     <File Include="bin/Ar.Common.dll">
-      <publishTime>03/30/2020 15:41:07</publishTime>
+      <publishTime>04/02/2020 15:20:43</publishTime>
     </File>
     <File Include="bin/Ar.Common.pdb">
-      <publishTime>03/30/2020 15:41:07</publishTime>
+      <publishTime>04/02/2020 15:20:43</publishTime>
     </File>
     <File Include="bin/Ar.IServices.dll">
       <publishTime>05/01/2020 20:33:12</publishTime>

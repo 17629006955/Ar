@@ -50,11 +50,14 @@
     <Compile Include="addCard.cs" />
     <Compile Include="BaseResult\SimpleResult.cs" />
     <Compile Include="CardExt.cs" />
+    <Compile Include="cardList.cs" />
+    <Compile Include="Cardstatus.cs" />
     <Compile Include="Certification.cs" />
     <Compile Include="Coupon.cs" />
     <Compile Include="CouponType.cs" />
     <Compile Include="CustomerService.cs" />
     <Compile Include="ExperienceVoucher.cs" />
+    <Compile Include="FescoParameter.cs" />
     <Compile Include="FinancialStatements.cs" />
     <Compile Include="FristModel.cs" />
     <Compile Include="IntegralRecord.cs" />

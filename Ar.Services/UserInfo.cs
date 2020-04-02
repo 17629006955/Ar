@@ -74,23 +74,25 @@ LEFT JOIN dbo.UserStore s ON s.UserCode = u.Code WHERE u.Phone = @phone AND s.Me
 
             }
         }
-        public int UpdateByuserCodePhone(string userCode, string phone, DateTime birthday)
+        public int UpdateByuserCodePhone(string userCode, string phone, DateTime birthday,string idcard)
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@phone", phone, System.Data.DbType.String);
             paras.Add("@Code", userCode, System.Data.DbType.String);
             paras.Add("@birthday", birthday, System.Data.DbType.DateTime);
             paras.Add("@IsMember", true, System.Data.DbType.Boolean);
-            return DapperSqlHelper.ExcuteNonQuery<User>(@"Update  [dbo].[User] set phone=@phone,birthday=@birthday,IsMember=@IsMember where Code=@Code", paras, false);
+            paras.Add("@ReferenceNumber", idcard, System.Data.DbType.String);
+            return DapperSqlHelper.ExcuteNonQuery<User>(@"Update  [dbo].[User] set phone=@phone,birthday=@birthday,IsMember=@IsMember,ReferenceNumber=@ReferenceNumber where Code=@Code", paras, false);
 
             
         }
-        public int UpdateIsMemberByuserCode(string userCode)
+        public int UpdateIsMemberByuserCode(string userCode,string ReferenceNumber)
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@IsMember", true, System.Data.DbType.Boolean);
             paras.Add("@Code", userCode, System.Data.DbType.String);
-            return DapperSqlHelper.ExcuteNonQuery<User>(@"Update  [dbo].[User] set IsMember=@IsMember where Code=@Code", paras, false);
+            paras.Add("@ReferenceNumber", ReferenceNumber, System.Data.DbType.String);
+            return DapperSqlHelper.ExcuteNonQuery<User>(@"Update  [dbo].[User] set IsMember=@IsMember,ReferenceNumber=@ReferenceNumber where Code=@Code", paras, false);
 
 
         }
