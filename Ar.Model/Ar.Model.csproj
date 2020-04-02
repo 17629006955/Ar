@@ -65,6 +65,7 @@
     <Compile Include="MembershipScore.cs" />
     <Compile Include="MessageNo.cs" />
     <Compile Include="MessageReturn.cs" />
+    <Compile Include="OpenCard.cs" />
     <Compile Include="Order.cs" />
     <Compile Include="PayPage.cs" />
     <Compile Include="ProductInfo.cs" />

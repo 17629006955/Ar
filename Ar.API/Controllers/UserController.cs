@@ -107,6 +107,10 @@ namespace Ar.API.Controllers
                     {
                         userInfo.userTask= userTask.Where(t=>t.IsComplete==false).Count();
                     }
+                    userInfo.openCard = new OpenCard();
+                    var cardId = ConfigurationManager.AppSettings["cardId"].ToString();
+                    userInfo.openCard.cardId = cardId;
+                    userInfo.openCard.code = userInfo.user?.ReferenceNumber;
                     result.Resource = userInfo;
                     result.Status = Result.SUCCEED;
                 }

@@ -22,7 +22,8 @@ namespace Ar.Model
 
         public int useCouponCount { get; set; }
         public int userTask { get; set; }
-        
+        public  OpenCard openCard { get; set; }
+
 
     }
 }
