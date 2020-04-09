@@ -48,10 +48,18 @@ namespace AR.Model
         private string _rate;
         private string _type;
         private string _creatorName;
-        
+
+        private string _transverseImageUrl;
 
         private List<DateTime> _selectDate;
         private int _peopleCount;
+
+        public string  TransverseImageUrl
+        {
+            set { _transverseImageUrl = value; }
+            get { return _transverseImageUrl; }
+        }
+
 
         /// <summary>
         /// 
