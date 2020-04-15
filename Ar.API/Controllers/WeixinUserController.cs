@@ -81,7 +81,7 @@ namespace Ar.API.Controllers
                 }
                 else
                 {
-                    result.Msg = "登陆失败，没有改店信息，请联系客服配置店面信息。";
+                    result.Msg = "登陆失败，没有该店信息，请联系客服配置店面信息。";
 
                 }
             } catch (Exception e)
