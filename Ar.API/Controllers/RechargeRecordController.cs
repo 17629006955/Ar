@@ -173,9 +173,8 @@ namespace Ar.API.Controllers
 
                             string rechargeTypeName = "充值";
                             decimal? donationAmount = 0;
-                            if (money >= 0)
+                            if (typeCode=="0")
                             {
-                                typeCode = "0";
                                 donationAmount = 0;
                             }
                             else
