@@ -30,10 +30,11 @@ namespace AR.Model
 		private string _listcode;
 		private string _productcode;
 		private bool _status;
-		/// <summary>
-		/// 
-		/// </summary>
-		public string ProductListCode
+        private DateTime _createTime;
+        /// <summary>
+        /// 
+        /// </summary>
+        public string ProductListCode
 		{
 			set{ _productlistcode=value;}
 			get{return _productlistcode;}
@@ -62,8 +63,16 @@ namespace AR.Model
 			set{ _status=value;}
 			get{return _status;}
 		}
-		#endregion Model
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime CreateTime
+        {
+            set { _createTime = value; }
+            get { return _createTime; }
+        }
+        #endregion Model
 
-	}
+    }
 }
 
