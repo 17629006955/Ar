@@ -291,6 +291,81 @@
     <File Include="bin/zh-Hans/System.Web.WebPages.resources.dll">
       <publishTime>01/28/2015 04:04:32</publishTime>
     </File>
+    <File Include="Controllers/BaseContolles/BaseApiController.cs">
+      <publishTime>02/23/2020 17:56:42</publishTime>
+    </File>
+    <File Include="Controllers/BaseContolles/DelegateFilter.cs">
+      <publishTime>02/23/2020 17:56:42</publishTime>
+    </File>
+    <File Include="Controllers/BaseContolles/EncryptBaseController.cs">
+      <publishTime>03/25/2020 21:40:31</publishTime>
+    </File>
+    <File Include="Controllers/Common.cs">
+      <publishTime>04/02/2020 13:36:39</publishTime>
+    </File>
+    <File Include="Controllers/CouponController.cs">
+      <publishTime>04/01/2020 23:12:23</publishTime>
+    </File>
+    <File Include="Controllers/CouponTypeController.cs">
+      <publishTime>03/30/2020 15:32:49</publishTime>
+    </File>
+    <File Include="Controllers/CustomerController.cs">
+      <publishTime>03/30/2020 15:32:49</publishTime>
+    </File>
+    <File Include="Controllers/ExperienceVoucherController.cs">
+      <publishTime>03/30/2020 14:49:38</publishTime>
+    </File>
+    <File Include="Controllers/IntegralRecordController.cs">
+      <publishTime>03/30/2020 15:32:49</publishTime>
+    </File>
+    <File Include="Controllers/ListTypeController.cs">
+      <publishTime>03/29/2020 19:51:22</publishTime>
+    </File>
+    <File Include="Controllers/MembershipScoreController.cs">
+      <publishTime>03/30/2020 14:52:17</publishTime>
+    </File>
+    <File Include="Controllers/MessageController.cs">
+      <publishTime>04/02/2020 15:20:00</publishTime>
+    </File>
+    <File Include="Controllers/OrderController.cs">
+      <publishTime>03/31/2020 21:35:34</publishTime>
+    </File>
+    <File Include="Controllers/ProductInfoController.cs">
+      <publishTime>03/31/2020 20:34:55</publishTime>
+    </File>
+    <File Include="Controllers/PropagandaController.cs">
+      <publishTime>03/29/2020 19:39:04</publishTime>
+    </File>
+    <File Include="Controllers/RechargeRecordController.cs">
+      <publishTime>04/16/2020 15:19:36</publishTime>
+    </File>
+    <File Include="Controllers/RechargeTypeController.cs">
+      <publishTime>03/30/2020 15:20:58</publishTime>
+    </File>
+    <File Include="Controllers/RecordsOfConsumptionController.cs">
+      <publishTime>05/01/2020 20:30:02</publishTime>
+    </File>
+    <File Include="Controllers/StoreController.cs">
+      <publishTime>03/30/2020 15:24:17</publishTime>
+    </File>
+    <File Include="Controllers/TaskController.cs">
+      <publishTime>05/01/2020 20:30:02</publishTime>
+    </File>
+    <File Include="Controllers/UserController.cs">
+      <publishTime>04/02/2020 20:47:30</publishTime>
+    </File>
+    <File Include="Controllers/UserTaskController.cs">
+      <publishTime>04/01/2020 21:53:55</publishTime>
+    </File>
+    <File Include="Controllers/UseWalletController.cs">
+      <publishTime>03/31/2020 20:58:57</publishTime>
+    </File>
+    <File Include="Controllers/WeixinUserController.cs">
+      <publishTime>04/02/2020 22:21:00</publishTime>
+    </File>
+    <File Include="Controllers/WxTokenController.cs">
+      <publishTime>03/30/2020 13:58:25</publishTime>
+    </File>
     <File Include="favicon.ico">
       <publishTime>02/23/2020 17:56:42</publishTime>
     </File>

@@ -53,7 +53,7 @@ namespace Ar.Services
             var explain = "";
             decimal? donationAmount = 0;
             decimal? ratio = 0;
-            if (money > 0)
+            if (money > 0 && type==null)
             {
                 typeCode = "0";
                 ratio = 0;
@@ -77,16 +77,17 @@ namespace Ar.Services
                 Sort = 1,
                 IsMissionGiveaway = false
             };
-            var fs =_financialStatementsService.getDataRechargeRecord(userCode, typeCode, wallet, storeCode, "微信");
-            LogHelper.WriteLog("报表表数据更新完成");
-            _financialStatementsService.Insert(fs);
-            using (var scope = new TransactionScope())//创建事务
+           
+            using (var scope2 = new TransactionScope())//创建事务
             {
                 //钱包
                 us.InsertUseWallet(wallet);
                 //消费记录
                 cs.InsertRecore(typeCode, userCode, decimal.Parse(money.ToString()), explain,null, null);
-                scope.Complete();
+                var fs = _financialStatementsService.getDataRechargeRecord(userCode, typeCode, wallet, storeCode, "微信");
+                LogHelper.WriteLog("报表表数据更新完成");
+                _financialStatementsService.Insert(fs);
+                scope2.Complete();
             }
             //充值
             //InsertRechargeRecord(record);
