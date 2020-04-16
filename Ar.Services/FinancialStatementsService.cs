@@ -279,25 +279,25 @@ namespace Ar.Services
             fs.StoreName = s?.StoreName;
             fs.ProductionType = "体验服务";
             fs.Cstname = "普通销售";
-            fs.ProductionCode = rechargetype.RechargeTypeCode;
-            fs.ProductionName = rechargetype.RechargeTypeName;
+            fs.ProductionCode = rechargetype?.RechargeTypeCode;
+            fs.ProductionName = rechargetype?.RechargeTypeName;
             fs.Iquantity = 1;
-            fs.Itaxunitprice = useWallet.AccountPrincipal;
-            fs.Isum = useWallet.AccountPrincipal;
+            fs.Itaxunitprice = useWallet?.AccountPrincipal;
+            fs.Isum = useWallet?.AccountPrincipal;
             fs.CpersonName = "业务员";
             fs.PayType = payType;
-            fs.AmountOfIncome = useWallet.AccountPrincipal;
-            fs.DonationAmount = useWallet.DonationAmount;
+            fs.AmountOfIncome = useWallet?.AccountPrincipal;
+            fs.DonationAmount = useWallet?.DonationAmount;
             fs.CouponUseCode = "";
             fs.CouponUseMoney = 0;
-            fs.UseWalletMoney = uw.TotalAmount+ useWallet.AccountPrincipal+ useWallet.DonationAmount;
-            if (!string.IsNullOrEmpty(uw.Ratio))
+            fs.UseWalletMoney = uw?.TotalAmount+ useWallet?.AccountPrincipal+ useWallet?.DonationAmount;
+            if (!string.IsNullOrEmpty(uw?.Ratio))
             {
-                fs.Ratio = Math.Round(100-Convert.ToDouble(uw.Ratio) * 100, 2).ToString() + '%';
+                fs.Ratio = Math.Round(100-Convert.ToDouble(uw?.Ratio) * 100, 2).ToString() + '%';
             }
             
-            fs.UseWalletMoney1 = fs.UseWalletMoney;
-            fs.UseWalletAccountPrincipal = uw.AccountPrincipal + useWallet.AccountPrincipal;
+            fs.UseWalletMoney1 = fs?.UseWalletMoney;
+            fs.UseWalletAccountPrincipal = uw?.AccountPrincipal + useWallet?.AccountPrincipal;
            
             fs.ProductInfoRate = "0";
             return fs;
