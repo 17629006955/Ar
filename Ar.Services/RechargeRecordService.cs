@@ -80,13 +80,13 @@ namespace Ar.Services
            
             using (var scope2 = new TransactionScope())//创建事务
             {
+                var fs = _financialStatementsService.getDataRechargeRecord(userCode, typeCode, wallet, storeCode, "微信");
+                LogHelper.WriteLog("报表表数据更新完成");
+                _financialStatementsService.Insert(fs);
                 //钱包
                 us.InsertUseWallet(wallet);
                 //消费记录
                 cs.InsertRecore(typeCode, userCode, decimal.Parse(money.ToString()), explain,null, null);
-                var fs = _financialStatementsService.getDataRechargeRecord(userCode, typeCode, wallet, storeCode, "微信");
-                LogHelper.WriteLog("报表表数据更新完成");
-                _financialStatementsService.Insert(fs);
                 scope2.Complete();
             }
             //充值

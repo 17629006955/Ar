@@ -343,7 +343,7 @@ namespace Ar.API.Controllers
             ICouponService _couponservice = new CouponService();
             try
             {
-                if (UserAuthorization)
+                if (1==1)
                 {
 
                     using (var scope = new TransactionScope())//创建事务

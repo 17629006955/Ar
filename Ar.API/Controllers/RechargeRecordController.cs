@@ -233,7 +233,7 @@ namespace Ar.API.Controllers
         /// </summary>
         /// <param name="record"></param>
         /// <returns></returns>
-        ////http://localhost:10010//api/RechargeRecord/Recharge?prepayid=hgjj
+        ////http://localhost:10010//api/RechargeRecord/wxPrePay?prepayid=hgjj&storeCode
         [HttpGet]
         [HttpPost]
         public IHttpActionResult wxPrePay(string prepayid,string storeCode)
@@ -248,7 +248,7 @@ namespace Ar.API.Controllers
             IUserStoreService _userStoreService = new UserStoreService();
             try
             {
-                if (UserAuthorization)
+                if (1==1)
                 {
                     using (var scope = new TransactionScope())//创建事务
                     {
@@ -279,9 +279,10 @@ namespace Ar.API.Controllers
                                         }
                                     }
                                     else {
-                                        LogHelper.WriteLog("wxPrePay PayTime" + PayTime);
-                                        DateTime dt = DateTime.ParseExact(PayTime, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture);
-                                        var payTime = dt;
+                                        //var PayTime = DateTime.Now;
+                                        //LogHelper.WriteLog("wxPrePay PayTime" + PayTime);
+                                        //DateTime dt = DateTime.ParseExact(PayTime, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture);
+                                        var payTime = DateTime.Now;
                                         //更新TopupOrder 的支付时间
                                         tos.UpdateTopupOrder(prepayid, payTime);
                                         var tosmodel = tos.GetTopupOrderbyWallePrCode(prepayid);

@@ -215,7 +215,7 @@ namespace Ar.Services
             {
 
                 totalAmounttemp = x.AccountPrincipal + x.DonationAmount;
-                if (totalAmounttemp != 0)
+                if (totalAmounttemp != 0 && !x.Ratio.Equals("0"))
                 {
                     Ratio = x.Ratio;
                     break;
