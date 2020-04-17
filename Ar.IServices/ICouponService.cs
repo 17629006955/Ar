@@ -8,7 +8,7 @@ namespace Ar.IServices
         object GetCoupon(string userCode);
         Coupon GetCouponByOrderCode(string OrderCode);
         
-            bool checkCoupon(string userCode);
+        bool checkCoupon(string userCode,string taskCode);
         Coupon GetCouponByCode(string code);
         IList<Coupon> GetCouponList(string userCode);
         bool UsedUpdate(string couponCode,string userCode,string orderCode);

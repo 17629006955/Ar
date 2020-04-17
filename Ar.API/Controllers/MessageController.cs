@@ -146,6 +146,68 @@ namespace Ar.API.Controllers
                                     var userStore = userStoreService.GetUserStorebyUserCode(userCode);
                                     if (userStore != null)
                                     {
+                                        var recouser = _userservice.GetUserByphone(recommendedPhone, store.StoreCode);
+                                        //判断是不是已经领够了2次
+                                        if (recouser != null && recouser.IsMember)
+                                        {
+                                            if (_service.checkCoupon(recouser.Code, "2"))
+                                            {
+                                                var couponType = _couponTypeservice.GetCouponTypeByIsGivedType("2");
+                                                if (couponType != null)
+                                                {
+                                                    Coupon coupon = new Coupon();
+                                                    coupon.CouponCode = Guid.NewGuid().ToString();
+                                                    coupon.UserCode = recouser.Code;
+                                                    coupon.CouponTypeCode = couponType.CouponTypeCode;
+                                                    coupon.StratTime = DateTime.Now;
+                                                    coupon.VersionEndTime = DateTime.MaxValue;
+                                                    coupon.IsGiveed = true;
+                                                    coupon.CouponUseCode = Str(10, true);
+                                                    //没有添加任务优惠券
+                                                    var re = _service.Insert(coupon);
+                                                    //更改任务状态
+                                                    var userTask = _userTaskservice.GetUserTaskList(recouser.Code);
+                                                    var ut = userTask.Where(u => u.TaskCode == "2").FirstOrDefault();
+                                                    ut.IsComplete = true;
+                                                    _userTaskservice.UpdateUserTask(ut.UserTaskCode, 1);
+                                                    result.Resource = re;
+                                                    result.Status = Result.SUCCEED;
+
+                                                }
+                                                else
+                                                {
+                                                    result.Resource = "好友赠送任务已经结束";
+                                                    result.Status = Result.SYSTEM_ERROR;
+                                                }
+                                            }
+                                        }
+                                        //添加赠送本人
+                                        if (_service.checkCoupon(userCode, "1"))
+                                        {
+                                            var couponType = _couponTypeservice.GetCouponTypeByIsGivedType("1");
+                                            if (couponType != null)
+                                            {
+                                                Coupon coupon = new Coupon();
+                                                coupon.CouponCode = Guid.NewGuid().ToString();
+                                                coupon.UserCode = userCode;
+                                                coupon.CouponTypeCode = couponType.CouponTypeCode;
+                                                coupon.StratTime = DateTime.Now;
+                                                coupon.VersionEndTime = DateTime.MaxValue;
+                                                coupon.IsGiveed = true;
+                                                coupon.CouponUseCode = Str(10, true);
+                                                //没有添加任务优惠券
+                                                var re = _service.Insert(coupon);
+                                                //更改任务状态
+                                                //更改任务状态
+                                                var userTask = _userTaskservice.GetUserTaskList(userCode);
+                                                var ut = userTask.Where(u => u.TaskCode == "1").FirstOrDefault();
+                                                ut.IsComplete = true;
+                                                _userTaskservice.UpdateUserTask(ut.UserTaskCode, 1);
+                                                result.Resource = re;
+                                                result.Status = Result.SUCCEED;
+                                            }
+
+                                        }
                                         var cardId = ConfigurationManager.AppSettings["cardId"].ToString();
                                         var card = getcardlist(store.accessToken, userStore.OpenID, cardId);
                                         if (card != null && card.FirstOrDefault()?.code != null)
@@ -175,6 +237,7 @@ namespace Ar.API.Controllers
                                                     var count = userInfo.UpdateByPhone(userCode, phone, birthdaydate, wxc.cardExt.code, recommendedPhone);
                                                     if (count > 0)
                                                     {
+                                                       
                                                         result.Status = Result.SUCCEED;
                                                         LogHelper.WriteLog("BangMessageCode :" + result.Status);
                                                         LogHelper.WriteLog("wxc :" + wxc);
@@ -321,9 +384,9 @@ namespace Ar.API.Controllers
                                                     //判断是不是已经领够了2次
                                                     if (recouser != null && recouser.IsMember)
                                                     {
-                                                        if (_service.checkCoupon(recouser.Code))
+                                                        if (_service.checkCoupon(recouser.Code, "2"))
                                                         {
-                                                            var couponType = _couponTypeservice.GetCouponTypeByIsGivedType();
+                                                            var couponType = _couponTypeservice.GetCouponTypeByIsGivedType("2");
                                                             if (couponType != null)
                                                             {
                                                                 Coupon coupon = new Coupon();
@@ -374,9 +437,9 @@ namespace Ar.API.Controllers
                                             {
                                                 //
                                                 //添加赠送本人
-                                                if (_service.checkCoupon(userCode))
+                                                if (_service.checkCoupon(userCode, "1"))
                                                 {
-                                                    var couponType = _couponTypeservice.GetCouponTypeByIsGivedType();
+                                                    var couponType = _couponTypeservice.GetCouponTypeByIsGivedType("1");
                                                     if (couponType != null)
                                                     {
                                                         Coupon coupon = new Coupon();

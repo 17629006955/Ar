@@ -40,11 +40,14 @@ namespace Ar.Services
             IList<CouponShow> takeEffectList = DapperSqlHelper.FindToList<CouponShow>("select *  from [dbo].[Coupon] a,[dbo].[CouponType] b  where a.UserCode=@userCode and a.CouponTypeCode=b.CouponTypeCode  and   isnull(a.IsUsed,0)=0 and  isnull(a.VersionEndTime,'9999-9-9')>=getdate()", paras, false);
             return takeEffectList;
         }
-        public bool checkCoupon(string userCode)
+        public bool checkCoupon(string userCode,string taskCode)
         {
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@userCode", userCode, System.Data.DbType.String);
-            IList<CouponShow> lapseList = DapperSqlHelper.FindToList<CouponShow>("select *  from [dbo].[Coupon] a where a.UserCode=@userCode and IsGiveed=1", paras, false);
+            paras.Add("@taskCode", taskCode, System.Data.DbType.String);
+            IList<CouponShow> lapseList = DapperSqlHelper.FindToList<CouponShow>(@"select *  from [dbo].[Coupon] a 
+INNER JOIN dbo.CouponType ct ON ct.CouponTypeCode = a.CouponTypeCode
+where a.UserCode = @userCode and IsGiveed = 1 AND ct.TaskType = @taskCode", paras, false);
 
             if (lapseList.Count >= 2)
             {
