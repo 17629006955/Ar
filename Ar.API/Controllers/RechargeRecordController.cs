@@ -248,7 +248,7 @@ namespace Ar.API.Controllers
             IUserStoreService _userStoreService = new UserStoreService();
             try
             {
-                if (1==1)
+                if (UserAuthorization)
                 {
                     using (var scope = new TransactionScope())//创建事务
                     {

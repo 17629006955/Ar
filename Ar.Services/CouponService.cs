@@ -49,7 +49,7 @@ namespace Ar.Services
 INNER JOIN dbo.CouponType ct ON ct.CouponTypeCode = a.CouponTypeCode
 where a.UserCode = @userCode and IsGiveed = 1 AND ct.TaskType = @taskCode", paras, false);
 
-            if (lapseList.Count >= 2)
+            if (lapseList.Count >= 1)
             {
                 return false;
             } else

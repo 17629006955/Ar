@@ -31,40 +31,40 @@
       <publishTime>05/01/2020 20:33:21</publishTime>
     </File>
     <File Include="bin/Ar.API.dll">
-      <publishTime>05/01/2020 20:33:16</publishTime>
+      <publishTime>04/17/2020 23:07:17</publishTime>
     </File>
     <File Include="bin/Ar.API.pdb">
-      <publishTime>05/01/2020 20:33:16</publishTime>
+      <publishTime>04/17/2020 23:07:17</publishTime>
     </File>
     <File Include="bin/Ar.Common.dll">
-      <publishTime>04/15/2020 10:52:31</publishTime>
+      <publishTime>04/17/2020 21:49:02</publishTime>
     </File>
     <File Include="bin/Ar.Common.pdb">
-      <publishTime>04/15/2020 10:52:31</publishTime>
+      <publishTime>04/17/2020 21:49:02</publishTime>
     </File>
     <File Include="bin/Ar.IServices.dll">
-      <publishTime>05/01/2020 20:33:12</publishTime>
+      <publishTime>04/17/2020 23:07:14</publishTime>
     </File>
     <File Include="bin/Ar.IServices.pdb">
-      <publishTime>05/01/2020 20:33:12</publishTime>
+      <publishTime>04/17/2020 23:07:14</publishTime>
     </File>
     <File Include="bin/Ar.Model.dll">
-      <publishTime>05/01/2020 20:33:12</publishTime>
+      <publishTime>04/17/2020 23:07:14</publishTime>
     </File>
     <File Include="bin/Ar.Model.pdb">
-      <publishTime>05/01/2020 20:33:12</publishTime>
+      <publishTime>04/17/2020 23:07:14</publishTime>
     </File>
     <File Include="bin/Ar.Repository.dll">
-      <publishTime>04/15/2020 10:52:30</publishTime>
+      <publishTime>04/17/2020 21:49:02</publishTime>
     </File>
     <File Include="bin/Ar.Repository.pdb">
-      <publishTime>04/15/2020 10:52:30</publishTime>
+      <publishTime>04/17/2020 21:49:02</publishTime>
     </File>
     <File Include="bin/Ar.Services.dll">
-      <publishTime>05/01/2020 20:33:12</publishTime>
+      <publishTime>04/17/2020 23:07:14</publishTime>
     </File>
     <File Include="bin/Ar.Services.pdb">
-      <publishTime>05/01/2020 20:33:12</publishTime>
+      <publishTime>04/17/2020 23:07:14</publishTime>
     </File>
     <File Include="bin/Autofac.dll">
       <publishTime>08/18/2016 15:15:34</publishTime>
@@ -370,7 +370,7 @@
       <publishTime>02/23/2020 17:56:42</publishTime>
     </File>
     <File Include="Global.asax">
-      <publishTime>12/11/2019 16:13:48</publishTime>
+      <publishTime>02/23/2020 17:56:42</publishTime>
     </File>
     <File Include="packages.config">
       <publishTime>02/23/2020 17:56:42</publishTime>
@@ -379,7 +379,7 @@
       <publishTime>05/01/2020 20:33:17</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>05/01/2020 20:33:16</publishTime>
+      <publishTime>04/17/2020 23:07:17</publishTime>
     </File>
   </ItemGroup>
 </Project>

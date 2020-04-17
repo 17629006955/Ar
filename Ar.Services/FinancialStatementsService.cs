@@ -176,7 +176,7 @@ namespace Ar.Services
         /// <param name="order"></param>
         /// <param name="payType"></param>
         /// <returns></returns>
-        public financialStatements getDataRechargeRecord(string userCode, string typeCode,UseWallet useWallet, string storeCode, string payType)
+        public financialStatements getDataRechargeRecord(string userCode, string typeCode,UseWallet useWallet, string storeCode, decimal?  ratio ,string payType)
         {
             ICouponService _couponService = new CouponService();
             IRechargeTypeService rt = new RechargeTypeService();
@@ -215,9 +215,10 @@ namespace Ar.Services
             fs.CouponUseCode = "";
             fs.CouponUseMoney = 0;
             fs.UseWalletMoney = uw?.TotalAmount+ useWallet?.AccountPrincipal+ useWallet?.DonationAmount;
-            if (!string.IsNullOrEmpty(uw?.Ratio))
+
+            if (ratio!=null)
             {
-                fs.Ratio = Math.Round(100-Convert.ToDouble(uw?.Ratio) * 100, 2).ToString() + '%';
+                fs.Ratio = Math.Round(100-Convert.ToDouble(ratio) * 100, 2).ToString() + '%';
             }
             
             fs.UseWalletMoney1 = fs?.UseWalletMoney;
@@ -246,7 +247,7 @@ namespace Ar.Services
             IStoreService _storeService = new StoreService();
             IUserInfo _userService = new UserInfo();
             var order=_orderService.GetOrderByCode(orderCode);
-            var uw = _useWalletService.GetUseWalletCountMoney(userCode);
+            var uw = _useWalletService.GetUseWalletCountMoneyWf(userCode);
             var s = _storeService.GetStore(order.StoreCode);
             var p = _productInfoService.GetProductInfo(order.ProductCode);
             var u = _userService.GetUserByCode(userCode);

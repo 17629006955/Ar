@@ -44,5 +44,6 @@ namespace Ar.IServices
         object GetUseWalletInfoByUserCode(string userCode);
 
         UseWallet GetUseWalletCountMoney(string userCode);
+        UseWallet GetUseWalletCountMoneyWf(string userCode);
     }
 }

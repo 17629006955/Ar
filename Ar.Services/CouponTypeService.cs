@@ -20,7 +20,8 @@ namespace Ar.Services
         public CouponType GetCouponTypeByIsGivedType(string taskcode)
         {
             DynamicParameters paras = new DynamicParameters();
-            CouponType record = DapperSqlHelper.FindOne<CouponType>("select * from [dbo].[CouponType] where  IsGivedType=1 and TaskType=taskcode", paras, false);
+            paras.Add("@taskcode", taskcode, System.Data.DbType.String);
+            CouponType record = DapperSqlHelper.FindOne<CouponType>("select * from [dbo].[CouponType] where  IsGivedType=1 and TaskType=@taskcode", paras, false);
             return record;
         }
 

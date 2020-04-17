@@ -351,7 +351,7 @@ namespace Ar.API.Controllers
             SimpleResult result = new SimpleResult();
             try
             {
-                if (UserAuthorization)
+                if (1==1)
                 {
                     var user = userInfo.GetUserByCode(userCode);
                     if (user != null)

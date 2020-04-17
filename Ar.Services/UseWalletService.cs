@@ -91,7 +91,8 @@ namespace Ar.Services
             {
                 if (w.AccountPrincipal > 0)
                 {
-                    var ratio = decimal.Parse(w.Ratio);
+                    //var ratio = decimal.Parse(w.Ratio);
+                    var ratio = Convert.ToDecimal(w.Ratio);
                     var tempTotal = decimal.Parse((w.AccountPrincipal + w.DonationAmount).ToString());
                     total = total + tempTotal;
                    var tempmoney = money - total;
@@ -226,6 +227,43 @@ namespace Ar.Services
                 DonationAmount = donationAmount,
                 TotalAmount = totalAmount,
                 Ratio= Ratio
+            };
+        }
+        public UseWallet GetUseWalletCountMoneyWf(string userCode)
+        {
+            DynamicParameters paras = new DynamicParameters();
+            paras.Add("@userCode", userCode, System.Data.DbType.String);
+            decimal? totalAmount = 0;
+            decimal? accountPrincipal = 0;
+            decimal? donationAmount = 0;
+            string Ratio = "1";
+            IList<UseWallet> list = DapperSqlHelper.FindToList<UseWallet>("select * from [dbo].[UseWallet] where UserCode=@userCode and Status=1 order by Sort", paras, false);
+            foreach (var w in list)
+            {
+                accountPrincipal = w.AccountPrincipal + accountPrincipal;
+                donationAmount = donationAmount + w.DonationAmount;
+                w.TotalAmount = w.AccountPrincipal + w.DonationAmount;
+                totalAmount = totalAmount + w.TotalAmount;
+
+            }
+            decimal? totalAmounttemp = 0;
+            foreach (var x in list)
+            {
+
+                totalAmounttemp = x.AccountPrincipal + x.DonationAmount;
+                if (totalAmounttemp != 0 )
+                {
+                    Ratio = x.Ratio;
+                    break;
+                }
+            }
+
+            return new UseWallet()
+            {
+                AccountPrincipal = accountPrincipal,
+                DonationAmount = donationAmount,
+                TotalAmount = totalAmount,
+                Ratio = Ratio
             };
         }
     }
