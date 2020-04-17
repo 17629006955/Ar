@@ -279,9 +279,8 @@ namespace Ar.API.Controllers
                                         }
                                     }
                                     else {
-                                        LogHelper.WriteLog("wxPrePay PayTime" + PayTime);
-                                        DateTime dt = DateTime.ParseExact(PayTime, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture);
-                                        var payTime = dt;
+                                       
+                                        var payTime = DateTime.Now;
                                         //更新TopupOrder 的支付时间
                                         tos.UpdateTopupOrder(prepayid, payTime);
                                         var tosmodel = tos.GetTopupOrderbyWallePrCode(prepayid);
