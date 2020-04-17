@@ -261,9 +261,24 @@ namespace Ar.API.Controllers
                             {
                                 if (!string.IsNullOrEmpty(prepayid))
                                 {
-                                    var PayTime = Common.wxPayOrderQuery(prepayid, store.appid.Trim(), store.mchid);
-                                    if (!string.IsNullOrEmpty(PayTime))
+                                    if (ConfigurationManager.AppSettings["isWxpay"] != null && ConfigurationManager.AppSettings["isWxpay"].ToString() == "true")
                                     {
+                                        var PayTime = Common.wxPayOrderQuery(prepayid, store.appid.Trim(), store.mchid);
+                                        if (!string.IsNullOrEmpty(PayTime))
+                                        {
+                                            LogHelper.WriteLog("wxPrePay PayTime" + PayTime);
+                                            DateTime dt = DateTime.ParseExact(PayTime, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture);
+                                            var payTime = dt;
+                                            //更新TopupOrder 的支付时间
+                                            tos.UpdateTopupOrder(prepayid, payTime);
+                                            var tosmodel = tos.GetTopupOrderbyWallePrCode(prepayid);
+                                            var list = _service.Recharge(tosmodel.RechargeTypeCode, tosmodel.UserCode, tosmodel.RecordsMoney, storeCode);
+                                            result.Resource = list;
+                                            result.Status = Result.SUCCEED;
+
+                                        }
+                                    }
+                                    else {
                                         LogHelper.WriteLog("wxPrePay PayTime" + PayTime);
                                         DateTime dt = DateTime.ParseExact(PayTime, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture);
                                         var payTime = dt;
@@ -273,8 +288,8 @@ namespace Ar.API.Controllers
                                         var list = _service.Recharge(tosmodel.RechargeTypeCode, tosmodel.UserCode, tosmodel.RecordsMoney, storeCode);
                                         result.Resource = list;
                                         result.Status = Result.SUCCEED;
-                                       
                                     }
+
                                 }
 
                             }
