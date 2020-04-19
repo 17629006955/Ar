@@ -42,6 +42,7 @@ namespace AR.Model
         private string _SmallIcon;
         private string _BrandStoreName;
         private DateTime? _accessTokenCreateTime;
+        private string _customerService;
 
         public string VIPName
         {
@@ -140,9 +141,13 @@ namespace AR.Model
             set { _accessTokenCreateTime = value; }
             get { return _accessTokenCreateTime; }
         }
+        public string customerService
+        {
+            set { _customerService = value; }
+            get { return _customerService; }
+        }
 
 
-        
         #endregion Model
     }
 }

@@ -44,6 +44,9 @@ namespace Ar.API.Controllers
                     list.BackgroundPictureUrl = backgroundPictureUrl;
                     list.SmallIcon = smallIcon;
                     list.BrandStoreName = brandStoreName;
+                    ICustomerServiceS _customerServiceS = new CustomerServiceS();
+                    var customerService = _customerServiceS.GetCustomerService(list.StoreCode);
+                    list.customerService = customerService?.CardTelephone;
                     result.Resource = list;
                     result.Status = Result.SUCCEED;
                 }
