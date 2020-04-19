@@ -236,7 +236,7 @@ namespace Ar.Services
         /// <param name="order"></param>
         /// <param name="payType"></param>
         /// <returns></returns>
-        public financialStatements getWriteOff(string userCode, string orderCode,string payType)
+        public financialStatements getWriteOff(string userCode, string orderCode,string payType, decimal? RecordsAccountPrincipalMoney)
         {
             var dateTime = DateTime.Now;
             ICouponService _couponService = new CouponService();
@@ -326,15 +326,9 @@ namespace Ar.Services
             }
             else
             {
-                if (!string.IsNullOrEmpty(uw.Ratio))
-                {
-                    fs.FinancialRevenueAccounting = fs.RecordsMoney * Convert.ToDecimal((1 - Convert.ToDouble(uw.Ratio)));
-                }
-                else if (!string.IsNullOrEmpty(uw.Ratio))
-                {
-                    fs.FinancialRevenueAccounting = fs.RecordsMoney * Convert.ToDecimal((1-Convert.ToDouble(uw.Ratio)));
-                }
-                
+                fs.FinancialRevenueAccounting = RecordsAccountPrincipalMoney;
+
+
             }
             fs.Imoney = fs.FinancialRevenueAccounting * Convert.ToDecimal((100 - Convert.ToDouble(p.Rate)) * 0.01);
             fs.ProductInfoRate = p.Rate + "%";

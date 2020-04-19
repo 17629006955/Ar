@@ -538,10 +538,15 @@ namespace Ar.API.Controllers
                                     financialStatements fs = null;
                                     if (string.IsNullOrEmpty(order.WxPrepayId))
                                     {
-                                        fs = _financialStatementsService.getWriteOff(order.UserCode, orderCode, "会员卡");
+                                        
+                                        var recordsOfConsumption = _service.GetRecordsOfConsumptionByOrderCode(orderCode);
+                                        fs = _financialStatementsService.getWriteOff(order.UserCode, orderCode, "会员卡", recordsOfConsumption?.RecordsAccountPrincipalMoney);
+                                       
+                                        
                                     } else
                                     {
-                                         fs = _financialStatementsService.getWriteOff(order.UserCode, orderCode, "微信");
+                                         fs = _financialStatementsService.getWriteOff(order.UserCode, orderCode, "微信",null);
+                                        
                                     }
                                     LogHelper.WriteLog("financialStatements " + fs.Code);
                                     if (fs!=null)

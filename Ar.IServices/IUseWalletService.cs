@@ -38,12 +38,13 @@ namespace Ar.IServices
         /// <param name="userCode"></param>
         /// <returns></returns>
         RechargePage GetRechargePage(string userCode);
-       bool UpdateData(string userCode, decimal money);
+       bool UpdateData(string userCode, decimal money, string OrderCode, out decimal? recordsaccountPrincipalTemp);
 
         bool ExistMoney(string userCode, decimal money);
         object GetUseWalletInfoByUserCode(string userCode);
 
         UseWallet GetUseWalletCountMoney(string userCode);
         UseWallet GetUseWalletCountMoneyWf(string userCode);
+        decimal? GetUseAccountPrincipalByUserCode(string userCode);
     }
 }

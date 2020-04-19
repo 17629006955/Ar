@@ -86,7 +86,7 @@ namespace Ar.Services
                 //钱包
                 us.InsertUseWallet(wallet);
                 //消费记录
-                cs.InsertRecore(typeCode, userCode, decimal.Parse(money.ToString()), explain,null, null);
+                cs.InsertRecore(typeCode, userCode, decimal.Parse(money.ToString()), explain,null,null, null);
                 scope2.Complete();
             }
             //充值

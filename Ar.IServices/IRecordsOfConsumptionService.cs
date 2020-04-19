@@ -12,10 +12,11 @@ namespace Ar.IServices
     {
         bool IsWriteOffUser(string phone);
         RecordsOfConsumption GetRecordsOfConsumptionByCode(string code);
+        RecordsOfConsumption GetRecordsOfConsumptionByOrderCode(string OrderCode);
         IList<RecordsOfConsumption> GetRecordsOfConsumptionList();
 
         IList<RecordsOfConsumption> GetRecordsOfConsumptionListByUserCode(string userCode);
-        bool InsertRecore(string typeCode, string userCode, decimal? recordsMoney, string explain, decimal? recordsdonationAmount, decimal? recordsaccountPrincipal, bool IsRecharging = true );
+        bool InsertRecore(string typeCode, string userCode, decimal? recordsMoney, string explain, decimal? recordsdonationAmount, decimal? recordsaccountPrincipal,string OrderCode, bool IsRecharging = true );
 
         string PayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string storeId,string orderCode = "" ,string couponCode = "");
         Order WxPayOrder(string productCode, string userCode, string peopleCount, DateTime dateTime, decimal money, string wxPrepayId, string storeId, string orderCode = "", string couponCode = "");

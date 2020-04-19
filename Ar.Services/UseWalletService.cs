@@ -78,7 +78,7 @@ namespace Ar.Services
             return result;
 
         }
-        public bool UpdateData(string userCode, decimal money)
+        public bool UpdateData(string userCode, decimal money,string OrderCode,out decimal? recordsaccountPrincipalTemp)
         {
             IRecordsOfConsumptionService _recordsOfConsumption = new RecordsOfConsumptionService();
             decimal total = 0;
@@ -103,9 +103,9 @@ namespace Ar.Services
                       
                         donationAmount = 0;
                         accountPrincipal = 0;
-                        kouchumoney = w.AccountPrincipal + w.DonationAmount;
-                        recordsdonationAmount = w.AccountPrincipal;
-                        recordsaccountPrincipal = w.DonationAmount;
+                        kouchumoney = kouchumoney+w.AccountPrincipal + w.DonationAmount;
+                        recordsdonationAmount = recordsdonationAmount+w.DonationAmount;
+                        recordsaccountPrincipal = recordsaccountPrincipal+w.AccountPrincipal;
                     }
                     else
                     {
@@ -123,11 +123,12 @@ namespace Ar.Services
                 }
                 if (total >= money)
                 {
-                    _recordsOfConsumption.InsertRecore("0", userCode, money, "", recordsdonationAmount, recordsaccountPrincipal, false);
+                    _recordsOfConsumption.InsertRecore("0", userCode, money, "", recordsdonationAmount, recordsaccountPrincipal, OrderCode, false);
+                    recordsaccountPrincipalTemp = recordsaccountPrincipal;
                     return true;
                 }
             }
-          
+            recordsaccountPrincipalTemp = recordsaccountPrincipal;
             return true;
         }
 
@@ -193,6 +194,23 @@ namespace Ar.Services
                 totalAmount = totalAmount + w.TotalAmount;
             }
             return new { accountPrincipal = accountPrincipal, donationAmount = donationAmount, totalAmount = totalAmount };
+        }
+        public decimal? GetUseAccountPrincipalByUserCode(string userCode)
+        {
+            DynamicParameters paras = new DynamicParameters();
+            paras.Add("@userCode", userCode, System.Data.DbType.String);
+            decimal? totalAmount = 0;
+            decimal? accountPrincipal = 0;
+            decimal? donationAmount = 0;
+            IList<UseWallet> list = DapperSqlHelper.FindToList<UseWallet>("select * from [dbo].[UseWallet] where UserCode=@userCode and Status=1 order by Sort", paras, false);
+            foreach (var w in list)
+            {
+                accountPrincipal = w.AccountPrincipal + accountPrincipal;
+                donationAmount = donationAmount + w.DonationAmount;
+                w.TotalAmount = w.AccountPrincipal + w.DonationAmount;
+                totalAmount = totalAmount + w.TotalAmount;
+            }
+            return accountPrincipal;
         }
 
 

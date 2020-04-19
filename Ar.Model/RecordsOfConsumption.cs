@@ -36,13 +36,20 @@ namespace AR.Model
         private bool _isRecharging;
         private decimal? _RecordsDonationAmountMoney;
         private decimal? _RecordsAccountPrincipalMoney;
-
+        private string _ordercode;
         public bool IsRecharging
         {
             set { _isRecharging = value; }
             get { return _isRecharging; }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        public string OrderCode
+        {
+            set { _ordercode = value; }
+            get { return _ordercode; }
+        }
         /// <summary>
         /// 
         /// </summary>

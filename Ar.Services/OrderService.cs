@@ -120,11 +120,7 @@ namespace Ar.Services
         public string InsertOrder(Order order)
         {
             DynamicParameters paras = new DynamicParameters();
-            if (string.IsNullOrEmpty(order.OrderCode))
-            {
-                order.OrderCode = Guid.NewGuid().ToString();
-                order.OrderNO = WxPayApi.GenerateOutTradeNo().ToString();
-            }
+           
             paras.Add("@OrderCode", order.OrderCode, System.Data.DbType.String);
             paras.Add("@UserCode", order.UserCode, System.Data.DbType.String);
             paras.Add("@ProductCode", order.ProductCode, System.Data.DbType.String);

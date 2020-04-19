@@ -21,6 +21,13 @@ namespace Ar.Services
             RecordsOfConsumption rechargeRecord = DapperSqlHelper.FindOne<RecordsOfConsumption>("select * from [dbo].[RecordsOfConsumption] where RecordsOfConsumptionCode=@code", paras, false);
             return rechargeRecord;
         }
+        public RecordsOfConsumption GetRecordsOfConsumptionByOrderCode(string OrderCode)
+        {
+            DynamicParameters paras = new DynamicParameters();
+            paras.Add("@OrderCode", OrderCode, System.Data.DbType.String);
+            RecordsOfConsumption rechargeRecord = DapperSqlHelper.FindOne<RecordsOfConsumption>("select * from [dbo].[RecordsOfConsumption] where OrderCode=@OrderCode", paras, false);
+            return rechargeRecord;
+        }
 
         public IList<RecordsOfConsumption> GetRecordsOfConsumptionList()
         {
@@ -38,7 +45,7 @@ namespace Ar.Services
              where UserCode=@UserCode AND ISNULL(IsRecharging,0)=0 ", paras, false);
             return list;
         }
-        public bool InsertRecore(string typeCode,string userCode,decimal? recordsMoney,string explain, decimal? recordsdonationAmount, decimal? recordsaccountPrincipal,bool IsRecharging=true)
+        public bool InsertRecore(string typeCode,string userCode,decimal? recordsMoney,string explain, decimal? recordsdonationAmount, decimal? recordsaccountPrincipal,string OrderCode,bool IsRecharging =true)
         {
             var tempRecord = DapperSqlHelper.FindOne<RecordsOfConsumption>("SELECT MAX(RecordsOfConsumptionCode) RecordsOfConsumptionCode FROM [dbo].[RecordsOfConsumption]", null, false);
             if (tempRecord != null && !string.IsNullOrEmpty(tempRecord.RecordsOfConsumptionCode))
@@ -60,14 +67,15 @@ namespace Ar.Services
             paras.Add("@RecordsOfConsumptionCode", tempRecord.RecordsOfConsumptionCode, System.Data.DbType.String);
             paras.Add("@recordsdonationAmount", recordsdonationAmount, System.Data.DbType.Decimal);
             paras.Add("@recordsaccountPrincipal", recordsaccountPrincipal, System.Data.DbType.Decimal);
+            paras.Add("@OrderCode", OrderCode, System.Data.DbType.String);
             var n = DapperSqlHelper.ExcuteNonQuery<RecordsOfConsumption>(@"INSERT INTO [dbo].[RecordsOfConsumption]
-           ([RecordsOfConsumptionCode],[UserCode] ,[RechargeTypeCode]  ,[RecordsMoney],Explain,CreateTime,IsRecharging,RecordsDonationAmountMoney,RecordsAccountPrincipalMoney) 
+           ([RecordsOfConsumptionCode],[UserCode] ,[RechargeTypeCode]  ,[RecordsMoney],Explain,CreateTime,IsRecharging,RecordsDonationAmountMoney,RecordsAccountPrincipalMoney,OrderCode) 
             VALUES  ( @RecordsOfConsumptionCode, 
                       @UserCode, 
                       @RechargeTypeCode, 
                       @RecordsMoney, 
                       @Explain, 
-                      getdate(),@IsRecharging,@recordsdonationAmount,@recordsaccountPrincipal)", paras, false);
+                      getdate(),@IsRecharging,@recordsdonationAmount,@recordsaccountPrincipal,@OrderCode)", paras, false);
             if (n > 0)
             {
                 return true;
@@ -95,7 +103,7 @@ namespace Ar.Services
             var p = _productInfoService.GetProductInfo(productCode);
             var s=_storeService.GetStore(storeId);
             var uw = _useWalletService.GetUseWalletCountMoney(userCode);
-
+            var accountPrincipal = _useWalletService.GetUseAccountPrincipalByUserCode(userCode);
             Order order = new Order();
             order.Money = money;
             int ss = 0;
@@ -127,19 +135,31 @@ namespace Ar.Services
                     }
                     else
                     {
+                        if (string.IsNullOrEmpty(order.OrderCode))
+                        {
+                            order.OrderCode = Guid.NewGuid().ToString();
+                            order.OrderNO = WxPayApi.GenerateOutTradeNo().ToString();
+                            orderCode = order.OrderCode;
+                        }
                         msg = _orderService.InsertOrder(order);
                     }
                 }
                 else
                 {
-                    msg=_orderService.InsertOrder(order);
+                    if (string.IsNullOrEmpty(order.OrderCode))
+                    {
+                        order.OrderCode = Guid.NewGuid().ToString();
+                        order.OrderNO = WxPayApi.GenerateOutTradeNo().ToString();
+                        orderCode = order.OrderCode;
+                    }
+                    msg =_orderService.InsertOrder(order);
                 }
                 if (money==0)
                 {
                     LogHelper.WriteLog("会员支付0元 " + money);
                     LogHelper.WriteLog("couponCode " + couponCode);
                     _couponService.UsedUpdate(couponCode, userCode, orderCode);
-
+                    
                     LogHelper.WriteLog("financialStatements " + fs.Code);
                     _financialStatementsService.Insert(fs);
                 }
@@ -148,7 +168,11 @@ namespace Ar.Services
                     LogHelper.WriteLog("couponCode " + couponCode);
                     _couponService.UsedUpdate(couponCode, userCode, orderCode);
                     LogHelper.WriteLog("会员支付金额 " + money);
-                    _useWalletService.UpdateData(userCode, money);
+                    decimal? recordsaccountPrincipalTemp = 0m;
+                    _useWalletService.UpdateData(userCode, money, orderCode, out recordsaccountPrincipalTemp);
+                    LogHelper.WriteLog("会员支付金额 accountPrincipal " + accountPrincipal);
+                    LogHelper.WriteLog("会员支付金额 aecordsdonationAmountTemp " + recordsaccountPrincipalTemp);
+                    fs.UseWalletAccountPrincipal=accountPrincipal - recordsaccountPrincipalTemp;
                     LogHelper.WriteLog("financialStatements " + fs.Code);
                     _financialStatementsService.Insert(fs);
                 }
@@ -209,6 +233,12 @@ namespace Ar.Services
             }
             else
             {
+                if (string.IsNullOrEmpty(order.OrderCode))
+                {
+                    order.OrderCode = Guid.NewGuid().ToString();
+                    order.OrderNO = WxPayApi.GenerateOutTradeNo().ToString();
+                    orderCode = order.OrderCode;
+                }
                 _orderService.InsertOrder(order);
             }
             return order;
