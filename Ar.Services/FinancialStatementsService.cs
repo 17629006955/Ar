@@ -328,8 +328,13 @@ namespace Ar.Services
             {
                 if (!string.IsNullOrEmpty(uw.Ratio))
                 {
+                    fs.FinancialRevenueAccounting = fs.RecordsMoney * Convert.ToDecimal((1 - Convert.ToDouble(uw.Ratio)));
+                }
+                else if (!string.IsNullOrEmpty(uw.Ratio))
+                {
                     fs.FinancialRevenueAccounting = fs.RecordsMoney * Convert.ToDecimal((1-Convert.ToDouble(uw.Ratio)));
                 }
+                
             }
             fs.Imoney = fs.FinancialRevenueAccounting * Convert.ToDecimal((100 - Convert.ToDouble(p.Rate)) * 0.01);
             fs.ProductInfoRate = p.Rate + "%";

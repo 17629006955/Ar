@@ -43,10 +43,11 @@ namespace AR.Model
         private string _BrandStoreName;
         private DateTime? _accessTokenCreateTime;
         private string _customerService;
+        private string _StoreQRImageUrl;
 
         public string VIPName
         {
-            set { _VIPName = _VIPName; }
+            set { _VIPName = value; }
             get { return _VIPName; }
         }
         public string BackgroundPictureUrl
@@ -145,6 +146,11 @@ namespace AR.Model
         {
             set { _customerService = value; }
             get { return _customerService; }
+        }
+        public string StoreQRImageUrl
+        {
+            set { _StoreQRImageUrl = value; }
+            get { return _StoreQRImageUrl; }
         }
 
 
