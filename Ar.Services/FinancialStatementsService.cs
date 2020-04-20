@@ -322,7 +322,7 @@ namespace Ar.Services
 
             if (payType.Equals("微信"))
             {
-                fs.FinancialRevenueAccounting = fs.RecordsMoney;
+                fs.FinancialRevenueAccounting = fs.ActualConsumption;
             }
             else
             {
