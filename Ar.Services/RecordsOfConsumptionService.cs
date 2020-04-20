@@ -275,7 +275,7 @@ namespace Ar.Services
                 order.Number = ss;
             }
             order.PayTime = DateTime.Now;
-            order.StoreCode = userSotre.UserStoreCode;
+            order.StoreCode = userSotre.MembershipCardStore;
             order.UserCode = userCode;
             order.ProductCode = productCode;
             order.ExperienceVoucherCode = couponCode;
