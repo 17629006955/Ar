@@ -111,7 +111,14 @@ namespace Ar.Services
             fs.ProductionName = p.ProductName;
             fs.Iquantity = order.Number;
             fs.Itaxunitprice = p.ExperiencePrice;
-            fs.Isum = p.ExperiencePrice * order.Number;
+            if (payType.Equals("微信"))
+            {
+                fs.Isum = order.Money;
+            }
+            else
+            {
+                fs.Isum = p.ExperiencePrice * order.Number;
+            }
             fs.CpersonName = p.CreatorName;
             fs.PayType = payType;
             fs.AmountOfIncome = order.Money;
