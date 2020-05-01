@@ -35,10 +35,29 @@ namespace AR.Model
 		private DateTime? _versionendtime;
 		private DateTime? _createtime;
 		private int? _tasklevel;
-		/// <summary>
-		/// 
-		/// </summary>
-		public string TaskCode
+
+        private string _sharePictures;
+        private string _shareTitle;
+        private string _shareDescriptions;
+        public string SharePictures
+        {
+            set { _sharePictures = value; }
+            get { return _sharePictures; }
+        }
+        public string ShareTitle
+        {
+            set { _shareTitle = value; }
+            get { return _shareTitle; }
+        }
+        public string ShareDescriptions
+        {
+            set { _shareDescriptions = value; }
+            get { return _shareDescriptions; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string TaskCode
 		{
 			set{ _taskcode=value;}
 			get{return _taskcode;}

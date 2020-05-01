@@ -27,6 +27,10 @@ namespace Ar.API.Controllers
         [HttpGet]
         public IHttpActionResult GetTaskList()
         {
+            var sharePictures = ConfigurationManager.AppSettings["sharePictures"].ToString();
+            var shareDescriptions = ConfigurationManager.AppSettings["shareDescriptions"].ToString();
+            var shareTitle = ConfigurationManager.AppSettings["shareTitle"].ToString();
+
             LogHelper.WriteLog("GetTaskList");
             SimpleResult result = new SimpleResult();
             ITaskService _service = new TaskService();
@@ -35,6 +39,15 @@ namespace Ar.API.Controllers
                 if (UserAuthorization)
                 {
                     var list = _service.GetTaskList();
+                    foreach(var t in list)
+                    {
+                        if (t.TaskCode == "2")
+                        {
+                            t.ShareDescriptions = shareDescriptions;
+                            t.SharePictures = sharePictures;
+                            t.ShareTitle = shareTitle;
+                        }
+                    }
                     result.Resource = list;
                     result.Status = Result.SUCCEED;
                 } 
@@ -66,6 +79,11 @@ namespace Ar.API.Controllers
         public IHttpActionResult GetTaskByCode(string code)
         {
             LogHelper.WriteLog("GetTaskByCode code" + code);
+
+            var sharePictures = ConfigurationManager.AppSettings["sharePictures"].ToString();
+            var shareDescriptions = ConfigurationManager.AppSettings["shareDescriptions"].ToString();
+            var shareTitle = ConfigurationManager.AppSettings["shareTitle"].ToString();
+
             SimpleResult result = new SimpleResult();
             ITaskService _service = new TaskService();
             try
@@ -73,8 +91,14 @@ namespace Ar.API.Controllers
                 if (UserAuthorization)
                 {
                     var list = _service.GetTaskByCode(code);
-                result.Resource = list;
-                result.Status = Result.SUCCEED;
+                    if (list.TaskCode == "2")
+                    {
+                        list.ShareDescriptions = shareDescriptions;
+                        list.SharePictures = sharePictures;
+                        list.ShareTitle = shareTitle;
+                    }
+                    result.Resource = list;
+                    result.Status = Result.SUCCEED;
                 }
                 else
                 {
@@ -85,7 +109,7 @@ namespace Ar.API.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 LogHelper.WriteLog("GetTaskByCode code" + code, ex);
                 result.Status = Result.FAILURE;
                 result.Msg = ex.Message;
