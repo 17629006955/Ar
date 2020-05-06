@@ -272,7 +272,7 @@ namespace Ar.API.Controllers
                                         }
                                     } else
                                     {
-                                        var order = _service.WxPayNoMoneyOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money, param.couponCode);
+                                        var order = _service.WxPayNoMoneyOrder(param.productCode, param.userCode, param.peopleCount, param.dateTime, param.money,null, param.couponCode);
                                         _couponService.UsedUpdate(param.couponCode, param.userCode, order.OrderCode);
                                         LogHelper.WriteLog("更新的钱包和优惠券couponCode： " + param.couponCode);
 
@@ -540,12 +540,12 @@ namespace Ar.API.Controllers
                                     {
                                         
                                         var recordsOfConsumption = _service.GetRecordsOfConsumptionByOrderCode(orderCode);
-                                        fs = _financialStatementsService.getWriteOff(order.UserCode, orderCode, "会员卡", recordsOfConsumption?.RecordsAccountPrincipalMoney);
+                                        fs = _financialStatementsService.getWriteOff(use.UserName, order.UserCode, orderCode, "会员卡", recordsOfConsumption?.RecordsAccountPrincipalMoney);
                                        
                                         
                                     } else
                                     {
-                                         fs = _financialStatementsService.getWriteOff(order.UserCode, orderCode, "微信",null);
+                                         fs = _financialStatementsService.getWriteOff(use.UserName, order.UserCode, orderCode, "微信",null);
                                         
                                     }
                                     LogHelper.WriteLog("financialStatements " + fs.Code);

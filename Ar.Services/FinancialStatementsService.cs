@@ -243,7 +243,7 @@ namespace Ar.Services
         /// <param name="order"></param>
         /// <param name="payType"></param>
         /// <returns></returns>
-        public financialStatements getWriteOff(string userCode, string orderCode,string payType, decimal? RecordsAccountPrincipalMoney)
+        public financialStatements getWriteOff(string wfuserName,string userCode, string orderCode,string payType, decimal? RecordsAccountPrincipalMoney)
         {
             var dateTime = DateTime.Now;
             ICouponService _couponService = new CouponService();
@@ -307,7 +307,7 @@ namespace Ar.Services
                 }
             }
             fs.RecordsOfConsumptionCreateTime = dateTime;
-            fs.WriteOffUser =u.UserName;
+            fs.WriteOffUser = wfuserName;
             fs.ProductionCode1 = p.ProductCode;
             fs.ProductionName1 = p.ProductName;
             fs.ExperiencePrice = p.ExperiencePrice;
@@ -321,6 +321,11 @@ namespace Ar.Services
                 {
                     fs.CouponUseMoney1 = couponMoney.Money;
                     fs.ActualConsumption = fs.RecordsMoney - fs.CouponUseMoney1;
+                    if(fs.ActualConsumption<0m)
+                    {
+                        fs.ActualConsumption = 0m;
+                    }
+                    
                 }
             }
             else {

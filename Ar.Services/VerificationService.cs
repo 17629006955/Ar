@@ -17,7 +17,7 @@ namespace Ar.Services
             DynamicParameters paras = new DynamicParameters();
             paras.Add("@phone", phone, System.Data.DbType.String);
             paras.Add("@verificationCode", verificationCode, System.Data.DbType.String);
-            paras.Add("@CreateTime", DateTime.Now.AddMinutes(-5), System.Data.DbType.DateTime);
+            paras.Add("@CreateTime", DateTime.Now.AddMinutes(-15), System.Data.DbType.DateTime);
             Verification verification = DapperSqlHelper.FindOne<Verification>("select * from [dbo].[Verification] where phone=@phone and verificationCode=@verificationCode and CreateTime > @CreateTime ", paras, false);
             if (verification != null)
             {

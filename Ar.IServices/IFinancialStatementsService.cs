@@ -11,7 +11,7 @@ namespace Ar.IServices
       
         financialStatements getDataRechargeRecord(string userCode, string typeCode, UseWallet useWallet, string storeCode, decimal? ratio, string payType);
 
-        financialStatements getWriteOff(string userCode, string orderCode, string payType,decimal? RecordsAccountPrincipalMoney);
+        financialStatements getWriteOff(string wfuserName, string userCode, string orderCode, string payType,decimal? RecordsAccountPrincipalMoney);
 
     }
 }
