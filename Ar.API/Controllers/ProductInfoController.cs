@@ -14,6 +14,7 @@ using System.Web.Script.Serialization;
 using Ar.IServices;
 using Ar.Services;
 using Ar.Common;
+using System.Transactions;
 
 namespace Ar.API.Controllers
 {
@@ -135,9 +136,13 @@ namespace Ar.API.Controllers
                             //{
                             //    orderInfo.ExperienceVoucherCode = "";
                             //}
+                            using (var scope = new TransactionScope())//创建事务
+                            {
+                                _couponService.UpdatebycouponCode(orderInfo.ExperienceVoucherCode);
                             orderInfo.ExperienceVoucherCode = null;
-                            _couponService.UpdatebycouponCode(orderInfo.ExperienceVoucherCode);
                             _orderService.UpdateOrder(orderInfo);
+                                scope.Complete();//这是最后提交事务
+                            }
                         }
                         var productInfo = _service.GetProductInfo(orderInfo.ProductCode);
                         result.Status = Result.SUCCEED;

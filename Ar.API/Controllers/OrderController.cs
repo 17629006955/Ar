@@ -106,6 +106,7 @@ namespace Ar.API.Controllers
                 if (UserAuthorization)
                 {
                     var list = _service.GetOrderByCode(code);
+
                     result.Resource = list;
                     result.Status = Result.SUCCEED;
                 }
