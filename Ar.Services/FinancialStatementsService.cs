@@ -343,9 +343,9 @@ namespace Ar.Services
 
 
             }
-            fs.Imoney = fs.FinancialRevenueAccounting * Convert.ToDecimal((100 - Convert.ToDouble(p.Rate)) * 0.01);
+            fs.Imoney = fs.FinancialRevenueAccounting /( Convert.ToDecimal((Convert.ToDouble(p.Rate)) * 0.01)+1);
             fs.ProductInfoRate = p.Rate + "%";
-            fs.Itax = fs.FinancialRevenueAccounting * Convert.ToDecimal((Convert.ToDouble(p.Rate))*0.01); 
+            fs.Itax = fs.Imoney * Convert.ToDecimal((Convert.ToDouble(p.Rate))*0.01); 
             fs.GrossProfit = fs.Imoney;
             return fs;
         }
