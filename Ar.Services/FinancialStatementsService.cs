@@ -260,6 +260,7 @@ namespace Ar.Services
             var p = _productInfoService.GetProductInfo(order.ProductCode);
             var u = _userService.GetUserByCode(userCode);
             financialStatements fs = new financialStatements();
+            fs.OrderNo = order?.OrderNO;
             fs.Code = Guid.NewGuid().ToString();
             fs.CreateTime = dateTime;
             fs.UserPhone = u?.Phone;
