@@ -154,6 +154,7 @@ namespace Ar.Services
                     }
                     msg =_orderService.InsertOrder(order);
                 }
+                fs.OrderNo = order?.OrderNO;
                 if (money==0)
                 {
                     LogHelper.WriteLog("会员支付0元 " + money);

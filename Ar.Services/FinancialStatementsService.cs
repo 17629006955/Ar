@@ -92,6 +92,7 @@ namespace Ar.Services
             fs.UserPhone = u?.Phone;
             fs.UserCreateTime = u?.CreateTime;
             fs.StoreName = s?.StoreName;
+            fs.OrderNo = order.OrderNO;
             switch (p.Type)
             {
                 case "1":

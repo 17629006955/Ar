@@ -63,18 +63,26 @@ namespace AR.Model
 		private string _productinforate;
 		private decimal? _itax;
 		private decimal? _grossprofit;
-		/// <summary>
-		/// 
-		/// </summary>
-		public string Code
-		{
-			set{ _code=value;}
-			get{return _code;}
-		}
-		/// <summary>
-		/// 
-		/// </summary>
-		public DateTime? CreateTime
+        private string _orderNo;
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Code
+        {
+            set { _code = value; }
+            get { return _code; }
+
+        }
+        public string OrderNo
+        {
+            set { _orderNo = value; }
+            get { return _orderNo; }
+
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime? CreateTime
 		{
 			set{ _createtime=value;}
 			get{return _createtime;}
