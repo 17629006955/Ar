@@ -281,6 +281,7 @@ namespace Ar.API.Controllers
                                         LogHelper.WriteLog("报表表数据更新");
                                         financialStatements fs = _financialStatementsService.getData(param.userCode, order, "微信");
                                         LogHelper.WriteLog("报表表数据更新完成");
+                   
                                         _financialStatementsService.Insert(fs);
                                         LogHelper.WriteLog("报表写入数据结束" + fs.Code);
                                         WxOrder wxorder = new WxOrder();
@@ -385,6 +386,7 @@ namespace Ar.API.Controllers
                                             LogHelper.WriteLog("报表表数据更新");
                                             financialStatements fs = _financialStatementsService.getData(userCode, order, "微信");
                                             LogHelper.WriteLog("报表表数据更新完成");
+
                                             _financialStatementsService.Insert(fs);
                                             LogHelper.WriteLog("报表写入数据结束" + fs.Code);
                                             result.Status = Result.SUCCEED;
@@ -413,6 +415,7 @@ namespace Ar.API.Controllers
                                         LogHelper.WriteLog("报表表数据更新");
                                         financialStatements fs = _financialStatementsService.getData(userCode, order, "微信");
                                         LogHelper.WriteLog("报表表数据更新完成");
+                                       
                                         _financialStatementsService.Insert(fs);
                                         LogHelper.WriteLog("报表写入数据结束" + fs.Code);
                                         result.Status = Result.SUCCEED;

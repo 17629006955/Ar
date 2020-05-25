@@ -162,6 +162,7 @@ namespace Ar.Services
                     _couponService.UsedUpdate(couponCode, userCode, orderCode);
                     
                     LogHelper.WriteLog("financialStatements " + fs.Code);
+                   
                     _financialStatementsService.Insert(fs);
                 }
                 else
@@ -175,6 +176,7 @@ namespace Ar.Services
                     LogHelper.WriteLog("会员支付金额 aecordsdonationAmountTemp " + recordsaccountPrincipalTemp);
                     fs.UseWalletAccountPrincipal=accountPrincipal - recordsaccountPrincipalTemp;
                     LogHelper.WriteLog("financialStatements " + fs.Code);
+                    
                     _financialStatementsService.Insert(fs);
                 }
 

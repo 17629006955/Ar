@@ -50,19 +50,20 @@ namespace Ar.Services
             paras.Add("@ProductInfoRate", model.ProductInfoRate, System.Data.DbType.String);
             paras.Add("@Itax", model.Itax, System.Data.DbType.String);
             paras.Add("@GrossProfit", model.GrossProfit, System.Data.DbType.String);
+            paras.Add("@OrderNo", model.OrderNo, System.Data.DbType.String);
             string sql = (@"INSERT INTO dbo.financialStatements
            (Code,CreateTime ,UserPhone,UserCreateTime,StoreName ,ProductionType,Cstname ,ProductionCode,ProductionName
            ,Iquantity,Itaxunitprice,Isum,CpersonName,PayType,AmountOfIncome ,DonationAmount
            ,CouponUseCode,CouponUseMoney,GetCouponTime,UseWalletMoney,Ratio,RecordsOfConsumptionCreateTime
            ,WriteOffUser,ProductionCode1,ProductionName1,ExperiencePrice,Iquantity1
            ,RecordsMoney ,CouponUseMoney1 ,ActualConsumption ,UseWalletMoney1,UseWalletAccountPrincipal
-           ,FinancialRevenueAccounting,Imoney ,ProductInfoRate ,Itax ,GrossProfit)
+           ,FinancialRevenueAccounting,Imoney ,ProductInfoRate ,Itax ,GrossProfit,OrderNo)
                 values(@Code,@CreateTime ,@UserPhone,@UserCreateTime,@StoreName ,@ProductionType,@Cstname ,@ProductionCode,@ProductionName
            ,@Iquantity,@Itaxunitprice,@Isum,@CpersonName,@PayType,@AmountOfIncome ,@DonationAmount
            ,@CouponUseCode,@CouponUseMoney,@GetCouponTime,@UseWalletMoney,@Ratio,@RecordsOfConsumptionCreateTime
            ,@WriteOffUser,@ProductionCode1,@ProductionName1,@ExperiencePrice,@Iquantity1
            ,@RecordsMoney ,@CouponUseMoney1 ,@ActualConsumption ,@UseWalletMoney1,@UseWalletAccountPrincipal
-           ,@FinancialRevenueAccounting,@Imoney ,@ProductInfoRate ,@Itax ,@GrossProfit)");
+           ,@FinancialRevenueAccounting,@Imoney ,@ProductInfoRate ,@Itax ,@GrossProfit,@OrderNo)");
             DapperSqlHelper.ExcuteNonQuery<Coupon>(sql, paras, false);
             return true;
         }
