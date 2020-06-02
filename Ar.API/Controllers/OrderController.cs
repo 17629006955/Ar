@@ -59,6 +59,16 @@ namespace Ar.API.Controllers
                                         DateTime dt = DateTime.ParseExact(PayTime, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture);
                                         item.PayTime = dt;
                                         _service.UpdateOrder(item);
+
+                                        LogHelper.WriteLog("报表写入数据开始");
+                                        IFinancialStatementsService _financialStatementsService = new FinancialStatementService();
+                                        LogHelper.WriteLog("报表表数据更新");
+                                        financialStatements fs = _financialStatementsService.getData(userCode, item, "微信");
+
+                                        LogHelper.WriteLog("报表表数据更新完成");
+
+                                        _financialStatementsService.Insert(fs);
+                                        LogHelper.WriteLog("报表写入数据结束" + fs.Code);
                                     }
 
                                 }
